@@ -6,6 +6,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, SubsetRandomSampler
+import pandas as pd
 
 from transformers import AutoTokenizer, get_cosine_schedule_with_warmup
 
@@ -69,6 +70,7 @@ def parse_args():
     )
 
     return parser.parse_args()
+
 
 def create_dataloaders(
     csv_path: str,
@@ -138,6 +140,31 @@ def compute_accuracy(logits: torch.Tensor, targets: torch.Tensor) -> float:
     return correct / total
 
 
+def compute_gender_class_weights(csv_path: str) -> torch.Tensor:
+    """
+    Train split'teki Female / Male sayısına göre class weight hesaplar.
+    GENDER_MAP = {"Female": 0, "Male": 1} ile uyumlu olacak şekilde
+    ağırlık vektörü [w_female, w_male] döndürür.
+    """
+    df = pd.read_csv(csv_path)
+    train_df = df[df["split"] == "train"]
+
+    counts = train_df["gender"].value_counts()
+    # Varsayılan: 1.0, eğer label yoksa (özellikle olmasın ama) garanti olsun
+    female_count = counts.get("Female", 1)
+    male_count = counts.get("Male", 1)
+
+    total = female_count + male_count
+    # Basit inverse frequency: total / (2 * count)
+    w_female = total / (2.0 * female_count)
+    w_male = total / (2.0 * male_count)
+
+    weights = torch.tensor([w_female, w_male], dtype=torch.float32)
+    print(f"Gender class counts: Female={female_count}, Male={male_count}")
+    print(f"Gender class weights: {weights.tolist()}")
+    return weights
+
+
 def train_one_epoch(
     model: nn.Module,
     train_loader: DataLoader,
@@ -145,9 +172,14 @@ def train_one_epoch(
     scheduler,
     device: torch.device,
     epoch: int,
+    gender_class_weights: torch.Tensor,
+    emotion_loss_weight: float = 0.7,
+    gender_loss_weight: float = 1.3,
 ) -> Dict[str, float]:
     model.train()
-    ce = nn.CrossEntropyLoss()
+
+    ce_emotion = nn.CrossEntropyLoss()
+    ce_gender = nn.CrossEntropyLoss(weight=gender_class_weights.to(device))
 
     total_loss = 0.0
     total_emotion_acc = 0.0
@@ -172,9 +204,11 @@ def train_one_epoch(
         logits_emotion = outputs["logits_emotion"]
         logits_gender = outputs["logits_gender"]
 
-        loss_emotion = ce(logits_emotion, emotion_labels)
-        loss_gender = ce(logits_gender, gender_labels)
-        loss = loss_emotion + loss_gender
+        loss_emotion = ce_emotion(logits_emotion, emotion_labels)
+        loss_gender = ce_gender(logits_gender, gender_labels)
+
+        # Toplam loss'ta gender'i biraz daha önemli yap
+        loss = emotion_loss_weight * loss_emotion + gender_loss_weight * loss_gender
 
         loss.backward()
         optimizer.step()
@@ -209,6 +243,8 @@ def validate(
     model: nn.Module,
     val_loader: DataLoader,
     device: torch.device,
+    emotion_loss_weight: float = 0.7,
+    gender_loss_weight: float = 1.3,
 ) -> Dict[str, float]:
     model.eval()
     ce = nn.CrossEntropyLoss()
@@ -237,7 +273,8 @@ def validate(
 
         loss_emotion = ce(logits_emotion, emotion_labels)
         loss_gender = ce(logits_gender, gender_labels)
-        loss = loss_emotion + loss_gender
+
+        loss = emotion_loss_weight * loss_emotion + gender_loss_weight * loss_gender
 
         emotion_acc = compute_accuracy(logits_emotion, emotion_labels)
         gender_acc = compute_accuracy(logits_gender, gender_labels)
@@ -276,6 +313,9 @@ def main():
         val_ratio=args.val_ratio,
     )
 
+    # Gender class weight'lerini hesapla
+    gender_class_weights = compute_gender_class_weights(args.csv_path).to(device)
+
     print("Initializing model...")
     model = MultimodalEffNetBert(
         bert_model_name=args.bert_model,
@@ -313,6 +353,9 @@ def main():
             scheduler=scheduler,
             device=device,
             epoch=epoch,
+            gender_class_weights=gender_class_weights,
+            emotion_loss_weight=0.7,
+            gender_loss_weight=1.3,
         )
         print(
             f"Train - Loss: {train_metrics['loss']:.4f}, "
@@ -324,6 +367,8 @@ def main():
             model=model,
             val_loader=val_loader,
             device=device,
+            emotion_loss_weight=0.7,
+            gender_loss_weight=1.3,
         )
         print(
             f"Val   - Loss: {val_metrics['loss']:.4f}, "

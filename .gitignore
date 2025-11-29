@@ -28,7 +28,7 @@ logs/
 checkpoints/
 runs/
 outputs/
-models/
+
 *.pt
 *.pth
 *.ckpt
