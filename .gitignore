@@ -1,0 +1,56 @@
+# --- Python cache / derleme dosyaları ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Sanal ortamlar ---
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# --- IDE / Editor ayarları ---
+.vscode/
+.idea/
+*.iml
+
+# --- Jupyter Notebooks cache ---
+.ipynb_checkpoints/
+
+# --- Loglar, geçici dosyalar ---
+logs/
+*.log
+*.tmp
+*.temp
+
+# --- Model ağırlıkları ve çıktılar ---
+checkpoints/
+runs/
+outputs/
+models/
+*.pt
+*.pth
+*.ckpt
+
+# --- PyTorch / HuggingFace cache ---
+wandb/
+.lightning_logs/
+cache/
+.cache/
+huggingface/
+hf_cache/
+
+# --- Sistem dosyaları (Windows / macOS) ---
+.DS_Store
+Thumbs.db
+
+# --- Dataset (eğer komple track etmek istemezsen) ---
+# Dataset klasörünü versiyon kontrolüne almak istemiyorsan aşağıyı aç:
+# Dataset/
+# Eğer sadece büyük dosyaları hariç tutmak istersen, altına özel pattern ekleyebilirsin.
+
+# --- Config / çalışma sırasında oluşabilecek dosyalar ---
+*.jsonl
+*.csv~
+*.bak

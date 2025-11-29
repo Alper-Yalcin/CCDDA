@@ -1,0 +1,23 @@
+# Temel bilimsel python paketleri
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+
+# Görsel işleme
+Pillow
+opencv-python
+albumentations
+
+# NLP ve BERT
+transformers
+datasets
+sentencepiece
+
+# Eğitim yardımcıları
+tqdm
+pyyaml
+
+# Geliştirme / notebook
+jupyter
