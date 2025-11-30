@@ -1,6 +1,11 @@
 # RUN
 python src/data/build_master_csv.py
 python -m src.train.train_multimodal --epochs 5 --batch_size 8
+
+python -m src.explain.predict_and_explain --idx 0
+python -m src.explain.predict_and_explain --id 207-6C-543-M-S
+
+python -m src.app.tk_app
 # venv kullanıyorsan
 python -m venv .venv
 source .venv/bin/activate 

@@ -173,8 +173,8 @@ def train_one_epoch(
     device: torch.device,
     epoch: int,
     gender_class_weights: torch.Tensor,
-    emotion_loss_weight: float = 0.7,
-    gender_loss_weight: float = 1.3,
+    emotion_loss_weight: float = 0.6,
+    gender_loss_weight: float = 1.4,
 ) -> Dict[str, float]:
     model.train()
 
@@ -243,8 +243,8 @@ def validate(
     model: nn.Module,
     val_loader: DataLoader,
     device: torch.device,
-    emotion_loss_weight: float = 0.7,
-    gender_loss_weight: float = 1.3,
+    emotion_loss_weight: float = 0.6,
+    gender_loss_weight: float = 1.4,
 ) -> Dict[str, float]:
     model.eval()
     ce = nn.CrossEntropyLoss()
@@ -340,7 +340,9 @@ def main():
         num_training_steps=total_steps,
     )
 
-    best_val_loss = float("inf")
+    # Artık en iyi modeli gender_acc'e göre seçeceğiz
+    best_gender_acc = 0.0
+    best_val_loss = float("inf")  # sadece bilgi amaçlı tutuyoruz
     best_checkpoint_path = os.path.join(args.output_dir, "best_multimodal.pt")
 
     for epoch in range(1, args.epochs + 1):
@@ -354,8 +356,8 @@ def main():
             device=device,
             epoch=epoch,
             gender_class_weights=gender_class_weights,
-            emotion_loss_weight=0.7,
-            gender_loss_weight=1.3,
+            emotion_loss_weight=0.6,
+            gender_loss_weight=1.4,
         )
         print(
             f"Train - Loss: {train_metrics['loss']:.4f}, "
@@ -367,8 +369,8 @@ def main():
             model=model,
             val_loader=val_loader,
             device=device,
-            emotion_loss_weight=0.7,
-            gender_loss_weight=1.3,
+            emotion_loss_weight=0.6,
+            gender_loss_weight=1.4,
         )
         print(
             f"Val   - Loss: {val_metrics['loss']:.4f}, "
@@ -376,8 +378,9 @@ def main():
             f"Gender Acc: {val_metrics['gender_acc']:.4f}"
         )
 
-        # En iyi modeli kaydet
-        if val_metrics["loss"] < best_val_loss:
+        # En iyi modeli artık VAL GENDER ACC'e göre kaydediyoruz
+        if val_metrics["gender_acc"] > best_gender_acc:
+            best_gender_acc = val_metrics["gender_acc"]
             best_val_loss = val_metrics["loss"]
             torch.save(
                 {
@@ -389,10 +392,14 @@ def main():
                 },
                 best_checkpoint_path,
             )
-            print(f"✅ Yeni en iyi model kaydedildi: {best_checkpoint_path}")
+            print(
+                f"✅ Yeni en iyi model (val gender_acc={best_gender_acc:.4f}) "
+                f"kaydedildi: {best_checkpoint_path}"
+            )
 
     print("\nEğitim tamamlandı.")
-    print("En iyi val loss:", best_val_loss)
+    print("En iyi val gender_acc:", best_gender_acc)
+    print("O anda val loss:", best_val_loss)
 
 
 if __name__ == "__main__":

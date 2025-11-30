@@ -66,10 +66,32 @@ class KidoMultimodalDataset(Dataset):
             image = self.image_transform(image)
 
         # --- Metin ---
-        text = row["text_en"] if self.use_english else row["text_tr"]
-        if not isinstance(text, str):
-            text = "" if pd.isna(text) else str(text)
+        # use_english=False -> öncelik text_tr, sonra text_en
+        # use_english=True  -> öncelik text_en, sonra text_tr
+        if self.use_english:
+            primary_col = "text_en"
+            secondary_col = "text_tr"
+        else:
+            primary_col = "text_tr"
+            secondary_col = "text_en"
 
+        def _get_clean_text(col_name: str):
+            if col_name in row.index:
+                val = row[col_name]
+                if isinstance(val, str) and val.strip():
+                    return val.strip()
+                if not isinstance(val, str) and not pd.isna(val):
+                    # sayısal vs gelirse stringe çevir
+                    s = str(val).strip()
+                    if s:
+                        return s
+            return ""
+
+        text = _get_clean_text(primary_col)
+        if not text:  # primary boşsa fallback
+            text = _get_clean_text(secondary_col)
+
+        # Son çare hâlâ boş ise "" kalır
         encoding = self.tokenizer(
             text,
             padding="max_length",

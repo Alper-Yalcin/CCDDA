@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
+from typing import Dict                     # ← EKLENEN SATIR
 from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
 from transformers import AutoModel
-
 
 class MultimodalEffNetBert(nn.Module):
     def __init__(
@@ -63,38 +63,87 @@ class MultimodalEffNetBert(nn.Module):
             nn.Linear(256, 2),  # Female / Male
         )
 
-    def forward(self, image, input_ids, attention_mask):
+    def encode_image(self, image: torch.Tensor) -> torch.Tensor:
         """
+        Sadece görüntüden embedding üretir.
         image: [B, 3, H, W]
+        return: img_emb [B, proj_dim]
+        """
+        x_img = self.effnet_features(image)            # [B, C, H', W']
+        x_img = self.effnet_pool(x_img)                # [B, C, 1, 1]
+        x_img = x_img.view(x_img.size(0), -1)          # [B, C]
+        img_emb = self.img_proj(x_img)                 # [B, proj_dim]
+        return img_emb
+
+    def encode_text(
+        self,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Sadece metinden embedding üretir (CLS üzerinden).
         input_ids: [B, L]
         attention_mask: [B, L]
+        return: text_emb [B, proj_dim]
         """
-        # --- Image branch ---
-        x = self.effnet_features(image)          # [B, C, H', W']
-        x = self.effnet_pool(x)                  # [B, C, 1, 1]
-        x = torch.flatten(x, 1)                  # [B, C]
-        img_emb = self.img_proj(x)               # [B, proj_dim]
-
-        # --- Text branch ---
         bert_out = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask,
         )
-        # CLS token embedding
-        cls_emb = bert_out.last_hidden_state[:, 0, :]  # [B, text_embedding_dim]
+        cls_emb = bert_out.last_hidden_state[:, 0, :]  # [B, hidden]
         text_emb = self.text_proj(cls_emb)             # [B, proj_dim]
+        return text_emb
 
-        # --- Fusion ---
-        fused = torch.cat([img_emb, text_emb], dim=1)  # [B, 2*proj_dim]
+    def encode_multimodal(
+        self,
+        image: torch.Tensor,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+    ) -> Dict[str, torch.Tensor]:
+        """
+        Görüntü + metni birlikte encode eder,
+        hem tekil embedding'leri hem de fused embedding'i döner.
+        """
+        img_emb = self.encode_image(image)                      # [B, proj_dim]
+        text_emb = self.encode_text(input_ids, attention_mask)  # [B, proj_dim]
 
-        # --- Heads ---
-        logits_emotion = self.emotion_head(fused)      # [B, 2]
-        logits_gender = self.gender_head(fused)        # [B, 2]
+        # Burada ekstra bir fully-connected katmana gerek yok;
+        # direkt concatenation sonrası head'lere vereceğiz.
+        fused = torch.cat([img_emb, text_emb], dim=1)           # [B, 2*proj_dim]
+
+        return {
+            "img_emb": img_emb,
+            "text_emb": text_emb,
+            "fused": fused,
+        }
+
+    def forward(
+        self,
+        image: torch.Tensor,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+    ) -> Dict[str, torch.Tensor]:
+        """
+        Ana forward:
+          - emotion & gender logits
+          - img_emb, text_emb ve fused embedding
+        """
+        feats = self.encode_multimodal(
+            image=image,
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+        )
+
+        fused = feats["fused"]
+
+        # Sınıflandırma başlıkları
+        logits_emotion = self.emotion_head(fused)  # [B, 2]
+        logits_gender = self.gender_head(fused)    # [B, 2]
 
         return {
             "logits_emotion": logits_emotion,
             "logits_gender": logits_gender,
-            "img_emb": img_emb,
-            "text_emb": text_emb,
+            "img_emb": feats["img_emb"],
+            "text_emb": feats["text_emb"],
             "fused": fused,
         }
