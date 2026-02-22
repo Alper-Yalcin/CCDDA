@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Upload, ArrowRight, Activity, Shield, Brain, Info, AlertTriangle, FileText, CheckCircle, X } from 'lucide-react';
+import { useTranslation } from './i18n';
 
 // --- Types ---
 type Page = 'home' | 'analysis' | 'about';
@@ -13,10 +14,12 @@ type Page = 'home' | 'analysis' | 'about';
 // --- Components ---
 
 function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: Page) => void }) {
+  const { t, lang, setLang } = useTranslation();
+
   const navItems: { id: Page; label: string }[] = [
-    { id: 'home', label: 'Home' },
-    { id: 'analysis', label: 'Run Analysis' },
-    { id: 'about', label: 'About the Project' },
+    { id: 'home', label: t('nav.home') },
+    { id: 'analysis', label: t('nav.analysis') },
+    { id: 'about', label: t('nav.about') },
   ];
 
   return (
@@ -32,10 +35,10 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
             </div>
             <div className="flex flex-col">
               <span className="font-display font-bold text-lg leading-none text-slate-800">
-                ChildArt<span className="text-teal-600">Analyze</span>
+                {t('brand.title')}<span className="text-teal-600">{t('brand.accent')}</span>
               </span>
               <span className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">
-                Research Prototype v1.0
+                {t('brand.subtitle')}
               </span>
             </div>
           </div>
@@ -53,6 +56,16 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
                 {item.label}
               </button>
             ))}
+
+            <select
+              aria-label="Language"
+              value={lang}
+              onChange={(e) => setLang(e.target.value as any)}
+              className="ml-2 border rounded-md px-2 py-1 text-sm"
+            >
+              <option value="en">EN</option>
+              <option value="tr">TR</option>
+            </select>
           </div>
         </div>
       </div>
@@ -61,6 +74,8 @@ function Navigation({ currentPage, setPage }: { currentPage: Page; setPage: (p: 
 }
 
 function HomePage({ setPage }: { setPage: (p: Page) => void }) {
+  const { t } = useTranslation();
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
@@ -72,23 +87,22 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold uppercase tracking-wide mb-6">
             <Activity size={12} className="text-teal-600" />
-            Academic Research Tool
+            {t('hero.badge')}
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-slate-900 leading-tight mb-6">
-            Deep Learning Analysis of <br/>
-            <span className="text-teal-600">Children's Drawings</span>
+            {t('hero.title').split("\n").map((s, i) => (
+              <span key={i}>
+                {i > 0 && <br />}
+                {i === 1 ? <span className="text-teal-600">{s}</span> : s}
+              </span>
+            ))}
           </h1>
           <p className="text-lg text-slate-600 mb-8 leading-relaxed max-w-xl text-justify">
-            This project utilizes Convolutional Neural Networks (CNNs) to investigate emotional markers in juvenile art. 
-            Designed for researchers and clinicians, it provides automated screening support by detecting patterns associated with emotional states.
+            {t('hero.subtitle')}
           </p>
           
           <div className="space-y-4 mb-10">
-            {[
-              "Automated Emotion Recognition (Happy/Sad)",
-              "Visual Attention Heatmaps (Grad-CAM)",
-              "Non-Diagnostic Screening Support"
-            ].map((item, i) => (
+            {t('hero.features').map((item: string, i: number) => (
               <div key={i} className="flex items-center gap-3 text-slate-700">
                 <CheckCircle size={18} className="text-teal-500" />
                 <span>{item}</span>
@@ -101,14 +115,14 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
               onClick={() => setPage('analysis')}
               className="inline-flex items-center justify-center gap-2 bg-teal-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-teal-700 transition-all shadow-sm hover:shadow-md"
             >
-              Start Analysis
+              {t('hero.start')}
               <ArrowRight size={18} />
             </button>
             <button 
               onClick={() => setPage('about')}
               className="inline-flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-lg font-medium hover:bg-slate-50 transition-all"
             >
-              Methodology
+              {t('hero.methodology')}
             </button>
           </div>
         </div>
@@ -139,6 +153,7 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
 }
 
 function AnalysisPage() {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<null | { emotion: string; confidence: number }>(null);
@@ -168,8 +183,8 @@ function AnalysisPage() {
       className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20"
     >
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-display font-bold text-slate-900">Run Analysis</h2>
-        <p className="text-slate-500 mt-2">Upload a drawing to generate an emotional inference report.</p>
+        <h2 className="text-3xl font-display font-bold text-slate-900">{t('analysis.title')}</h2>
+        <p className="text-slate-500 mt-2">{t('analysis.subtitle')}</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -183,8 +198,8 @@ function AnalysisPage() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <Upload className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-              <p className="text-lg font-medium text-slate-700">Drop image here or click to upload</p>
-              <p className="text-sm text-slate-500 mt-1">Supports JPG, PNG (Max 5MB)</p>
+              <p className="text-lg font-medium text-slate-700">{t('analysis.drop')}</p>
+              <p className="text-sm text-slate-500 mt-1">{t('analysis.support')}</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
@@ -208,14 +223,14 @@ function AnalysisPage() {
                   disabled={isAnalyzing}
                   className="bg-teal-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-teal-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  {isAnalyzing ? (
+                      {isAnalyzing ? (
                     <>
                       <Activity className="animate-spin" size={20} />
-                      Processing Neural Network...
+                      {t('analysis.processing')}
                     </>
                   ) : (
                     <>
-                      Run Inference Model
+                      {t('analysis.run')}
                       <ArrowRight size={20} />
                     </>
                   )}
@@ -230,16 +245,16 @@ function AnalysisPage() {
           <div className="border-t border-slate-200 bg-slate-50 p-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Inference Result</h3>
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t('analysis.title')}</h3>
                 <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-600 font-medium">Predicted Class</span>
+                    <span className="text-slate-600 font-medium">{t('analysis.predicted')}</span>
                     <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-bold rounded-full">
                       {result.emotion.toUpperCase()}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-600 font-medium">Confidence</span>
+                    <span className="text-slate-600 font-medium">{t('analysis.confidence')}</span>
                     <span className="font-mono text-slate-900">{result.confidence}%</span>
                   </div>
                   <div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -259,7 +274,7 @@ function AnalysisPage() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Attention Heatmap (Grad-CAM)</h3>
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t('analysis.heatmapTitle')}</h3>
                 <div className="aspect-[4/3] bg-slate-200 rounded-lg flex items-center justify-center relative overflow-hidden group">
                   <img 
                     src={file ? URL.createObjectURL(file) : ''} 
@@ -268,7 +283,7 @@ function AnalysisPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/30 via-red-500/30 to-yellow-500/30 blur-xl"></div>
                   <span className="relative bg-black/50 text-white px-3 py-1 rounded text-xs backdrop-blur-sm">
-                    Heatmap Visualization Placeholder
+                    {t('analysis.heatmapPlaceholder')}
                   </span>
                 </div>
               </div>
@@ -277,9 +292,7 @@ function AnalysisPage() {
             <div className="mt-8 flex items-start gap-3 text-amber-700 bg-amber-50 p-4 rounded-lg border border-amber-100">
               <AlertTriangle className="shrink-0 mt-0.5" size={18} />
               <div className="text-sm">
-                <strong>Research Disclaimer:</strong> This tool is a prototype for academic research purposes only. 
-                The results generated are probabilistic and should <u>not</u> be interpreted as a clinical diagnosis. 
-                Always consult with a qualified child psychologist for professional assessment.
+                <strong>{t('analysis.disclaimerTitle')}:</strong> {t('analysis.disclaimer')}
               </div>
             </div>
           </div>
@@ -290,6 +303,8 @@ function AnalysisPage() {
 }
 
 function AboutPage() {
+  const { t } = useTranslation();
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -298,9 +313,9 @@ function AboutPage() {
       className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20"
     >
       <div className="mb-12">
-        <h1 className="text-3xl font-display font-bold text-slate-900 mb-4">About the Project</h1>
+        <h1 className="text-3xl font-display font-bold text-slate-900 mb-4">{t('about.aboutTitle')}</h1>
         <p className="text-xl text-slate-600 leading-relaxed">
-          An investigation into the efficacy of computer vision in assisting psychological screening of children's artwork.
+          {t('about.objectiveText')}
         </p>
       </div>
 
@@ -308,7 +323,7 @@ function AboutPage() {
         <section>
           <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
             <Brain className="text-teal-600" size={20} />
-            Objective
+            {t('about.objective')}
           </h2>
           <p className="text-slate-700 leading-relaxed">
             The primary objective of this research is to develop a supportive tool for child psychologists and educators. 
@@ -321,7 +336,7 @@ function AboutPage() {
         <section>
           <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
             <Activity className="text-teal-600" size={20} />
-            Methodology & Architecture
+            {t('about.methodologyTitle')}
           </h2>
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-4">
             <div className="flex items-center justify-center h-32 text-slate-400 text-sm border-2 border-dashed border-slate-300 rounded">
@@ -338,7 +353,7 @@ function AboutPage() {
         <section>
           <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
             <FileText className="text-teal-600" size={20} />
-            Dataset & Metrics
+            {t('about.datasetTitle')}
           </h2>
           <p className="text-slate-700 leading-relaxed mb-6">
             The model was trained on the <strong>KIDO Dataset</strong>, comprising 5,000+ annotated drawings 
@@ -388,6 +403,7 @@ function AboutPage() {
 
 export default function App() {
   const [page, setPage] = useState<Page>('home');
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-teal-100 selection:text-teal-900">
@@ -402,12 +418,12 @@ export default function App() {
       <footer className="bg-white border-t border-slate-200 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-slate-500">
-            © 2024 Child Art Analysis Research Group. All rights reserved.
+            {t('footer.copyright')}
           </p>
           <div className="flex gap-6 text-sm text-slate-500">
-            <a href="#" className="hover:text-teal-600 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-teal-600 transition-colors">Terms of Research</a>
-            <a href="#" className="hover:text-teal-600 transition-colors">Contact Lab</a>
+            <a href="#" className="hover:text-teal-600 transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="hover:text-teal-600 transition-colors">{t('footer.terms')}</a>
+            <a href="#" className="hover:text-teal-600 transition-colors">{t('footer.contact')}</a>
           </div>
         </div>
       </footer>

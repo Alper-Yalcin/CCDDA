@@ -1,0 +1,39 @@
+{
+  "nav": { "home": "Anasayfa", "analysis": "Analizi Çalıştır", "about": "Proje Hakkında" },
+  "brand": { "title": "CocukSanat", "accent": "Analiz", "subtitle": "Araştırma Prototipi v1.0" },
+  "hero": {
+    "badge": "Akademik Araştırma Aracı",
+    "title": "Çocukların Resimlerinin Derin Öğrenme Analizi",
+    "subtitle": "Bu proje, çocuk sanatındaki duygusal işaretleri araştırmak için Konvolüsyonel Sinir Ağları (CNN) kullanmaktadır. Araştırmacılar ve klinisyenler için tasarlanmıştır ve duygusal durumlarla ilişkili desenleri tespit ederek otomatik tarama desteği sunar.",
+    "features": [
+      "Otomatik Duygu Tanıma (Mutlu/Üzgün)",
+      "Görsel Dikkat Isı Haritaları (Grad-CAM)",
+      "Tanısal Olmayan Tarama Desteği"
+    ],
+    "start": "Analizi Başlat",
+    "methodology": "Yöntem" 
+  },
+  "analysis": {
+    "title": "Analizi Çalıştır",
+    "subtitle": "Duygusal çıkarım raporu oluşturmak için bir çizim yükleyin.",
+    "drop": "Görseli buraya bırakın veya yüklemek için tıklayın",
+    "support": "JPG, PNG desteklenir (Maks 5MB)",
+    "run": "Çıkarım Modelini Çalıştır",
+    "processing": "Sinir Ağı İşleniyor...",
+    "predicted": "Tahmin Edilen Sınıf",
+    "confidence": "Güven",
+    "heatmapTitle": "Dikkat Isı Haritası (Grad-CAM)",
+    "heatmapPlaceholder": "Isı Haritası Görselleştirme Yer Tutucu",
+    "disclaimerTitle": "Araştırma Feragatnamesi",
+    "disclaimer": "Bu araç yalnızca akademik araştırma amaçlı bir prototiptir. Oluşturulan sonuçlar olasılıksaldır ve klinik tanı olarak yorumlanmamalıdır. Profesyonel değerlendirme için her zaman nitelikli bir çocuk psikoloğuna danışın."
+  },
+  "about": {
+    "aboutTitle": "Proje Hakkında",
+    "objective": "Amaç",
+    "objectiveText": "Bu araştırmanın birincil amacı, çocuk psikologları ve eğitimciler için destekleyici bir araç geliştirmektir. Çizimlerdeki duygusal işaretlerin otomatik tespitiyle, daha fazla insan dikkatine ihtiyaç duyan vakaları vurgulayabilecek nesnel bir “ikinci görüş” sağlamayı hedefliyoruz. Bu araç insan yargısının yerini almak için değil, veri odaklı içgörülerle desteklemek için tasarlanmıştır.",
+    "methodologyTitle": "Yöntem ve Mimari",
+    "datasetTitle": "Veri Seti ve Metrikler"
+  },
+  "footer": { "copyright": "© 2024 Çocuk Sanat Analizi Araştırma Grubu. Tüm hakları saklıdır.", "privacy": "Gizlilik Politikası", "terms": "Araştırma Koşulları", "contact": "Laboratuvarla İletişim" },
+  "ui": { "remove": "Kaldır", "confidenceLabel": "GÜVEN: {{val}}%" }
+}

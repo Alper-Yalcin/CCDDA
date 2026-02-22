@@ -1,0 +1,39 @@
+{
+  "nav": { "home": "Home", "analysis": "Run Analysis", "about": "About the Project" },
+  "brand": { "title": "ChildArt", "accent": "Analyze", "subtitle": "Research Prototype v1.0" },
+  "hero": {
+    "badge": "Academic Research Tool",
+    "title": "Deep Learning Analysis of Children's Drawings",
+    "subtitle": "This project utilizes Convolutional Neural Networks (CNNs) to investigate emotional markers in juvenile art. Designed for researchers and clinicians, it provides automated screening support by detecting patterns associated with emotional states.",
+    "features": [
+      "Automated Emotion Recognition (Happy/Sad)",
+      "Visual Attention Heatmaps (Grad-CAM)",
+      "Non-Diagnostic Screening Support"
+    ],
+    "start": "Start Analysis",
+    "methodology": "Methodology"
+  },
+  "analysis": {
+    "title": "Run Analysis",
+    "subtitle": "Upload a drawing to generate an emotional inference report.",
+    "drop": "Drop image here or click to upload",
+    "support": "Supports JPG, PNG (Max 5MB)",
+    "run": "Run Inference Model",
+    "processing": "Processing Neural Network...",
+    "predicted": "Predicted Class",
+    "confidence": "Confidence",
+    "heatmapTitle": "Attention Heatmap (Grad-CAM)",
+    "heatmapPlaceholder": "Heatmap Visualization Placeholder",
+    "disclaimerTitle": "Research Disclaimer",
+    "disclaimer": "This tool is a prototype for academic research purposes only. The results generated are probabilistic and should not be interpreted as a clinical diagnosis. Always consult with a qualified child psychologist for professional assessment."
+  },
+  "about": {
+    "aboutTitle": "About the Project",
+    "objective": "Objective",
+    "objectiveText": "The primary objective of this research is to develop a supportive tool for child psychologists and educators. By automating the detection of emotional markers in drawings, we aim to provide an objective \"second opinion\" that can highlight cases requiring further human attention. This tool is not intended to replace human judgment but to augment it with data-driven insights.",
+    "methodologyTitle": "Methodology & Architecture",
+    "datasetTitle": "Dataset & Metrics"
+  },
+  "footer": { "copyright": "© 2024 Child Art Analysis Research Group. All rights reserved.", "privacy": "Privacy Policy", "terms": "Terms of Research", "contact": "Contact Lab" },
+  "ui": { "remove": "Remove", "confidenceLabel": "CONFIDENCE: {{val}}%" }
+}
