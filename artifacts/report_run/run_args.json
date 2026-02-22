@@ -1,0 +1,17 @@
+{
+  "data_dir": "Dataset",
+  "epochs": 5,
+  "batch_size": 16,
+  "lr": 0.0001,
+  "seed": 42,
+  "output_dir": "artifacts/report_run",
+  "quick": false,
+  "bert_model": "dbmdz/bert-base-turkish-cased",
+  "max_length": 128,
+  "val_ratio": 0.15,
+  "weight_decay": 0.0001,
+  "warmup_steps": 0,
+  "freeze_bert": true,
+  "freeze_effnet": false,
+  "device": "cuda"
+}
