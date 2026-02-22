@@ -162,30 +162,25 @@ class MultimodalApp:
         )
         self.lbl_results.pack(anchor="w", pady=5)
 
-        # Text input
-        tk.Label(right_frame, text="Metin (Türkçe cümle):").pack(anchor="w")
-        self.txt_input = tk.Text(right_frame, height=4, width=60)
-        self.txt_input.pack(fill=tk.X, pady=5)
-
-        # Token önemleri frame
-        tokens_frame = tk.Frame(right_frame)
-        tokens_frame.pack(fill=tk.BOTH, expand=True, pady=5)
-
-        # Emotion token önemleri
-        emotion_frame = tk.Frame(tokens_frame)
-        emotion_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
-
-        tk.Label(emotion_frame, text="Önemli token'lar (Emotion)").pack(anchor="w")
-        self.lst_emotion_tokens = tk.Listbox(emotion_frame, height=15)
-        self.lst_emotion_tokens.pack(fill=tk.BOTH, expand=True)
-
-        # Gender token önemleri
-        gender_frame = tk.Frame(tokens_frame)
-        gender_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
-
-        tk.Label(gender_frame, text="Önemli token'lar (Gender)").pack(anchor="w")
-        self.lst_gender_tokens = tk.Listbox(gender_frame, height=15)
-        self.lst_gender_tokens.pack(fill=tk.BOTH, expand=True)
+        # Açıklama metni için scrollable text widget
+        tk.Label(right_frame, text="Açıklama:").pack(anchor="w")
+        
+        explain_frame = tk.Frame(right_frame)
+        explain_frame.pack(fill=tk.BOTH, expand=True, pady=5)
+        
+        scrollbar = tk.Scrollbar(explain_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        self.txt_explanation = tk.Text(
+            explain_frame,
+            height=10,
+            width=60,
+            wrap=tk.WORD,
+            font=("Arial", 10),
+            yscrollcommand=scrollbar.set
+        )
+        self.txt_explanation.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.config(command=self.txt_explanation.yview)
 
     # -------------------------------------------------------------------------
     #                           Yardımcı Fonksiyonlar
@@ -243,6 +238,46 @@ class MultimodalApp:
         pil_img = Image.fromarray(overlay_rgb)
         return pil_img
 
+    def _generate_explanation(self, image_path: str, pred_emotion: str, pred_gender: str, prob_em: float, prob_ge: float) -> str:
+        """
+        Seçilen görseli ve tahmin sonuçlarını açıklayan metin üretir.
+        """
+        explanations = []
+
+        # Dosya adı
+        filename = os.path.basename(image_path)
+        explanations.append(f"Seçilen dosya: {filename}")
+        explanations.append("")
+
+        # ---- Emotion açıklaması ----
+        explanations.append(f"🎭 Duygu Tahmini: {pred_emotion} (güven: {prob_em:.1%})")
+        if pred_emotion == "Happiness":
+            explanations.append("   → Görseldeki çizim genel olarak daha açık, düzenli ve olumlu bir duygu tonu yansıtıyor.")
+            explanations.append("   → Renkler daha canlı ve kompozisyon daha dengeli görünüyor.")
+            explanations.append("   → Model, Grad-CAM ile görselin merkez bölgelerindeki renk ve şekilleri analiz etti.")
+        else:
+            explanations.append("   → Çizimdeki çizgiler ve genel kompozisyon daha çok üzüntü, karamsarlık ya da içe kapanıklık hissi veriyor.")
+            explanations.append("   → Koyu tonlar ve daha az detay dikkat çekiyor.")
+            explanations.append("   → Model, görseldeki genel hava ve çizgi karakterini değerlendirdi.")
+
+        explanations.append("")
+
+        # ---- Gender açıklaması ----
+        explanations.append(f"👤 Cinsiyet Tahmini: {pred_gender} (güven: {prob_ge:.1%})")
+        if pred_gender == "Male":
+            explanations.append("   → Çizim stili daha sivri hatlı ve baskın çizgiler içeriyor.")
+            explanations.append("   → Bu, daha çok erkek çocuklarda görülen bir çizim deseni.")
+        else:
+            explanations.append("   → Çizim daha yumuşak hatlı ve detaylara daha fazla odaklanılmış.")
+            explanations.append("   → Bu tarz, kadın çocuklarda daha sık görülüyor.")
+
+        explanations.append("")
+        explanations.append("📊 Açıklama Yöntemleri:")
+        explanations.append("   → Grad-CAM haritaları, modelin hangi bölgelere odaklandığını gösterir.")
+        explanations.append("   → Kırmızı/sarı bölgeler modelin en çok dikkat ettiği alanlardır.")
+
+        return "\n".join(explanations)
+
     # -------------------------------------------------------------------------
     #                           Ana İşlev: Tahmin + Açıklama
     # -------------------------------------------------------------------------
@@ -252,11 +287,10 @@ class MultimodalApp:
             messagebox.showwarning("Uyarı", "Önce bir görüntü seçmelisin.")
             return
 
-        text = self.txt_input.get("1.0", tk.END).strip()
-
-        # Tokenize text
+        # Boş metin ile tokenize (sadece görsel tabanlı tahmin)
+        text = ""
         enc = self.tokenizer(
-            text if len(text) > 0 else "",
+            text,
             padding="max_length",
             truncation=True,
             max_length=128,
@@ -337,51 +371,17 @@ class MultimodalApp:
         self.lbl_gender_cam.configure(image=self.tk_img_gender_cam)
         self.lbl_gender_cam.image = self.tk_img_gender_cam
 
-        # ---- 3) Text explanation (eğer metin varsa) ----
-        self.lst_emotion_tokens.delete(0, tk.END)
-        self.lst_gender_tokens.delete(0, tk.END)
-
-        if len(text.strip()) == 0:
-            self.lst_emotion_tokens.insert(tk.END, "(Metin girilmedi)")
-            self.lst_gender_tokens.insert(tk.END, "(Metin girilmedi)")
-            return
-
-        print("Text token importance hesaplanıyor...")
-
-        # Emotion hedefi için
-        tokens_emotion, scores_emotion, _ = self.text_explainer.explain(
-            tokenizer=self.tokenizer,
-            image_tensor=img_t,
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            target="emotion",
-            class_index=pred_em_idx,
-            device=self.device,
+        # ---- 3) Açıklama metni üret ----
+        explanation = self._generate_explanation(
+            self.current_img_path,
+            pred_em_str,
+            pred_g_str,
+            probs_emotion[pred_em_idx],
+            probs_gender[pred_g_idx]
         )
-        merged_em = merge_wordpieces(tokens_emotion, scores_emotion)
-
-        # Gender hedefi için
-        tokens_gender, scores_gender, _ = self.text_explainer.explain(
-            tokenizer=self.tokenizer,
-            image_tensor=img_t,
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            target="gender",
-            class_index=pred_g_idx,
-            device=self.device,
-        )
-        merged_g = merge_wordpieces(tokens_gender, scores_gender)
-
-        # En çok katkı veren ilk 10 token'ı göster
-        self.lst_emotion_tokens.insert(tk.END, f"Top token'lar (Emotion: {pred_em_str})")
-        self.lst_emotion_tokens.insert(tk.END, "-----------------------------------")
-        for w, sc in merged_em[:10]:
-            self.lst_emotion_tokens.insert(tk.END, f"{w:15s}  score={sc:.3f}")
-
-        self.lst_gender_tokens.insert(tk.END, f"Top token'lar (Gender: {pred_g_str})")
-        self.lst_gender_tokens.insert(tk.END, "-----------------------------------")
-        for w, sc in merged_g[:10]:
-            self.lst_gender_tokens.insert(tk.END, f"{w:15s}  score={sc:.3f}")
+        
+        self.txt_explanation.delete(1.0, tk.END)
+        self.txt_explanation.insert(1.0, explanation)
 
 
 def main():

@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
@@ -6,6 +7,12 @@ from PIL import Image, ImageTk
 import torch
 import torch.nn.functional as F
 from transformers import AutoTokenizer
+
+# Proje kökünden import edebilmek için
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
 
 from src.models.multimodal_effnet_bert import MultimodalEffNetBert
 from src.data.transforms import get_image_transforms
@@ -73,18 +80,28 @@ class EmotionGenderApp:
         self.btn_open = tk.Button(btn_frame, text="Fotoğraf Seç", command=self.load_image)
         self.btn_open.grid(row=0, column=0, padx=10)
 
-        tk.Label(self.root, text="(İsteğe bağlı) Metin gir:").pack()
-        self.text_entry = tk.Entry(self.root, width=60)
-        self.text_entry.pack(pady=5)
-
-        self.btn_predict = tk.Button(self.root, text="Tahmin Et", command=self.predict)
-        self.btn_predict.pack(pady=10)
+        self.btn_predict = tk.Button(btn_frame, text="Tahmin Et", command=self.predict)
+        self.btn_predict.grid(row=0, column=1, padx=10)
 
         self.result_label = tk.Label(self.root, text="", font=("Arial", 14), justify="left")
         self.result_label.pack(pady=10)
 
-        self.explain_label = tk.Label(self.root, text="", font=("Arial", 12), justify="left")
-        self.explain_label.pack(pady=10)
+        # Açıklama metni için text widget (scrollbar ile)
+        explain_frame = tk.Frame(self.root)
+        explain_frame.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
+
+        scrollbar = tk.Scrollbar(explain_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.explain_text = tk.Text(
+            explain_frame,
+            font=("Arial", 11),
+            wrap=tk.WORD,
+            height=15,
+            yscrollcommand=scrollbar.set
+        )
+        self.explain_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.config(command=self.explain_text.yview)
 
         self.current_image_path = None
 
@@ -94,7 +111,7 @@ class EmotionGenderApp:
     def _load_model(self):
         try:
             # Checkpoint yükle
-            ckpt_path = "checkpoints/best_multimodal.pt"
+            ckpt_path = os.path.join(PROJECT_ROOT, "checkpoints", "best_multimodal.pt")
             print("Loading checkpoint:", ckpt_path)
 
             ckpt = torch.load(ckpt_path, map_location=self.device)
@@ -141,7 +158,7 @@ class EmotionGenderApp:
         self.image_panel.image = img_tk
 
         self.result_label.config(text="")
-        self.explain_label.config(text="")
+        self.explain_text.delete(1.0, tk.END)
 
     # ----------------------------
     # TAHMİN
@@ -155,8 +172,8 @@ class EmotionGenderApp:
         image = Image.open(self.current_image_path).convert("RGB")
         img_tensor = self.transform(image).unsqueeze(0).to(self.device)
 
-        # Metin al
-        text = self.text_entry.get().strip()
+        # Boş metin ile tokenize (sadece görsel tabanlı tahmin)
+        text = ""
         enc = self.tokenizer(
             text,
             padding="max_length",
@@ -185,21 +202,27 @@ class EmotionGenderApp:
         pred_em = EMOTION_ID2STR[int(torch.argmax(prob_em))]
         pred_ge = GENDER_ID2STR[int(torch.argmax(prob_ge))]
 
-        # Embedding'ler
-        img_emb = out["img_emb"]
-        text_emb = out["text_emb"] if len(text) > 0 else None
+        prob_em_val = prob_em.max().item()
+        prob_ge_val = prob_ge.max().item()
 
         # Otomatik açıklama
-        explanation = generate_explanation(pred_em, pred_ge, img_emb, text_emb)
+        explanation = generate_explanation(
+            self.current_image_path,
+            pred_em,
+            pred_ge,
+            prob_em_val,
+            prob_ge_val
+        )
 
         # Arayüze yaz
         result_text = (
-            f"Emotion: {pred_em} ({prob_em.max():.3f})\n"
-            f"Gender : {pred_ge} ({prob_ge.max():.3f})"
+            f"Emotion: {pred_em} ({prob_em_val:.3f})\n"
+            f"Gender : {pred_ge} ({prob_ge_val:.3f})"
         )
         self.result_label.config(text=result_text)
 
-        self.explain_label.config(text="Açıklama:\n" + explanation)
+        self.explain_text.delete(1.0, tk.END)
+        self.explain_text.insert(1.0, explanation)
 
 
 # ----------------------------
