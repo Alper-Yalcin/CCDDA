@@ -25,7 +25,17 @@
     "heatmapTitle": "Attention Heatmap (Grad-CAM)",
     "heatmapPlaceholder": "Heatmap Visualization Placeholder",
     "disclaimerTitle": "Research Disclaimer",
-    "disclaimer": "This tool is a prototype for academic research purposes only. The results generated are probabilistic and should not be interpreted as a clinical diagnosis. Always consult with a qualified child psychologist for professional assessment."
+    "disclaimer": "This tool is a prototype for academic research purposes only. The results generated are probabilistic and should not be interpreted as a clinical diagnosis. Always consult with a qualified child psychologist for professional assessment.",
+    "textLabel": "Descriptive Text (optional)",
+    "textPlaceholder": "Enter any available description about the drawing (e.g. from a psychological report)...",
+    "inferenceResult": "Inference Result",
+    "predictedEmotion": "Predicted Emotion",
+    "predictedGender": "Predicted Gender",
+    "emotionHeatmap": "Emotion Heatmap (Grad-CAM)",
+    "genderHeatmap": "Gender Heatmap (Grad-CAM)",
+    "topTokens": "Top Influential Text Tokens",
+    "errorTitle": "Analysis failed",
+    "backendHint": "Make sure the Python API server is running: uvicorn api_server:app --port 8000"
   },
   "about": {
     "aboutTitle": "About the Project",

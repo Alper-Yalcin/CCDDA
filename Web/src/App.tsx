@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Upload, ArrowRight, Activity, Shield, Brain, Info, AlertTriangle, FileText, CheckCircle, X } from 'lucide-react';
+import { Upload, ArrowRight, Activity, Shield, Brain, AlertTriangle, FileText, CheckCircle, X } from 'lucide-react';
 import { useTranslation } from './i18n';
 
 // --- Types ---
@@ -152,31 +152,93 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
   );
 }
 
+// Use same-origin API path; Vite dev proxy forwards /api/* to the Python backend.
+const API_URL = '/api';
+
+type ApiResult = {
+  pred_emotion: string;
+  pred_gender: string;
+  confidence_emotion: number;
+  confidence_gender: number;
+  probs_emotion: number[];
+  probs_gender: number[];
+  heatmap_emotion_b64: string | null;
+  heatmap_gender_b64: string | null;
+  tokens_emotion: { token: string; score: number }[];
+  tokens_gender: { token: string; score: number }[];
+};
+
 function AnalysisPage() {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
+  const [text, setText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState<null | { emotion: string; confidence: number }>(null);
+  const [result, setResult] = useState<ApiResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
       setResult(null);
+      setError(null);
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!file) return;
     setIsAnalyzing(true);
-    // Simulate analysis delay
-    setTimeout(() => {
+    setError(null);
+    setResult(null);
+
+    try {
+      const form = new FormData();
+      // The backend OpenAPI expects the multipart field named `image` (see /api/predict schema)
+      form.append('image', file as Blob);
+      form.append('text', text);
+
+      const res = await fetch(`${API_URL}/predict`, { method: 'POST', body: form });
+      if (!res.ok) {
+        const detail = await res.json().catch(() => ({}));
+        throw new Error(detail?.detail || `HTTP ${res.status}`);
+      }
+      const raw = await res.json();
+
+      // Normalize backend responses: older/newer backends may use different keys.
+      const data: ApiResult = ((): ApiResult => {
+        if (raw.pred_emotion) return raw as ApiResult;
+        // fallback when backend returns { emotion, emotion_confidence, gender, gender_confidence, ... }
+        if (raw.emotion || raw.gender) {
+          const emotion_conf = Number(raw.emotion_confidence ?? raw.emotion_confidence) || 0;
+          const gender_conf = Number(raw.gender_confidence ?? raw.gender_confidence) || 0;
+          const toPct = (v: number) => (v > 0 && v <= 1 ? Math.round(v * 1000) / 10 : Math.round(v * 10) / 10);
+          return {
+            pred_emotion: raw.emotion ?? String(raw.pred_emotion ?? ''),
+            pred_gender: raw.gender ?? String(raw.pred_gender ?? ''),
+            confidence_emotion: toPct(emotion_conf),
+            confidence_gender: toPct(gender_conf),
+            probs_emotion: raw.probs_emotion ?? [],
+            probs_gender: raw.probs_gender ?? [],
+            heatmap_emotion_b64: raw.heatmap_emotion_b64 ?? raw.heatmap_emotion ?? null,
+            heatmap_gender_b64: raw.heatmap_gender_b64 ?? raw.heatmap_gender ?? null,
+            tokens_emotion: raw.tokens_emotion ?? [],
+            tokens_gender: raw.tokens_gender ?? [],
+          } as ApiResult;
+        }
+
+        // Default safe cast
+        return raw as ApiResult;
+      })();
+
+      setResult(data);
+    } catch (err: any) {
+      setError(err.message ?? 'Unknown error');
+    } finally {
       setIsAnalyzing(false);
-      setResult({ emotion: 'Happy', confidence: 94.2 });
-    }, 2000);
+    }
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -188,11 +250,12 @@ function AnalysisPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="p-8">
+        <div className="p-8 space-y-6">
+          {/* ── Upload zone ─────────────────────────────────────── */}
           {!file ? (
             <div className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center hover:bg-slate-50 transition-colors relative">
-              <input 
-                type="file" 
+              <input
+                type="file"
                 accept="image/*"
                 onChange={handleFileChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -202,28 +265,44 @@ function AnalysisPage() {
               <p className="text-sm text-slate-500 mt-1">{t('analysis.support')}</p>
             </div>
           ) : (
-            <div className="flex flex-col items-center">
-              <div className="relative w-full max-w-md aspect-[4/3] bg-slate-100 rounded-lg overflow-hidden mb-6 border border-slate-200">
-                <img 
-                  src={URL.createObjectURL(file)} 
-                  alt="Preview" 
+            <div className="flex flex-col items-center gap-4">
+              {/* Preview */}
+              <div className="relative w-full max-w-md aspect-[4/3] bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="Preview"
                   className="w-full h-full object-contain"
                 />
-                <button 
-                  onClick={() => { setFile(null); setResult(null); }}
+                <button
+                  onClick={() => { setFile(null); setResult(null); setError(null); setText(''); }}
                   className="absolute top-2 right-2 p-1 bg-white/80 rounded-full hover:bg-white text-slate-600"
                 >
                   <X size={20} />
                 </button>
               </div>
 
+              {/* Optional text input */}
+              <div className="w-full">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  {t('analysis.textLabel')}
+                </label>
+                <textarea
+                  rows={3}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder={t('analysis.textPlaceholder')}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                />
+              </div>
+
+              {/* Run button */}
               {!result && (
                 <button
                   onClick={handleAnalyze}
                   disabled={isAnalyzing}
                   className="bg-teal-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-teal-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                      {isAnalyzing ? (
+                  {isAnalyzing ? (
                     <>
                       <Activity className="animate-spin" size={20} />
                       {t('analysis.processing')}
@@ -238,58 +317,121 @@ function AnalysisPage() {
               )}
             </div>
           )}
+
+          {/* ── Error state ─────────────────────────────────────── */}
+          {error && (
+            <div className="flex items-start gap-3 text-red-700 bg-red-50 p-4 rounded-lg border border-red-100">
+              <AlertTriangle className="shrink-0 mt-0.5" size={18} />
+              <div className="text-sm">
+                <strong>{t('analysis.errorTitle')}:</strong> {error}
+                <p className="mt-1 text-red-500 text-xs">{t('analysis.backendHint')}</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Results Section */}
+        {/* ── Results Section ───────────────────────────────────── */}
         {result && (
-          <div className="border-t border-slate-200 bg-slate-50 p-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t('analysis.title')}</h3>
-                <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-600 font-medium">{t('analysis.predicted')}</span>
-                    <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-bold rounded-full">
-                      {result.emotion.toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 font-medium">{t('analysis.confidence')}</span>
-                    <span className="font-mono text-slate-900">{result.confidence}%</span>
-                  </div>
-                  <div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-teal-500 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${result.confidence}%` }}
-                    ></div>
-                  </div>
+          <div className="border-t border-slate-200 bg-slate-50 p-8 space-y-8">
+
+            {/* Prediction cards */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Emotion */}
+              <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+                  {t('analysis.predictedEmotion')}
+                </h3>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-2xl font-bold text-slate-800">{result.pred_emotion}</span>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-bold rounded-full">
+                    {result.confidence_emotion}%
+                  </span>
                 </div>
-                
-                <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex gap-3">
-                  <Info className="text-blue-600 shrink-0 mt-0.5" size={18} />
-                  <p className="text-sm text-blue-800">
-                    The model identified high-activation regions in the subject's facial features and color usage, correlating with the 'Happy' class in the KIDO dataset.
-                  </p>
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-teal-500 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${result.confidence_emotion}%` }}
+                  />
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t('analysis.heatmapTitle')}</h3>
-                <div className="aspect-[4/3] bg-slate-200 rounded-lg flex items-center justify-center relative overflow-hidden group">
-                  <img 
-                    src={file ? URL.createObjectURL(file) : ''} 
-                    alt="Original" 
-                    className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-50"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/30 via-red-500/30 to-yellow-500/30 blur-xl"></div>
-                  <span className="relative bg-black/50 text-white px-3 py-1 rounded text-xs backdrop-blur-sm">
-                    {t('analysis.heatmapPlaceholder')}
+              {/* Gender */}
+              <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+                  {t('analysis.predictedGender')}
+                </h3>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-2xl font-bold text-slate-800">{result.pred_gender}</span>
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-bold rounded-full">
+                    {result.confidence_gender}%
                   </span>
+                </div>
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-400 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${result.confidence_gender}%` }}
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 flex items-start gap-3 text-amber-700 bg-amber-50 p-4 rounded-lg border border-amber-100">
+            {/* Grad-CAM Heatmaps */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {result.heatmap_emotion_b64 && (
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                    {t('analysis.emotionHeatmap')}
+                  </h3>
+                  <img
+                    src={`data:image/jpeg;base64,${result.heatmap_emotion_b64}`}
+                    alt="Emotion Grad-CAM"
+                    className="w-full rounded-lg border border-slate-200 shadow-sm"
+                  />
+                </div>
+              )}
+              {result.heatmap_gender_b64 && (
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                    {t('analysis.genderHeatmap')}
+                  </h3>
+                  <img
+                    src={`data:image/jpeg;base64,${result.heatmap_gender_b64}`}
+                    alt="Gender Grad-CAM"
+                    className="w-full rounded-lg border border-slate-200 shadow-sm"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Token attributions */}
+            {result.tokens_emotion.length > 0 && (
+              <div>
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                  {t('analysis.topTokens')}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {[...result.tokens_emotion]
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 12)
+                    .map((tk, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-1 rounded text-xs font-mono border"
+                        style={{
+                          background: `rgba(13,148,136,${Math.min(tk.score, 1) * 0.7 + 0.1})`,
+                          borderColor: 'rgba(13,148,136,0.3)',
+                          color: tk.score > 0.5 ? '#fff' : '#334155',
+                        }}
+                      >
+                        {tk.token}
+                      </span>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* Disclaimer */}
+            <div className="flex items-start gap-3 text-amber-700 bg-amber-50 p-4 rounded-lg border border-amber-100">
               <AlertTriangle className="shrink-0 mt-0.5" size={18} />
               <div className="text-sm">
                 <strong>{t('analysis.disclaimerTitle')}:</strong> {t('analysis.disclaimer')}
@@ -430,5 +572,4 @@ export default function App() {
     </div>
   );
 }
-
 

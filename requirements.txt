@@ -21,3 +21,8 @@ pyyaml
 
 # Geliştirme / notebook
 jupyter
+
+# Web API
+fastapi
+uvicorn[standard]
+python-multipart

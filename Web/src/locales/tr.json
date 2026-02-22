@@ -25,7 +25,17 @@
     "heatmapTitle": "Dikkat Isı Haritası (Grad-CAM)",
     "heatmapPlaceholder": "Isı Haritası Görselleştirme Yer Tutucu",
     "disclaimerTitle": "Araştırma Feragatnamesi",
-    "disclaimer": "Bu araç yalnızca akademik araştırma amaçlı bir prototiptir. Oluşturulan sonuçlar olasılıksaldır ve klinik tanı olarak yorumlanmamalıdır. Profesyonel değerlendirme için her zaman nitelikli bir çocuk psikoloğuna danışın."
+    "disclaimer": "Bu araç yalnızca akademik araştırma amaçlı bir prototiptir. Oluşturulan sonuçlar olasılıksaldır ve klinik tanı olarak yorumlanmamalıdır. Profesyonel değerlendirme için her zaman nitelikli bir çocuk psikoloğuna danışın.",
+    "textLabel": "Açıklama Metni (isteğe bağlı)",
+    "textPlaceholder": "Çizimle ilgili mevcut bir açıklama girin (ör: psikolojik rapordan)...",
+    "inferenceResult": "Çıkarım Sonucu",
+    "predictedEmotion": "Tahmin Edilen Duygu",
+    "predictedGender": "Tahmin Edilen Cinsiyet",
+    "emotionHeatmap": "Duygu Isı Haritası (Grad-CAM)",
+    "genderHeatmap": "Cinsiyet Isı Haritası (Grad-CAM)",
+    "topTokens": "En Etkili Metin Token'ları",
+    "errorTitle": "Analiz başarısız",
+    "backendHint": "Python API sunucusunun çalışır durumda olduğundan emin olun: uvicorn api_server:app --port 8000"
   },
   "about": {
     "aboutTitle": "Proje Hakkında",
