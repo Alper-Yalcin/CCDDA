@@ -155,6 +155,71 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
 // Use same-origin API path; Vite dev proxy forwards /api/* to the Python backend.
 const API_URL = '/api';
 
+const EMOTION_TR_MAP: Record<string, string> = {
+  Happiness: 'Mutluluk',
+  Sadness: 'Üzüntü',
+};
+
+const GENDER_TR_MAP: Record<string, string> = {
+  Female: 'Kız',
+  Male: 'Erkek',
+};
+
+function localizeClassLabel(value: string, type: 'emotion' | 'gender', lang: 'en' | 'tr') {
+  if (lang !== 'tr') return value;
+  if (type === 'emotion') return EMOTION_TR_MAP[value] ?? value;
+  return GENDER_TR_MAP[value] ?? value;
+}
+
+function localizeBackendExplanation(explanation: string, lang: 'en' | 'tr') {
+  if (lang !== 'tr') return explanation;
+
+  let out = explanation;
+
+  out = out.replace(
+    /Model predicts emotion '([^']+)' with ([\d.]+)% confidence\./g,
+    (_m, emotion, conf) =>
+      `Model, duygu tahminini '${localizeClassLabel(String(emotion), 'emotion', 'tr')}' olarak %${String(conf)} güvenle yaptı.`,
+  );
+  out = out.replace(
+    /Model predicts gender '([^']+)' with ([\d.]+)% confidence\./g,
+    (_m, gender, conf) =>
+      `Model, cinsiyet tahminini '${localizeClassLabel(String(gender), 'gender', 'tr')}' olarak %${String(conf)} güvenle yaptı.`,
+  );
+  out = out.replace(
+    /Visual pattern appears more balanced and positive\./g,
+    'Görsel örüntü daha dengeli ve olumlu görünüyor.',
+  );
+  out = out.replace(
+    /Visual pattern appears more restrained and low-energy\./g,
+    'Görsel örüntü daha kısıtlı ve düşük enerjili görünüyor.',
+  );
+  out = out.replace(
+    /Stroke style is interpreted as stronger and sharper by the model\./g,
+    'Çizgi stili model tarafından daha güçlü ve keskin olarak yorumlandı.',
+  );
+  out = out.replace(
+    /Stroke style is interpreted as softer and more detailed by the model\./g,
+    'Çizgi stili model tarafından daha yumuşak ve daha detaylı olarak yorumlandı.',
+  );
+  out = out.replace(
+    /Text input was included in the multimodal decision\./g,
+    'Metin girdisi çok modlu karara dahil edildi.',
+  );
+  out = out.replace(
+    /No text input was provided, so the decision is image-heavy\./g,
+    'Metin girdisi sağlanmadığı için karar ağırlıklı olarak görsele dayanıyor.',
+  );
+
+  // We no longer collect text input; remove any text-related rationale sentence.
+  out = out.replace(/Text input was included in the multimodal decision\./g, '');
+  out = out.replace(/No text input was provided, so the decision is image-heavy\./g, '');
+  out = out.replace(/Metin girdisi[^.]*\./g, '');
+  out = out.replace(/\s{2,}/g, ' ').trim();
+
+  return out;
+}
+
 type ApiResult = {
   pred_emotion: string;
   pred_gender: string;
@@ -170,7 +235,7 @@ type ApiResult = {
 };
 
 function AnalysisPage() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<ApiResult | null>(null);
@@ -194,8 +259,15 @@ function AnalysisPage() {
       const form = new FormData();
       // The backend OpenAPI expects the multipart field named `image` (see /api/predict schema)
       form.append('image', file as Blob);
+      form.append('lang', lang);
 
-      const res = await fetch(`${API_URL}/predict`, { method: 'POST', body: form });
+      const res = await fetch(`${API_URL}/predict`, {
+        method: 'POST',
+        body: form,
+        headers: {
+          'Accept-Language': lang,
+        },
+      });
       if (!res.ok) {
         const detail = await res.json().catch(() => ({}));
         throw new Error(detail?.detail || `HTTP ${res.status}`);
@@ -211,7 +283,7 @@ function AnalysisPage() {
         confidence_gender: toPct(Number(raw.confidence_gender ?? raw.gender_confidence ?? 0) || 0),
         explanation:
           typeof raw.explanation === 'string' && raw.explanation.trim().length > 0
-            ? raw.explanation.trim()
+            ? localizeBackendExplanation(raw.explanation.trim(), lang)
             : null,
         probs_emotion: Array.isArray(raw.probs_emotion) ? raw.probs_emotion : [],
         probs_gender: Array.isArray(raw.probs_gender) ? raw.probs_gender : [],
@@ -320,7 +392,9 @@ function AnalysisPage() {
                   {t('analysis.predictedEmotion')}
                 </h3>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-slate-800">{result.pred_emotion}</span>
+                  <span className="text-2xl font-bold text-slate-800">
+                    {localizeClassLabel(result.pred_emotion, 'emotion', lang)}
+                  </span>
                   <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-bold rounded-full">
                     {result.confidence_emotion}%
                   </span>
@@ -339,7 +413,9 @@ function AnalysisPage() {
                   {t('analysis.predictedGender')}
                 </h3>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-slate-800">{result.pred_gender}</span>
+                  <span className="text-2xl font-bold text-slate-800">
+                    {localizeClassLabel(result.pred_gender, 'gender', lang)}
+                  </span>
                   <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-bold rounded-full">
                     {result.confidence_gender}%
                   </span>
