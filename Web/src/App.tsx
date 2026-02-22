@@ -160,6 +160,7 @@ type ApiResult = {
   pred_gender: string;
   confidence_emotion: number;
   confidence_gender: number;
+  explanation: string | null;
   probs_emotion: number[];
   probs_gender: number[];
   heatmap_emotion_b64: string | null;
@@ -171,7 +172,6 @@ type ApiResult = {
 function AnalysisPage() {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
-  const [text, setText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<ApiResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -194,7 +194,6 @@ function AnalysisPage() {
       const form = new FormData();
       // The backend OpenAPI expects the multipart field named `image` (see /api/predict schema)
       form.append('image', file as Blob);
-      form.append('text', text);
 
       const res = await fetch(`${API_URL}/predict`, { method: 'POST', body: form });
       if (!res.ok) {
@@ -204,30 +203,23 @@ function AnalysisPage() {
       const raw = await res.json();
 
       // Normalize backend responses: older/newer backends may use different keys.
-      const data: ApiResult = ((): ApiResult => {
-        if (raw.pred_emotion) return raw as ApiResult;
-        // fallback when backend returns { emotion, emotion_confidence, gender, gender_confidence, ... }
-        if (raw.emotion || raw.gender) {
-          const emotion_conf = Number(raw.emotion_confidence ?? raw.emotion_confidence) || 0;
-          const gender_conf = Number(raw.gender_confidence ?? raw.gender_confidence) || 0;
-          const toPct = (v: number) => (v > 0 && v <= 1 ? Math.round(v * 1000) / 10 : Math.round(v * 10) / 10);
-          return {
-            pred_emotion: raw.emotion ?? String(raw.pred_emotion ?? ''),
-            pred_gender: raw.gender ?? String(raw.pred_gender ?? ''),
-            confidence_emotion: toPct(emotion_conf),
-            confidence_gender: toPct(gender_conf),
-            probs_emotion: raw.probs_emotion ?? [],
-            probs_gender: raw.probs_gender ?? [],
-            heatmap_emotion_b64: raw.heatmap_emotion_b64 ?? raw.heatmap_emotion ?? null,
-            heatmap_gender_b64: raw.heatmap_gender_b64 ?? raw.heatmap_gender ?? null,
-            tokens_emotion: raw.tokens_emotion ?? [],
-            tokens_gender: raw.tokens_gender ?? [],
-          } as ApiResult;
-        }
-
-        // Default safe cast
-        return raw as ApiResult;
-      })();
+      const toPct = (v: number) => (v > 0 && v <= 1 ? Math.round(v * 1000) / 10 : Math.round(v * 10) / 10);
+      const data: ApiResult = {
+        pred_emotion: String(raw.pred_emotion ?? raw.emotion ?? ''),
+        pred_gender: String(raw.pred_gender ?? raw.gender ?? ''),
+        confidence_emotion: toPct(Number(raw.confidence_emotion ?? raw.emotion_confidence ?? 0) || 0),
+        confidence_gender: toPct(Number(raw.confidence_gender ?? raw.gender_confidence ?? 0) || 0),
+        explanation:
+          typeof raw.explanation === 'string' && raw.explanation.trim().length > 0
+            ? raw.explanation.trim()
+            : null,
+        probs_emotion: Array.isArray(raw.probs_emotion) ? raw.probs_emotion : [],
+        probs_gender: Array.isArray(raw.probs_gender) ? raw.probs_gender : [],
+        heatmap_emotion_b64: raw.heatmap_emotion_b64 ?? raw.heatmap_emotion ?? null,
+        heatmap_gender_b64: raw.heatmap_gender_b64 ?? raw.heatmap_gender ?? null,
+        tokens_emotion: Array.isArray(raw.tokens_emotion) ? raw.tokens_emotion : [],
+        tokens_gender: Array.isArray(raw.tokens_gender) ? raw.tokens_gender : [],
+      };
 
       setResult(data);
     } catch (err: any) {
@@ -274,25 +266,11 @@ function AnalysisPage() {
                   className="w-full h-full object-contain"
                 />
                 <button
-                  onClick={() => { setFile(null); setResult(null); setError(null); setText(''); }}
+                  onClick={() => { setFile(null); setResult(null); setError(null); }}
                   className="absolute top-2 right-2 p-1 bg-white/80 rounded-full hover:bg-white text-slate-600"
                 >
                   <X size={20} />
                 </button>
-              </div>
-
-              {/* Optional text input */}
-              <div className="w-full">
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  {t('analysis.textLabel')}
-                </label>
-                <textarea
-                  rows={3}
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder={t('analysis.textPlaceholder')}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
-                />
               </div>
 
               {/* Run button */}
@@ -373,6 +351,16 @@ function AnalysisPage() {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Model explanation */}
+            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                {t('analysis.resultExplanation')}
+              </h3>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                {result.explanation ?? t('analysis.noExplanation')}
+              </p>
             </div>
 
             {/* Grad-CAM Heatmaps */}
@@ -572,4 +560,3 @@ export default function App() {
     </div>
   );
 }
-

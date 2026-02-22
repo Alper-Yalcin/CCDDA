@@ -31,6 +31,8 @@
     "inferenceResult": "Inference Result",
     "predictedEmotion": "Predicted Emotion",
     "predictedGender": "Predicted Gender",
+    "resultExplanation": "Why This Result",
+    "noExplanation": "No explanation was returned by the backend for this result.",
     "emotionHeatmap": "Emotion Heatmap (Grad-CAM)",
     "genderHeatmap": "Gender Heatmap (Grad-CAM)",
     "topTokens": "Top Influential Text Tokens",

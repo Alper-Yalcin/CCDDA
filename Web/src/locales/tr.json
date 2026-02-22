@@ -31,6 +31,8 @@
     "inferenceResult": "Çıkarım Sonucu",
     "predictedEmotion": "Tahmin Edilen Duygu",
     "predictedGender": "Tahmin Edilen Cinsiyet",
+    "resultExplanation": "Bu Sonucun Nedeni",
+    "noExplanation": "Bu sonuç için backend tarafında açıklama üretilmedi.",
     "emotionHeatmap": "Duygu Isı Haritası (Grad-CAM)",
     "genderHeatmap": "Cinsiyet Isı Haritası (Grad-CAM)",
     "topTokens": "En Etkili Metin Token'ları",
