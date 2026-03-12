@@ -54,7 +54,7 @@ class GradCAM:
     def _backward_hook(self, module, grad_input, grad_output):
         self.gradients = grad_output[0].detach()
 
-    def generate(self, image_tensor, class_logits, class_index=None):
+    def generate(self, image_tensor, class_logits, class_index=None, retain_graph=True):
         """
         image_tensor : (1, 3, H, W)
         class_logits : logits for emotion or gender
@@ -66,7 +66,7 @@ class GradCAM:
 
         loss = class_logits[:, class_index].sum()
         self.model.zero_grad()
-        loss.backward(retain_graph=True)
+        loss.backward(retain_graph=retain_graph)
 
         # Gradients shape: (1, C, H', W')
         # Activations shape: (1, C, H', W')
@@ -75,7 +75,11 @@ class GradCAM:
         cam = torch.sum(weights * self.activations, dim=1).squeeze()
 
         cam = torch.relu(cam)
-        cam = cam / torch.max(cam)
+        cam_max = torch.max(cam)
+        if float(cam_max) > 0:
+            cam = cam / cam_max
+        else:
+            cam = torch.zeros_like(cam)
 
         cam = cam.cpu().numpy()
         cam = cv2.resize(cam, (image_tensor.size(3), image_tensor.size(2)))

@@ -5,6 +5,7 @@ __pycache__/
 
 # --- Sanal ortamlar ---
 .venv/
+.desktop-venv/
 venv/
 env/
 ENV/
@@ -23,6 +24,13 @@ logs/
 *.log
 *.tmp
 *.temp
+
+# --- Derleme / paketleme çıktıları ---
+build/
+dist/
+artifacts/installer/
+artifacts/docx_inspect/
+artifacts/report_run_quick_test/
 
 # --- Model ağırlıkları ve çıktılar ---
 checkpoints/
@@ -54,3 +62,4 @@ Thumbs.db
 *.jsonl
 *.csv~
 *.bak
+models/

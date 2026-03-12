@@ -9,6 +9,8 @@ seaborn
 Pillow
 opencv-python
 albumentations
+torch
+torchvision
 
 # NLP ve BERT
 transformers

@@ -13,11 +13,12 @@ class MultimodalEffNetBert(nn.Module):
         proj_dim: int = 512,
         freeze_bert: bool = True,
         freeze_effnet: bool = True,
+        use_imagenet_weights: bool = True,
     ):
         super().__init__()
 
         # --- Image encoder: EfficientNet-B0 ---
-        weights = EfficientNet_B0_Weights.IMAGENET1K_V1
+        weights = EfficientNet_B0_Weights.IMAGENET1K_V1 if use_imagenet_weights else None
         effnet = efficientnet_b0(weights=weights)
 
         # classifier'ı at, sadece feature extractor kullan

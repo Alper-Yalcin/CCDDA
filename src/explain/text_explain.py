@@ -43,6 +43,25 @@ class BertTextExplainer:
         return tokens
 
     @staticmethod
+    def _normalize_scores(
+        token_importance: torch.Tensor,
+        attention_mask: torch.Tensor,
+    ) -> List[float]:
+        token_importance = token_importance.detach().cpu()
+
+        mask = attention_mask.squeeze(0).detach().cpu()
+        token_importance = token_importance * mask
+
+        min_v = token_importance.min()
+        max_v = token_importance.max()
+        if max_v > min_v:
+            scores = (token_importance - min_v) / (max_v - min_v)
+        else:
+            scores = torch.zeros_like(token_importance)
+
+        return scores.tolist()
+
+    @staticmethod
     def get_top_tokens(
         tokens: List[str],
         scores: List[float],
@@ -80,22 +99,45 @@ class BertTextExplainer:
           - pred_label_idx: kullanılan sınıf index'i
         """
 
-        # Her çağrıdan önce hook verilerini temizle
-        self.emb_activations = None
-        self.emb_gradients = None
-
         self.model.to(device)
-        self.model.zero_grad()
-
         image_tensor = image_tensor.to(device)
         input_ids = input_ids.to(device)
         attention_mask = attention_mask.to(device)
 
+        self.emb_activations = None
+        self.emb_gradients = None
+        self.model.zero_grad()
         outputs = self.model(
             image=image_tensor,
             input_ids=input_ids,
             attention_mask=attention_mask,
         )
+
+        return self.explain_from_outputs(
+            tokenizer=tokenizer,
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            outputs=outputs,
+            target=target,
+            class_index=class_index,
+            retain_graph=False,
+        )
+
+    def explain_from_outputs(
+        self,
+        tokenizer,
+        input_ids,
+        attention_mask,
+        outputs,
+        target: str = "gender",
+        class_index: int = None,
+        retain_graph: bool = True,
+    ):
+        if self.emb_activations is None:
+            raise RuntimeError(
+                "BertTextExplainer: activation hook'lari bos geldi. "
+                "explain_from_outputs ayni forward ciktilari ile cagirilmalidir."
+            )
 
         if target == "gender":
             logits = outputs["logits_gender"]
@@ -105,12 +147,11 @@ class BertTextExplainer:
         if class_index is None:
             class_index = torch.argmax(logits, dim=1).item()
 
-        # Grad hesapla
+        self.emb_gradients = None
         loss = logits[:, class_index].sum()
         self.model.zero_grad()
-        loss.backward(retain_graph=True)
+        loss.backward(retain_graph=retain_graph)
 
-        # emb_activations & emb_gradients: [1, L, H]
         grads = self.emb_gradients
         activations = self.emb_activations
 
@@ -120,24 +161,31 @@ class BertTextExplainer:
                 "Muhtemelen model yapısı değişti veya backward tetiklenmedi."
             )
 
-        # Basit önem skoru: grad * activation üzerinden
-        # shape: [1, L]
         token_importance = (grads * activations).sum(dim=-1).squeeze(0)
-        token_importance = token_importance.detach().cpu()
-
-        # Sadece attention_mask == 1 olanları düşün
-        mask = attention_mask.squeeze(0).detach().cpu()
-        token_importance = token_importance * mask
-
-        # Normalize (0-1)
-        min_v = token_importance.min()
-        max_v = token_importance.max()
-        if max_v > min_v:
-            scores = (token_importance - min_v) / (max_v - min_v)
-        else:
-            scores = torch.zeros_like(token_importance)
 
         tokens = self._tokens_from_ids(tokenizer, input_ids)
-        scores = scores.tolist()
+        scores = self._normalize_scores(token_importance, attention_mask)
 
         return tokens, scores, class_index
+
+    def explain_targets_from_outputs(
+        self,
+        tokenizer,
+        input_ids,
+        attention_mask,
+        outputs,
+        targets,
+    ):
+        results = {}
+        target_items = list(targets.items())
+        for index, (target, class_index) in enumerate(target_items):
+            results[target] = self.explain_from_outputs(
+                tokenizer=tokenizer,
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                outputs=outputs,
+                target=target,
+                class_index=class_index,
+                retain_graph=index < len(target_items) - 1,
+            )
+        return results

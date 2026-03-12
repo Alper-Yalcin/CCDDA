@@ -1,33 +1,133 @@
 {
-  "nav": { "home": "Home", "analysis": "Run Analysis", "about": "About the Project" },
-  "brand": { "title": "ChildArt", "accent": "Analyze", "subtitle": "Research Prototype v1.0" },
+  "nav": {
+    "home": "Home",
+    "analysis": "Run Analysis",
+    "about": "About the Project"
+  },
+  "brand": {
+    "title": "ChildDrawing",
+    "accent": "Analysis",
+    "subtitle": "TÜBİTAK 2209-A research prototype"
+  },
   "hero": {
-    "badge": "Academic Research Tool",
-    "title": "Deep Learning Analysis of Children's Drawings",
-    "subtitle": "This project utilizes Convolutional Neural Networks (CNNs) to investigate emotional markers in juvenile art. Designed for researchers and clinicians, it provides automated screening support by detecting patterns associated with emotional states.",
-    "features": [
-      "Automated Emotion Recognition (Happy/Sad)",
-      "Visual Attention Heatmaps (Grad-CAM)",
-      "Non-Diagnostic Screening Support"
+    "badge": "TÜBİTAK 2209-A research output",
+    "title": "Explainable multimodal emotion analysis from children's drawings",
+    "subtitle": "This prototype evaluates children's drawings and, when available, accompanying text with an EfficientNet-B0 and BERTurk based architecture trained on the KIDO dataset. Its purpose is to provide an explainable decision-support flow that can assist expert review.",
+    "highlights": [
+      "A multimodal workflow built on 10,856 examples from the KIDO dataset",
+      "Explainable outputs with Grad-CAM and token importance scoring",
+      "A research prototype delivered through a FastAPI service and React interface"
     ],
     "start": "Start Analysis",
-    "methodology": "Methodology"
+    "methodology": "Project Details"
+  },
+  "home": {
+    "panelEyebrow": "Research snapshot",
+    "panelTitle": "The report distilled into one screen",
+    "panelSubtitle": "The system processes the drawing image together with optional text to predict emotion, while gender classification is handled as an auxiliary task to strengthen shared representation learning.",
+    "flowTitle": "Local runtime flow",
+    "panelFlow": [
+      "The drawing is accepted as input and prepared at 224x224 resolution.",
+      "If text is available, it is tokenized with BERT up to a maximum length of 128 tokens.",
+      "EfficientNet-B0 and BERTurk outputs are fused, then emotion and auxiliary gender heads are evaluated."
+    ],
+    "panelFacts": [
+      { "label": "Emotion accuracy", "value": "94.36%" },
+      { "label": "Macro F1", "value": "94.35%" },
+      { "label": "ROC-AUC", "value": "0.9866" }
+    ],
+    "quickCardOneLabel": "Model backbone",
+    "quickCardOneText": "EfficientNet-B0 is used for the visual stream, while dbmdz/bert-base-turkish-cased powers the text stream.",
+    "quickCardTwoLabel": "Explainability",
+    "quickCardTwoText": "Grad-CAM heatmaps and token importance scores make model decisions more transparent.",
+    "stats": [
+      {
+        "value": "10,856",
+        "label": "Total samples",
+        "note": "Emotion and gender labels from KIDO were merged into a single master table."
+      },
+      {
+        "value": "9,226 / 1,630",
+        "label": "Train / test split",
+        "note": "The original split reported in the project report was preserved."
+      },
+      {
+        "value": "7,843 / 1,383",
+        "label": "Train / validation",
+        "note": "The training partition was split again during experimentation."
+      },
+      {
+        "value": "Target exceeded",
+        "label": "Primary success threshold",
+        "note": "The proposal's 85% accuracy target for emotion classification was surpassed."
+      }
+    ],
+    "workflowEyebrow": "How it works",
+    "workflowTitle": "From drawing to explainable output",
+    "workflowIntro": "The home page summarizes the experimental pipeline from the report as a clear product flow.",
+    "workflowSteps": [
+      {
+        "title": "Data preparation",
+        "body": "Emotion and gender CSV files are merged via id and split fields, then drawing paths and Turkish-first text fields are added to the working dataset."
+      },
+      {
+        "title": "Multimodal inference",
+        "body": "Visual features are extracted with EfficientNet-B0, textual features with BERTurk, and fused representations feed the emotion and auxiliary gender heads."
+      },
+      {
+        "title": "Explanation and delivery",
+        "body": "Outputs are presented together with confidence scores, Grad-CAM maps, and token importance scores when text is available."
+      }
+    ],
+    "modulesEyebrow": "System architecture",
+    "modulesTitle": "Model, service, and interface were designed together",
+    "modulesIntro": "According to the report, the project did not stop at a training run; it also produced a reproducible experimentation layer and a user-facing prototype.",
+    "modules": [
+      {
+        "title": "Data and experiment layer",
+        "body": "The master_emotion_gender.csv generation flow, experiment records, and reproducible reporting under artifacts/report_run were prepared."
+      },
+      {
+        "title": "Multimodal core",
+        "body": "The EfficientNet-B0 and BERTurk architecture treats emotion as the primary task and gender as the auxiliary task."
+      },
+      {
+        "title": "Explainability module",
+        "body": "Visual focus regions are shown with Grad-CAM, while textual contribution is exposed through token-level importance scores."
+      },
+      {
+        "title": "Service and presentation",
+        "body": "The FastAPI inference service and React interface turn the research output into an interactive prototype."
+      }
+    ],
+    "outcomesEyebrow": "Research output",
+    "outcomesTitle": "More than a model checkpoint",
+    "outcomesIntro": "The project outcome is not only a trained model; it is an end-to-end experimentation and presentation chain.",
+    "outcomes": [
+      "Reproducible scripts for training, evaluation, and reporting",
+      "Prototype tools for single-sample prediction and explanation generation",
+      "A local service layer built around the FastAPI /api/predict endpoint",
+      "A React-based front end that exposes the workflow to expert users"
+    ],
+    "previewTitle": "Analysis Visualization Preview",
+    "ethicsTitle": "Usage boundary",
+    "ethicsText": "As stated in the report, this system is not a clinical diagnosis tool. It should be used as an explainable decision-support prototype that assists expert judgment."
   },
   "analysis": {
     "title": "Run Analysis",
-    "subtitle": "Upload a drawing to generate an emotional inference report.",
+    "subtitle": "Upload a drawing to generate an inference report.",
     "drop": "Drop image here or click to upload",
-    "support": "Supports JPG, PNG (Max 5MB)",
+    "support": "Supports JPG and PNG",
     "run": "Run Inference Model",
-    "processing": "Processing Neural Network...",
+    "processing": "Processing model...",
     "predicted": "Predicted Class",
     "confidence": "Confidence",
     "heatmapTitle": "Attention Heatmap (Grad-CAM)",
-    "heatmapPlaceholder": "Heatmap Visualization Placeholder",
+    "heatmapPlaceholder": "Heatmap Visualization",
     "disclaimerTitle": "Research Disclaimer",
-    "disclaimer": "This tool is a prototype for academic research purposes only. The results generated are probabilistic and should not be interpreted as a clinical diagnosis. Always consult with a qualified child psychologist for professional assessment.",
+    "disclaimer": "This tool is a prototype intended for academic research. Its outputs are probabilistic and must not be interpreted as a clinical diagnosis. Professional assessment should always involve qualified experts.",
     "textLabel": "Descriptive Text (optional)",
-    "textPlaceholder": "Enter any available description about the drawing (e.g. from a psychological report)...",
+    "textPlaceholder": "Enter any available description about the drawing...",
     "inferenceResult": "Inference Result",
     "predictedEmotion": "Predicted Emotion",
     "predictedGender": "Predicted Gender",
@@ -40,12 +140,128 @@
     "backendHint": "Make sure the Python API server is running: uvicorn api_server:app --port 8000"
   },
   "about": {
-    "aboutTitle": "About the Project",
-    "objective": "Objective",
-    "objectiveText": "The primary objective of this research is to develop a supportive tool for child psychologists and educators. By automating the detection of emotional markers in drawings, we aim to provide an objective \"second opinion\" that can highlight cases requiring further human attention. This tool is not intended to replace human judgment but to augment it with data-driven insights.",
-    "methodologyTitle": "Methodology & Architecture",
-    "datasetTitle": "Dataset & Metrics"
+    "eyebrow": "Project Overview",
+    "aboutTitle": "TÜBİTAK 2209-A final project summary",
+    "objectiveText": "This project developed an explainable artificial intelligence system capable of detecting emotional states from children's drawings. While the original goal focused on emotion analysis from drawings, the final system expanded into a multimodal architecture that jointly processes the drawing image and, when available, the accompanying text.",
+    "facts": [
+      {
+        "label": "Project title",
+        "value": "Emotion State Analysis with Deep Learning from Children's Drawings"
+      },
+      { "label": "Principal investigator", "value": "Alper YALÇIN" },
+      { "label": "Advisor", "value": "Res. Asst. Alper ECEMİŞ" },
+      { "label": "Institution", "value": "Nigde Omer Halisdemir University, Computer Engineering" },
+      { "label": "Dataset", "value": "KIDO" },
+      { "label": "Report type", "value": "Final Project Report" }
+    ],
+    "goalsTitle": "Goals and scope",
+    "goals": [
+      "Build a workable data structure that combines drawing images with paired text",
+      "Develop a deep learning model that performs emotion classification",
+      "Make the model's decisions explainable",
+      "Deliver a prototype system that presents the results to users"
+    ],
+    "dataTitle": "Dataset and preparation pipeline",
+    "dataIntro": "The project used the KIDO dataset. Emotion and gender labels were merged through shared sample identifiers to produce the master_emotion_gender.csv file that served as the main data source.",
+    "dataPoints": [
+      "A total of 10,856 samples were used.",
+      "The original data split consists of 9,226 training and 1,630 test samples.",
+      "During experimentation, the training partition was further divided into 7,843 training and 1,383 validation samples.",
+      "Emotion classes are Happiness and Sadness, while the auxiliary task uses Female and Male.",
+      "Text content was incorporated with a Turkish-first preference."
+    ],
+    "methodologyTitle": "Methodology and architecture",
+    "methodologyIntro": "The report describes the multimodal and multi-task design across four main areas.",
+    "methodologyCards": [
+      {
+        "title": "General architecture",
+        "items": [
+          "EfficientNet-B0 is used as the visual backbone.",
+          "dbmdz/bert-base-turkish-cased is used as the text backbone.",
+          "Visual and textual embeddings are fused in a shared layer.",
+          "Separate classification heads are defined for emotion and gender."
+        ]
+      },
+      {
+        "title": "Pre-processing",
+        "items": [
+          "Images are resized to 224x224.",
+          "Random horizontal flips and rotations are applied.",
+          "Images are normalized before inference.",
+          "Texts are tokenized with a maximum sequence length of 128."
+        ]
+      },
+      {
+        "title": "Training setup",
+        "items": [
+          "The model was trained for 5 epochs with batch size 16 and learning rate 0.0001.",
+          "AdamW was used with weight decay 0.0001 and validation ratio 0.15.",
+          "The random seed was fixed at 42.",
+          "Gender remained an auxiliary task while emotion stayed the main evaluation axis."
+        ]
+      },
+      {
+        "title": "Explainability",
+        "items": [
+          "Grad-CAM highlights the visual regions that drive the model decision.",
+          "Token importance analysis scores the effect of words and subwords in text input.",
+          "The system returns not only labels, but also the rationale behind the decision."
+        ]
+      }
+    ],
+    "resultsEyebrow": "Experimental results",
+    "resultsTitle": "Findings on the test set",
+    "resultsIntro": "Emotion classification was reported as the primary task and exceeded the proposal's 85% accuracy target.",
+    "emotionResultsTitle": "Emotion classification task",
+    "emotionResultsText": "Balanced separation was achieved across the Happiness and Sadness classes.",
+    "emotionMetrics": [
+      { "label": "Accuracy", "value": "0.9436" },
+      { "label": "Precision", "value": "0.9438" },
+      { "label": "Recall", "value": "0.9436" },
+      { "label": "F1", "value": "0.9435" }
+    ],
+    "genderResultsTitle": "Auxiliary gender task",
+    "genderResultsText": "This task was not the primary objective; it was included to strengthen shared representation learning.",
+    "genderMetrics": [
+      { "label": "Accuracy", "value": "0.7712" },
+      { "label": "Precision", "value": "0.7637" },
+      { "label": "Recall", "value": "0.7728" },
+      { "label": "F1", "value": "0.7658" }
+    ],
+    "deliverablesTitle": "Integrated system delivered",
+    "deliverables": [
+      "A trained multimodal model, best-weight checkpoints, and retraining scripts",
+      "An explainability layer that produces Grad-CAM visuals and token importance scores",
+      "A FastAPI service layer that returns predictions, confidence scores, explanations, and heatmaps",
+      "A React-based web interface and desktop prototype approach for user-facing interaction"
+    ],
+    "limitationsTitle": "Limitations and ethical notes",
+    "limitations": [
+      "The dataset is limited to only two emotion classes.",
+      "Model evaluation was performed on a single dataset.",
+      "The auxiliary gender task raises ethical concerns and must be handled carefully.",
+      "The system must not be used for clinical diagnosis."
+    ],
+    "futureWorkTitle": "Future work",
+    "futureWork": [
+      "Increase the number of emotion classes",
+      "Reassess auxiliary tasks from ethical and scientific perspectives",
+      "Select the best model directly with emotion-centered criteria",
+      "Perform external validation on additional datasets",
+      "Run human-centered evaluation studies with expert feedback",
+      "Mature the web interface for field-oriented usage scenarios"
+    ],
+    "disclaimerTitle": "Research boundary",
+    "disclaimer": "As explicitly stated in the report, this system is not a clinical diagnosis tool; it should be used to support expert evaluation."
   },
-  "footer": { "copyright": "© 2024 Child Art Analysis Research Group. All rights reserved.", "privacy": "Privacy Policy", "terms": "Terms of Research", "contact": "Contact Lab" },
-  "ui": { "remove": "Remove", "confidenceLabel": "CONFIDENCE: {{val}}%" }
+  "footer": {
+    "copyright": "© 2026 Child Drawing Analysis research prototype. All rights reserved.",
+    "privacy": "Privacy Note",
+    "terms": "Research Terms",
+    "contact": "Project Contact"
+  },
+  "ui": {
+    "remove": "Remove",
+    "confidenceLabel": "CONFIDENCE: {{val}}%"
+  }
 }

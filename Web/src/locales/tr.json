@@ -1,33 +1,133 @@
 {
-  "nav": { "home": "Anasayfa", "analysis": "Analizi Çalıştır", "about": "Proje Hakkında" },
-  "brand": { "title": "CocukSanat", "accent": "Analiz", "subtitle": "Araştırma Prototipi v1.0" },
+  "nav": {
+    "home": "Anasayfa",
+    "analysis": "Analizi Çalıştır",
+    "about": "Proje Hakkında"
+  },
+  "brand": {
+    "title": "ÇocukÇizim",
+    "accent": "Analiz",
+    "subtitle": "TÜBİTAK 2209-A araştırma prototipi"
+  },
   "hero": {
-    "badge": "Akademik Araştırma Aracı",
-    "title": "Çocukların Resimlerinin Derin Öğrenme Analizi",
-    "subtitle": "Bu proje, çocuk sanatındaki duygusal işaretleri araştırmak için Konvolüsyonel Sinir Ağları (CNN) kullanmaktadır. Araştırmacılar ve klinisyenler için tasarlanmıştır ve duygusal durumlarla ilişkili desenleri tespit ederek otomatik tarama desteği sunar.",
-    "features": [
-      "Otomatik Duygu Tanıma (Mutlu/Üzgün)",
-      "Görsel Dikkat Isı Haritaları (Grad-CAM)",
-      "Tanısal Olmayan Tarama Desteği"
+    "badge": "TÜBİTAK 2209-A araştırma çıktısı",
+    "title": "Çocuk çizimlerinden açıklanabilir çok modlu duygu analizi",
+    "subtitle": "Bu prototip, KIDO veri seti üzerinden eğitilen EfficientNet-B0 ve BERTurk tabanlı bir yapıyla çocuk çizimlerini ve varsa eşlik eden metni birlikte değerlendirir. Hedef, uzman değerlendirmesini destekleyecek açıklanabilir bir karar destek akışı sunmaktır.",
+    "highlights": [
+      "KIDO veri seti üzerinde 10.856 örnekten oluşan çok modlu çalışma akışı",
+      "Grad-CAM ve token önem skorları ile açıklanabilir çıktı üretimi",
+      "FastAPI servisi ve React arayüzü ile araştırma prototipi sunumu"
     ],
     "start": "Analizi Başlat",
-    "methodology": "Yöntem" 
+    "methodology": "Proje Detayları"
+  },
+  "home": {
+    "panelEyebrow": "Araştırma özeti",
+    "panelTitle": "Raporun çekirdeği bu ekranda",
+    "panelSubtitle": "Sistem, çizim görüntüsünü ve varsa metinsel ifadeyi birlikte işleyerek duygu sınıflandırması yapar; cinsiyet sınıflandırmasını ise ortak temsil öğrenmesini güçlendiren yardımcı görev olarak kullanır.",
+    "flowTitle": "Yerel çalışma akışı",
+    "panelFlow": [
+      "Girdi olarak çizim alınır ve 224x224 boyutuna hazırlanır.",
+      "Metin varsa BERT tokenizer ile en fazla 128 token olacak şekilde işlenir.",
+      "EfficientNet-B0 ve BERTurk çıktıları birleştirilir; duygu ve yardımcı cinsiyet başlıkları hesaplanır."
+    ],
+    "panelFacts": [
+      { "label": "Duygu doğruluğu", "value": "%94,36" },
+      { "label": "Makro F1", "value": "%94,35" },
+      { "label": "ROC-AUC", "value": "0.9866" }
+    ],
+    "quickCardOneLabel": "Model omurgası",
+    "quickCardOneText": "EfficientNet-B0 görsel omurga ve dbmdz/bert-base-turkish-cased metin omurga birlikte kullanılır.",
+    "quickCardTwoLabel": "Açıklanabilirlik",
+    "quickCardTwoText": "Grad-CAM ısı haritaları ve token önem skorları model kararını saydamlaştırır.",
+    "stats": [
+      {
+        "value": "10.856",
+        "label": "Toplam örnek",
+        "note": "KIDO veri setindeki duygu ve cinsiyet etiketleri tek ana tabloda birleştirildi."
+      },
+      {
+        "value": "9.226 / 1.630",
+        "label": "Eğitim / test ayrımı",
+        "note": "Orijinal veri ayrımı raporda bu şekilde korunmuştur."
+      },
+      {
+        "value": "7.843 / 1.383",
+        "label": "Eğitim / doğrulama",
+        "note": "Eğitim kümesi deneyler sırasında yeniden ayrılmıştır."
+      },
+      {
+        "value": "%85 hedefi aşıldı",
+        "label": "Ana başarı eşiği",
+        "note": "Duygu sınıflandırmada proje önerisindeki doğruluk hedefi geçildi."
+      }
+    ],
+    "workflowEyebrow": "Nasıl çalışır",
+    "workflowTitle": "Çizimden açıklanabilir sonuca giden akış",
+    "workflowIntro": "Ana sayfa, rapordaki deney hattını kullanıcıya anlaşılır bir ürün akışı olarak özetler.",
+    "workflowSteps": [
+      {
+        "title": "Veri hazırlama",
+        "body": "Duygu ve cinsiyet CSV dosyaları id ve split alanları üzerinden birleştirilir; çizim yolu ve Türkçe öncelikli metin alanı veri yapısına eklenir."
+      },
+      {
+        "title": "Çok modlu çıkarım",
+        "body": "Görsel özellikler EfficientNet-B0 ile, metin özellikleri BERTurk ile çıkarılır; füzyon katmanından sonra duygu ve yardımcı cinsiyet başlıkları üretilir."
+      },
+      {
+        "title": "Açıklama ve sunum",
+        "body": "Sonuçlar güven skorları, Grad-CAM haritaları ve metin mevcut olduğunda token önem skorları ile birlikte sunulur."
+      }
+    ],
+    "modulesEyebrow": "Sistem mimarisi",
+    "modulesTitle": "Model, servis ve arayüz birlikte tasarlandı",
+    "modulesIntro": "Rapora göre proje yalnızca eğitim modeli üretmekle kalmadı; yeniden üretilebilir deney altyapısı ve kullanıcıya açık prototip katmanı da oluşturdu.",
+    "modules": [
+      {
+        "title": "Veri ve deney katmanı",
+        "body": "master_emotion_gender.csv üretimi, deney kayıtları ve artifacts/report_run altında tekrar üretilebilir raporlama akışı hazırlandı."
+      },
+      {
+        "title": "Çok modlu çekirdek",
+        "body": "EfficientNet-B0 ve BERTurk tabanlı mimari, duygu görevini ana eksende; cinsiyet görevini yardımcı eksende işler."
+      },
+      {
+        "title": "Açıklanabilirlik modülü",
+        "body": "Görsel odak bölgeleri Grad-CAM ile, metinsel katkı ise token tabanlı önem puanları ile gösterilir."
+      },
+      {
+        "title": "Servis ve sunum",
+        "body": "FastAPI tahmin servisi ve React arayüzü, araştırma çıktısını etkileşimli bir prototipe dönüştürür."
+      }
+    ],
+    "outcomesEyebrow": "Araştırma çıktısı",
+    "outcomesTitle": "Modelden öte, bütünleşik bir prototip",
+    "outcomesIntro": "Projenin çıktısı tek bir checkpoint dosyasından ibaret değil; uçtan uca deney ve sunum zinciri kurulmuş durumda.",
+    "outcomes": [
+      "Yeniden üretilebilir eğitim, değerlendirme ve raporlama betikleri",
+      "Tek örnek tahmini ve açıklama üretimi için prototip araçlar",
+      "FastAPI tabanlı /api/predict servisi ile yerel servis katmanı",
+      "React tabanlı web arayüzü ile uzman kullanımına açık ön yüz"
+    ],
+    "previewTitle": "Analiz Görselleştirme Önizlemesi",
+    "ethicsTitle": "Kullanım sınırı",
+    "ethicsText": "Raporun vurguladığı gibi bu sistem klinik tanı aracı değildir. Uzman yorumunu desteklemek için tasarlanmış açıklanabilir bir karar destek prototipidir."
   },
   "analysis": {
     "title": "Analizi Çalıştır",
     "subtitle": "Duygusal çıkarım raporu oluşturmak için bir çizim yükleyin.",
     "drop": "Görseli buraya bırakın veya yüklemek için tıklayın",
-    "support": "JPG, PNG desteklenir (Maks 5MB)",
+    "support": "JPG, PNG desteklenir",
     "run": "Çıkarım Modelini Çalıştır",
-    "processing": "Sinir Ağı İşleniyor...",
+    "processing": "Model işleniyor...",
     "predicted": "Tahmin Edilen Sınıf",
     "confidence": "Güven",
     "heatmapTitle": "Dikkat Isı Haritası (Grad-CAM)",
-    "heatmapPlaceholder": "Isı Haritası Görselleştirme Yer Tutucu",
+    "heatmapPlaceholder": "Isı Haritası Görselleştirmesi",
     "disclaimerTitle": "Araştırma Feragatnamesi",
-    "disclaimer": "Bu araç yalnızca akademik araştırma amaçlı bir prototiptir. Oluşturulan sonuçlar olasılıksaldır ve klinik tanı olarak yorumlanmamalıdır. Profesyonel değerlendirme için her zaman nitelikli bir çocuk psikoloğuna danışın.",
+    "disclaimer": "Bu araç yalnızca akademik araştırma amaçlı bir prototiptir. Sonuçlar olasılıksaldır ve klinik tanı olarak yorumlanmamalıdır. Profesyonel değerlendirme için nitelikli bir uzmana başvurulmalıdır.",
     "textLabel": "Açıklama Metni (isteğe bağlı)",
-    "textPlaceholder": "Çizimle ilgili mevcut bir açıklama girin (ör: psikolojik rapordan)...",
+    "textPlaceholder": "Çizimle ilgili açıklama girin...",
     "inferenceResult": "Çıkarım Sonucu",
     "predictedEmotion": "Tahmin Edilen Duygu",
     "predictedGender": "Tahmin Edilen Cinsiyet",
@@ -40,12 +140,128 @@
     "backendHint": "Python API sunucusunun çalışır durumda olduğundan emin olun: uvicorn api_server:app --port 8000"
   },
   "about": {
-    "aboutTitle": "Proje Hakkında",
-    "objective": "Amaç",
-    "objectiveText": "Bu araştırmanın birincil amacı, çocuk psikologları ve eğitimciler için destekleyici bir araç geliştirmektir. Çizimlerdeki duygusal işaretlerin otomatik tespitiyle, daha fazla insan dikkatine ihtiyaç duyan vakaları vurgulayabilecek nesnel bir “ikinci görüş” sağlamayı hedefliyoruz. Bu araç insan yargısının yerini almak için değil, veri odaklı içgörülerle desteklemek için tasarlanmıştır.",
-    "methodologyTitle": "Yöntem ve Mimari",
-    "datasetTitle": "Veri Seti ve Metrikler"
+    "eyebrow": "Proje Hakkında",
+    "aboutTitle": "TÜBİTAK 2209-A proje sonuç özeti",
+    "objectiveText": "Bu projede, çocuk çizimlerinden duygu durumu tespiti yapabilen açıklanabilir bir yapay zeka sistemi geliştirilmiştir. Başlangıç hedefi çizimlerden duygu analizi yapmak olsa da nihai sistem, çizim görüntüsünü ve varsa eşlik eden metni birlikte işleyen çok modlu bir mimariye genişletilmiştir.",
+    "facts": [
+      {
+        "label": "Proje adı",
+        "value": "Çocukların Yaptıkları Çizimlerden Derin Öğrenme Yöntemleri ile Duygu Durumu Analizi"
+      },
+      { "label": "Yürütücü", "value": "Alper YALÇIN" },
+      { "label": "Danışman", "value": "Arş. Gör. Alper ECEMİŞ" },
+      { "label": "Kurum", "value": "Niğde Ömer Halisdemir Üniversitesi, Bilgisayar Mühendisliği" },
+      { "label": "Veri seti", "value": "KIDO" },
+      { "label": "Rapor türü", "value": "Proje Sonuç Raporu" }
+    ],
+    "goalsTitle": "Amaç ve kapsam",
+    "goals": [
+      "Çizim görüntülerini ve eşlenik metinleri içeren işlenebilir bir veri yapısı oluşturmak",
+      "Duygu sınıflandırması yapabilen derin öğrenme tabanlı bir model geliştirmek",
+      "Model kararlarını açıklanabilir hale getirmek",
+      "Sonuçları kullanıcıya sunabilecek bir prototip sistem ortaya koymak"
+    ],
+    "dataTitle": "Veri seti ve hazırlık süreci",
+    "dataIntro": "Projede KIDO veri seti kullanılmış; duygu ve cinsiyet etiketleri ortak örnek kimlikleri üzerinden birleştirilerek master_emotion_gender.csv ana veri kaynağı hazırlanmıştır.",
+    "dataPoints": [
+      "Toplam 10.856 örnek kullanılmıştır.",
+      "Orijinal veri ayrımı 9.226 eğitim ve 1.630 test örneğinden oluşmaktadır.",
+      "Eğitim verisi deney sürecinde 7.843 eğitim ve 1.383 doğrulama örneğine ayrılmıştır.",
+      "Duygu sınıfları Happiness ve Sadness, yardımcı görev sınıfları Female ve Male olarak tanımlanmıştır.",
+      "Türkçe metin öncelikli olacak şekilde metinsel içerik veri yapısına dahil edilmiştir."
+    ],
+    "methodologyTitle": "Yöntem ve mimari",
+    "methodologyIntro": "Rapor, çok modlu ve çok görevli mimariyi dört ana başlık altında tanımlamaktadır.",
+    "methodologyCards": [
+      {
+        "title": "Genel mimari",
+        "items": [
+          "Görsel omurga olarak EfficientNet-B0 kullanılmıştır.",
+          "Metin omurgası olarak dbmdz/bert-base-turkish-cased seçilmiştir.",
+          "Görsel ve metin gömüleri füzyon katmanında birleştirilmiştir.",
+          "Duygu ve cinsiyet için iki ayrı sınıflandırma başlığı oluşturulmuştur."
+        ]
+      },
+      {
+        "title": "Ön işleme",
+        "items": [
+          "Görseller 224x224 boyutuna yeniden ölçeklenmiştir.",
+          "Rastgele yatay çevirme ve döndürme uygulanmıştır.",
+          "Görseller normalize edilmiştir.",
+          "Metinler en fazla 128 token olacak biçimde BERT tokenizer ile hazırlanmıştır."
+        ]
+      },
+      {
+        "title": "Eğitim ayarları",
+        "items": [
+          "Epoch sayısı 5, batch size 16 ve öğrenme oranı 0.0001 olarak belirlenmiştir.",
+          "Optimizer AdamW, weight decay 0.0001 ve doğrulama oranı 0.15 olarak kullanılmıştır.",
+          "Seed değeri 42 seçilmiştir.",
+          "Cinsiyet görevi yardımcı görev olarak tutulmuş, ana değerlendirme ekseni duygu analizi olmuştur."
+        ]
+      },
+      {
+        "title": "Açıklanabilirlik",
+        "items": [
+          "Grad-CAM ile modelin görsel üzerinde odaklandığı bölgeler ısı haritası olarak gösterilmiştir.",
+          "Token önem analizi ile metin girdisindeki kelime ve alt kelimelerin etkisi puanlanmıştır.",
+          "Çıktılar yalnızca sınıf etiketi değil, kararın dayanaklarıyla birlikte sunulmuştur."
+        ]
+      }
+    ],
+    "resultsEyebrow": "Deney sonuçları",
+    "resultsTitle": "Test kümesinde elde edilen bulgular",
+    "resultsIntro": "Duygu görevi ana değerlendirme ekseni olarak raporlandı ve proje önerisindeki %85 doğruluk hedefi aşıldı.",
+    "emotionResultsTitle": "Duygu sınıflandırma görevi",
+    "emotionResultsText": "Happiness ve Sadness sınıflarında dengeli ayrım gücü elde edildi.",
+    "emotionMetrics": [
+      { "label": "Accuracy", "value": "0.9436" },
+      { "label": "Precision", "value": "0.9438" },
+      { "label": "Recall", "value": "0.9436" },
+      { "label": "F1", "value": "0.9435" }
+    ],
+    "genderResultsTitle": "Yardımcı cinsiyet görevi",
+    "genderResultsText": "Bu görev ana amaç değil; ortak temsil öğrenmesini güçlendiren yardımcı başlık olarak değerlendirilmiştir.",
+    "genderMetrics": [
+      { "label": "Accuracy", "value": "0.7712" },
+      { "label": "Precision", "value": "0.7637" },
+      { "label": "Recall", "value": "0.7728" },
+      { "label": "F1", "value": "0.7658" }
+    ],
+    "deliverablesTitle": "Ortaya konan sistem",
+    "deliverables": [
+      "Eğitilmiş çok modlu model, en iyi ağırlıklar ve yeniden eğitim betikleri",
+      "Duygu ve cinsiyet için Grad-CAM görselleri ile token önem skorları üreten açıklanabilirlik katmanı",
+      "Görsel yükleme, güven skoru, açıklama ve ısı haritası döndüren FastAPI tabanlı servis katmanı",
+      "Görsel yükleme ve sonuç görüntüleme akışına sahip React tabanlı web arayüzü ve masaüstü prototip yaklaşımı"
+    ],
+    "limitationsTitle": "Sınırlılıklar ve etik notlar",
+    "limitations": [
+      "Veri seti yalnızca iki duygu sınıfı ile sınırlandırılmıştır.",
+      "Model değerlendirmesi tek veri seti üzerinde yapılmıştır.",
+      "Yardımcı cinsiyet görevi etik açıdan dikkatle ele alınması gereken bir bileşendir.",
+      "Sistem klinik tanı amacıyla kullanılmamalıdır."
+    ],
+    "futureWorkTitle": "Gelecek çalışmalar",
+    "futureWork": [
+      "Duygu görevinde sınıf sayısının artırılması",
+      "Yardımcı görevlerin etik ve bilimsel açıdan yeniden değerlendirilmesi",
+      "En iyi model seçim kriterinin doğrudan duygu metriğine göre belirlenmesi",
+      "Farklı veri setleri ile dış doğrulama yapılması",
+      "Uzman geri bildirimi içeren insan-merkezli değerlendirme çalışmaları yürütülmesi",
+      "Web arayüzünün saha kullanımına uygun biçimde olgunlaştırılması"
+    ],
+    "disclaimerTitle": "Araştırma sınırı",
+    "disclaimer": "Raporun açıkça belirttiği gibi bu sistem klinik tanı aracı değildir; uzman değerlendirmesini desteklemek amacıyla kullanılmalıdır."
   },
-  "footer": { "copyright": "© 2024 Çocuk Sanat Analizi Araştırma Grubu. Tüm hakları saklıdır.", "privacy": "Gizlilik Politikası", "terms": "Araştırma Koşulları", "contact": "Laboratuvarla İletişim" },
-  "ui": { "remove": "Kaldır", "confidenceLabel": "GÜVEN: {{val}}%" }
+  "footer": {
+    "copyright": "© 2026 Çocuk Çizim Analizi Araştırma Prototipi. Tüm hakları saklıdır.",
+    "privacy": "Gizlilik Notu",
+    "terms": "Araştırma Koşulları",
+    "contact": "Proje İletişimi"
+  },
+  "ui": {
+    "remove": "Kaldır",
+    "confidenceLabel": "GÜVEN: {{val}}%"
+  }
 }
