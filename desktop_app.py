@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import ctypes
+import os
 import socket
+import sys
 import threading
 import time
 import traceback
@@ -17,6 +19,15 @@ from src.app_paths import executable_dir, resolve_frontend_dist
 APP_TITLE = "ChildArt Analyzer"
 WEBVIEW2_CLIENT_ID = "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
 WEBVIEW2_DOWNLOAD_URL = "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
+
+
+def _ensure_standard_streams() -> None:
+    if sys.stdout is None:
+        sys.stdout = open(os.devnull, "w", encoding="utf-8", buffering=1)
+    if sys.stderr is None:
+        sys.stderr = open(os.devnull, "w", encoding="utf-8", buffering=1)
+    if sys.stdin is None:
+        sys.stdin = open(os.devnull, "r", encoding="utf-8")
 
 
 def _error_log_path() -> Path:
@@ -113,6 +124,8 @@ def _wait_for_server(
 
 
 def main() -> None:
+    _ensure_standard_streams()
+
     static_dir = resolve_frontend_dist()
     if static_dir is None:
         raise SystemExit("Web/dist not found. Run `npm run build` inside `Web/` before starting the desktop app.")

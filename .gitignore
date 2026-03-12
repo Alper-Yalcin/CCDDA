@@ -28,9 +28,13 @@ logs/
 # --- Derleme / paketleme çıktıları ---
 build/
 dist/
+artifacts/
 artifacts/installer/
 artifacts/docx_inspect/
 artifacts/report_run_quick_test/
+
+# Generated local exports
+docs/*-sonuc-raporu-*.docx
 
 # --- Model ağırlıkları ve çıktılar ---
 checkpoints/
