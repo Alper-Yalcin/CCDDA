@@ -1,91 +1,25 @@
-# RUN
-python src/data/build_master_csv.py
-python -m src.train.train_multimodal --epochs 5 --batch_size 8
+# CCDDA
 
-python -m src.explain.predict_and_explain --idx 0
-python -m src.explain.predict_and_explain --id 207-6C-543-M-S
+Eski multimodal AI hatti bu repodan temizlendi.
 
-python -m src.app.tk_app
-# venv kullanıyorsan
-python -m venv .venv
-source .venv/bin/activate 
-.venv\Scripts\activate
+Kaldirilan eski yapi:
+- emotion + gender cok-gorevli siniflandirma
+- text/BERT tabanli multimodal akis
+- eski checkpoint, explainability ve inference kodlari
 
-# KIDO Multimodal Emotion & Gender Analysis
+Mevcut durum:
+- repo yeni etiketli image-only veriyle sifirdan kurulacak yeni AI sistemi icin hazirlaniyor
+- legacy AI giris noktalari bilincli olarak devre disi birakildi
+- `api_server.py` calissa bile `/predict` su anda `503 reset_in_progress` doner
 
-Bu proje, **KIDO** veri setini kullanarak çocukların çizimlerinden:
-- Çizen kişinin **cinsiyetini** (Male / Female),
-- Çocuğun **duygu durumunu** (Happiness / Sadness),
+Korunan genel parcalar:
+- proje iskeleti
+- web/desktop kabugu
+- genel goruntu transform yardimcilari
+- dokumantasyon ve rapor dosyalari
 
-hem **görsel** (çizim) hem de **metin** (çocuğun yazdığı açıklama) üzerinden tahmin etmeyi ve  
-bu tahminleri **açıklanabilir** hale getirmeyi amaçlayan çok-modlu (multi-modal), çok-görevli (multi-task) bir derin öğrenme modelini içerir.
-
-Ana mimari:
-- 🖼 **EfficientNet-B0** → çizimden görsel özellik çıkarma
-- 📝 **BERTurk / mBERT** → metinden dil özellikleri çıkarma
-- 🔗 Birleştirme (fusion) → ortak temsil
-- 🎯 2 ayrı head → **Emotion** + **Gender** sınıflandırma
-- 🧠 **Grad-CAM + attention** ile açıklanabilirlik
-
----
-
-## 1. Proje Yapısı
-
-Önerilen klasör yapısı:
-
-```text
-kido_multimodal/
-├─ Dataset/
-│  ├─ Images/
-│  │  ├─ Education/
-│  │  │  ├─ train/
-│  │  │  │  ├─ Primary/
-│  │  │  │  └─ Secondary/
-│  │  │  └─ test/
-│  │  │     ├─ Primary/
-│  │  │     └─ Secondary/
-│  │  ├─ Emotion/
-│  │  │  ├─ train/
-│  │  │  │  ├─ Happiness/
-│  │  │  │  └─ Sadness/
-│  │  │  └─ test/
-│  │  │     ├─ Happiness/
-│  │  │     └─ Sadness/
-│  │  ├─ Gender/
-│  │  │  ├─ train/
-│  │  │  │  ├─ Female/
-│  │  │  │  └─ Male/
-│  │  │  └─ test/
-│  │  │     ├─ Female/
-│  │  │     └─ Male/
-│  └─ Texts/
-│     ├─ Education/
-│     │  ├─ Education_Train.csv
-│     │  └─ Education_Test.csv
-│     ├─ Emotion/
-│     │  ├─ Emotion_Train.csv
-│     │  └─ Emotion_Test.csv
-│     └─ Gender/
-│        ├─ Gender_Train.csv
-│        └─ Gender_Test.csv
-├─ src/
-│  ├─ data/
-│  │  ├─ build_master_csv.py
-│  │  ├─ dataset.py
-│  │  └─ transforms.py
-│  ├─ models/
-│  │  ├─ efficientnet_multitask.py
-│  │  ├─ bert_text_only.py
-│  │  └─ multimodal_effnet_bert.py
-│  ├─ train/
-│  │  ├─ train_image_only.py
-│  │  ├─ train_text_only.py
-│  │  └─ train_multimodal.py
-│  ├─ eval/
-│  │  └─ evaluate.py
-│  └─ explain/
-│     └─ gradcam_and_text_explain.py
-├─ notebooks/
-│  └─ EDA_and_sanity_checks.ipynb
-├─ requirements.txt
-└─ README.md
+Bir sonraki asamada kurulacak yeni sistem icin cekirdekler:
+- yeni veri manifest uretimi
+- 4 sinifli image-only egitim hatti
+- yeni model mimarisi
+- klinik/CV ozellik cikarim katmani

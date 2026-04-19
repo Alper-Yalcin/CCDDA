@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import ctypes
 import os
@@ -133,7 +133,7 @@ def main() -> None:
     _ensure_webview2_runtime()
 
     port = _find_free_port()
-    app = create_app(static_dir=static_dir, preload_model=True, device="cpu")
+    app = create_app(static_dir=static_dir, preload_model=False, device="cpu")
     server = uvicorn.Server(
         uvicorn.Config(
             app,
