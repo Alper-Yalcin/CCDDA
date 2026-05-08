@@ -12,10 +12,10 @@
   "hero": {
     "badge": "TÜBİTAK 2209-A research output",
     "title": "Explainable multimodal emotion analysis from children's drawings",
-    "subtitle": "This prototype evaluates children's drawings and, when available, accompanying text with an EfficientNet-B0 and BERTurk based architecture trained on the KIDO dataset. Its purpose is to provide an explainable decision-support flow that can assist expert review.",
+    "subtitle": "This prototype evaluates children's drawings with an EfficientNet-B0 based architecture trained on the Qwen-selected dataset. It classifies drawings into four emotion categories — Happy, Sad, Angry, and Fear — and provides explainable decision-support outputs to assist expert review.",
     "highlights": [
-      "A multimodal workflow built on 10,856 examples from the KIDO dataset",
-      "Explainable outputs with Grad-CAM and token importance scoring",
+      "A 4-class emotion classifier (Happy / Sad / Angry / Fear) trained on 1,408 Qwen-selected drawings",
+      "Explainable outputs with Grad-CAM and clinical feature scoring",
       "A research prototype delivered through a FastAPI service and React interface"
     ],
     "start": "Start Analysis",
@@ -32,9 +32,9 @@
       "EfficientNet-B0 and BERTurk outputs are fused, then emotion and auxiliary gender heads are evaluated."
     ],
     "panelFacts": [
-      { "label": "Emotion accuracy", "value": "94.36%" },
-      { "label": "Macro F1", "value": "94.35%" },
-      { "label": "ROC-AUC", "value": "0.9866" }
+      { "label": "Test accuracy", "value": "43.40%" },
+      { "label": "Macro F1", "value": "43.12%" },
+      { "label": "4 classes", "value": "H/S/A/F" }
     ],
     "quickCardOneLabel": "Model backbone",
     "quickCardOneText": "EfficientNet-B0 is used for the visual stream, while dbmdz/bert-base-turkish-cased powers the text stream.",
@@ -42,24 +42,24 @@
     "quickCardTwoText": "Grad-CAM heatmaps and token importance scores make model decisions more transparent.",
     "stats": [
       {
-        "value": "10,856",
+        "value": "1,408",
         "label": "Total samples",
-        "note": "Emotion and gender labels from KIDO were merged into a single master table."
+        "note": "Drawings curated from the Qwen-selected dataset across 4 emotion classes."
       },
       {
-        "value": "9,226 / 1,630",
-        "label": "Train / test split",
-        "note": "The original split reported in the project report was preserved."
+        "value": "984 / 212 / 212",
+        "label": "Train / val / test",
+        "note": "Stratified 70 / 15 / 15 split with fixed seed 42 for reproducibility."
       },
       {
-        "value": "7,843 / 1,383",
-        "label": "Train / validation",
-        "note": "The training partition was split again during experimentation."
+        "value": "4 classes",
+        "label": "Emotion categories",
+        "note": "Happy, Sad, Angry, Fear — balanced at ~350 samples each before splitting."
       },
       {
-        "value": "Target exceeded",
-        "label": "Primary success threshold",
-        "note": "The proposal's 85% accuracy target for emotion classification was surpassed."
+        "value": "43.40%",
+        "label": "Test accuracy",
+        "note": "EfficientNet-B0 backbone, best checkpoint at epoch 8 (val macro F1 = 0.389)."
       }
     ],
     "workflowEyebrow": "How it works",
@@ -68,15 +68,15 @@
     "workflowSteps": [
       {
         "title": "Data preparation",
-        "body": "Emotion and gender CSV files are merged via id and split fields, then drawing paths and Turkish-first text fields are added to the working dataset."
+        "body": "1,408 drawings from dataset_qwen_selected are split 70/15/15 into train, validation, and test sets using stratified sampling, producing a manifest CSV for reproducible training."
       },
       {
-        "title": "Multimodal inference",
-        "body": "Visual features are extracted with EfficientNet-B0, textual features with BERTurk, and fused representations feed the emotion and auxiliary gender heads."
+        "title": "Image-based inference",
+        "body": "Visual features are extracted with EfficientNet-B0 and combined with a clinical feature MLP to feed the 4-class emotion head (Happy / Sad / Angry / Fear)."
       },
       {
         "title": "Explanation and delivery",
-        "body": "Outputs are presented together with confidence scores, Grad-CAM maps, and token importance scores when text is available."
+        "body": "Outputs are presented together with per-class confidence scores and Grad-CAM heatmaps highlighting the drawing regions most influential in the prediction."
       }
     ],
     "modulesEyebrow": "System architecture",
@@ -85,15 +85,15 @@
     "modules": [
       {
         "title": "Data and experiment layer",
-        "body": "The master_emotion_gender.csv generation flow, experiment records, and reproducible reporting under artifacts/report_run were prepared."
+        "body": "The manifest builder (build_manifest_qwen.py) performs stratified splitting and produces a reproducible CSV manifest from dataset_qwen_selected."
       },
       {
-        "title": "Multimodal core",
-        "body": "The EfficientNet-B0 and BERTurk architecture treats emotion as the primary task and gender as the auxiliary task."
+        "title": "Image classification core",
+        "body": "EfficientNet-B0 backbone feeds a projection head and clinical MLP, whose fused output is classified into 4 emotion categories."
       },
       {
         "title": "Explainability module",
-        "body": "Visual focus regions are shown with Grad-CAM, while textual contribution is exposed through token-level importance scores."
+        "body": "Visual focus regions are shown with Grad-CAM, making the model's attention on specific drawing areas transparent to the expert."
       },
       {
         "title": "Service and presentation",
@@ -136,13 +136,15 @@
     "emotionHeatmap": "Emotion Heatmap (Grad-CAM)",
     "genderHeatmap": "Gender Heatmap (Grad-CAM)",
     "topTokens": "Top Influential Text Tokens",
+    "clinicalFeatures": "Clinical Features",
+    "focusRegion": "Focus region",
     "errorTitle": "Analysis failed",
     "backendHint": "Make sure the Python API server is running: uvicorn api_server:app --port 8000"
   },
   "about": {
     "eyebrow": "Project Overview",
     "aboutTitle": "TÜBİTAK 2209-A final project summary",
-    "objectiveText": "This project developed an explainable artificial intelligence system capable of detecting emotional states from children's drawings. While the original goal focused on emotion analysis from drawings, the final system expanded into a multimodal architecture that jointly processes the drawing image and, when available, the accompanying text.",
+    "objectiveText": "This project developed an explainable artificial intelligence system capable of detecting emotional states from children's drawings. The system classifies drawings into four emotion categories — Happy, Sad, Angry, and Fear — using an EfficientNet-B0 backbone trained on the Qwen-selected dataset, and provides Grad-CAM based visual explanations to support expert review.",
     "facts": [
       {
         "label": "Project title",
@@ -151,7 +153,7 @@
       { "label": "Principal investigator", "value": "Alper YALÇIN" },
       { "label": "Advisor", "value": "Res. Asst. Alper ECEMİŞ" },
       { "label": "Institution", "value": "Nigde Omer Halisdemir University, Computer Engineering" },
-      { "label": "Dataset", "value": "KIDO" },
+      { "label": "Dataset", "value": "Qwen-selected (dataset_qwen_selected)" },
       { "label": "Report type", "value": "Final Project Report" }
     ],
     "goalsTitle": "Goals and scope",
@@ -162,13 +164,13 @@
       "Deliver a prototype system that presents the results to users"
     ],
     "dataTitle": "Dataset and preparation pipeline",
-    "dataIntro": "The project used the KIDO dataset. Emotion and gender labels were merged through shared sample identifiers to produce the master_emotion_gender.csv file that served as the main data source.",
+    "dataIntro": "The project used the Qwen-selected dataset (dataset_qwen_selected). Images were curated into four balanced emotion categories and split into train, validation, and test sets using a reproducible stratified pipeline.",
     "dataPoints": [
-      "A total of 10,856 samples were used.",
-      "The original data split consists of 9,226 training and 1,630 test samples.",
-      "During experimentation, the training partition was further divided into 7,843 training and 1,383 validation samples.",
-      "Emotion classes are Happiness and Sadness, while the auxiliary task uses Female and Male.",
-      "Text content was incorporated with a Turkish-first preference."
+      "A total of 1,408 samples were used across 4 emotion classes.",
+      "Class distribution: Angry 357, Happy 350, Sad 350, Fear 351 — near-perfectly balanced.",
+      "Stratified 70/15/15 split: 984 training, 212 validation, 212 test samples (seed 42).",
+      "Emotion classes: Happy, Sad, Angry, Fear — a 4-class classification task.",
+      "Image-only pipeline; no auxiliary gender task in this training run."
     ],
     "methodologyTitle": "Methodology and architecture",
     "methodologyIntro": "The report describes the multimodal and multi-task design across four main areas.",
@@ -176,70 +178,70 @@
       {
         "title": "General architecture",
         "items": [
-          "EfficientNet-B0 is used as the visual backbone.",
-          "dbmdz/bert-base-turkish-cased is used as the text backbone.",
-          "Visual and textual embeddings are fused in a shared layer.",
-          "Separate classification heads are defined for emotion and gender."
+          "EfficientNet-B0 is used as the visual backbone (pretrained on ImageNet).",
+          "A projection MLP maps the 1280-dim backbone output to 256 dims.",
+          "A clinical feature MLP handles optional 18-dim feature vectors.",
+          "A fusion head outputs 4-class logits (Happy / Sad / Angry / Fear)."
         ]
       },
       {
         "title": "Pre-processing",
         "items": [
           "Images are resized to 224x224.",
-          "Random horizontal flips and rotations are applied.",
-          "Images are normalized before inference.",
-          "Texts are tokenized with a maximum sequence length of 128."
+          "Training augmentation: random rotation ±10°, color jitter (brightness/contrast).",
+          "Images are normalized with ImageNet statistics.",
+          "Weighted random sampling is used to handle any remaining class imbalance."
         ]
       },
       {
         "title": "Training setup",
         "items": [
-          "The model was trained for 5 epochs with batch size 16 and learning rate 0.0001.",
-          "AdamW was used with weight decay 0.0001 and validation ratio 0.15.",
-          "The random seed was fixed at 42.",
-          "Gender remained an auxiliary task while emotion stayed the main evaluation axis."
+          "Up to 40 epochs, batch size 32, learning rate 1e-4, early stopping patience 8.",
+          "AdamW optimizer with weight decay 1e-4; cosine annealing LR schedule.",
+          "Weighted cross-entropy loss per class; random seed fixed at 42.",
+          "Best checkpoint selected by validation macro F1 (best at epoch 8, val F1 = 0.389)."
         ]
       },
       {
         "title": "Explainability",
         "items": [
-          "Grad-CAM highlights the visual regions that drive the model decision.",
-          "Token importance analysis scores the effect of words and subwords in text input.",
-          "The system returns not only labels, but also the rationale behind the decision."
+          "Grad-CAM highlights the visual regions of the drawing that drive the model decision.",
+          "Per-class probability bars show the confidence across all 4 emotion categories.",
+          "The system returns not only a label but also the rationale behind the decision."
         ]
       }
     ],
     "resultsEyebrow": "Experimental results",
     "resultsTitle": "Findings on the test set",
-    "resultsIntro": "Emotion classification was reported as the primary task and exceeded the proposal's 85% accuracy target.",
-    "emotionResultsTitle": "Emotion classification task",
-    "emotionResultsText": "Balanced separation was achieved across the Happiness and Sadness classes.",
+    "resultsIntro": "4-class emotion classification on the Qwen-selected test set (212 samples). Best checkpoint from epoch 8 with validation macro F1 = 0.389.",
+    "emotionResultsTitle": "4-class emotion classification",
+    "emotionResultsText": "Test set results across Happy, Sad, Angry, Fear. Happy and Fear classes achieved the highest F1 scores (0.48 and 0.45 respectively).",
     "emotionMetrics": [
-      { "label": "Accuracy", "value": "0.9436" },
-      { "label": "Precision", "value": "0.9438" },
-      { "label": "Recall", "value": "0.9436" },
-      { "label": "F1", "value": "0.9435" }
+      { "label": "Accuracy", "value": "0.4340" },
+      { "label": "Precision", "value": "0.4377" },
+      { "label": "Recall", "value": "0.4340" },
+      { "label": "F1 (macro)", "value": "0.4312" }
     ],
-    "genderResultsTitle": "Auxiliary gender task",
-    "genderResultsText": "This task was not the primary objective; it was included to strengthen shared representation learning.",
+    "genderResultsTitle": "Per-class F1 scores",
+    "genderResultsText": "Individual class F1 scores on the 212-sample test set. Each class has approximately 52–54 test examples.",
     "genderMetrics": [
-      { "label": "Accuracy", "value": "0.7712" },
-      { "label": "Precision", "value": "0.7637" },
-      { "label": "Recall", "value": "0.7728" },
-      { "label": "F1", "value": "0.7658" }
+      { "label": "Happy", "value": "F1 0.48" },
+      { "label": "Sad", "value": "F1 0.40" },
+      { "label": "Angry", "value": "F1 0.39" },
+      { "label": "Fear", "value": "F1 0.45" }
     ],
     "deliverablesTitle": "Integrated system delivered",
     "deliverables": [
-      "A trained multimodal model, best-weight checkpoints, and retraining scripts",
-      "An explainability layer that produces Grad-CAM visuals and token importance scores",
-      "A FastAPI service layer that returns predictions, confidence scores, explanations, and heatmaps",
+      "A trained 4-class emotion model (best.pt at epoch 8, val macro F1 = 0.389) with reproducible training scripts",
+      "Manifest builder and stratified split pipeline for dataset_qwen_selected",
+      "A FastAPI service layer that returns predictions, confidence scores, explanations, and Grad-CAM heatmaps",
       "A React-based web interface and desktop prototype approach for user-facing interaction"
     ],
     "limitationsTitle": "Limitations and ethical notes",
     "limitations": [
-      "The dataset is limited to only two emotion classes.",
-      "Model evaluation was performed on a single dataset.",
-      "The auxiliary gender task raises ethical concerns and must be handled carefully.",
+      "The dataset is relatively small (1,408 samples), which limits generalization to unseen drawings.",
+      "Test accuracy of 43.4% indicates meaningful learning above chance (25%) but substantial room for improvement.",
+      "Model evaluation was performed on a single dataset; external validation is needed.",
       "The system must not be used for clinical diagnosis."
     ],
     "futureWorkTitle": "Future work",

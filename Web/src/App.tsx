@@ -309,6 +309,10 @@ const API_URL = '/api';
 const EMOTION_TR_MAP: Record<string, string> = {
   Happiness: 'Mutluluk',
   Sadness: 'Üzüntü',
+  Happy: 'Mutluluk',
+  Sad: 'Üzüntü',
+  Angry: 'Öfke',
+  Fear: 'Korku',
 };
 
 const GENDER_TR_MAP: Record<string, string> = {
@@ -383,6 +387,12 @@ type ApiResult = {
   heatmap_gender_b64: string | null;
   tokens_emotion: { token: string; score: number }[];
   tokens_gender: { token: string; score: number }[];
+  class_names: string[];
+  clinical_features: Record<string, number | null>;
+  clinical_validity: Record<string, number>;
+  feature_tiers: Record<string, string>;
+  highlighted_features: string[];
+  gradcam_focus_region: string;
 };
 
 function AnalysisPage() {
@@ -442,6 +452,12 @@ function AnalysisPage() {
         heatmap_gender_b64: raw.heatmap_gender_b64 ?? raw.heatmap_gender ?? null,
         tokens_emotion: Array.isArray(raw.tokens_emotion) ? raw.tokens_emotion : [],
         tokens_gender: Array.isArray(raw.tokens_gender) ? raw.tokens_gender : [],
+        class_names: Array.isArray(raw.class_names) ? raw.class_names : [],
+        clinical_features: (raw.clinical_features && typeof raw.clinical_features === 'object') ? raw.clinical_features : {},
+        clinical_validity: (raw.clinical_validity && typeof raw.clinical_validity === 'object') ? raw.clinical_validity : {},
+        feature_tiers: (raw.feature_tiers && typeof raw.feature_tiers === 'object') ? raw.feature_tiers : {},
+        highlighted_features: Array.isArray(raw.highlighted_features) ? raw.highlighted_features : [],
+        gradcam_focus_region: String(raw.gradcam_focus_region ?? ''),
       };
 
       setResult(data);
@@ -535,50 +551,76 @@ function AnalysisPage() {
         {result && (
           <div className="border-t border-slate-200 bg-slate-50 p-8 space-y-8">
 
-            {/* Prediction cards */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Emotion */}
-              <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
-                  {t('analysis.predictedEmotion')}
-                </h3>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-slate-800">
-                    {localizeClassLabel(result.pred_emotion, 'emotion', lang)}
-                  </span>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-bold rounded-full">
-                    {result.confidence_emotion}%
-                  </span>
-                </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-teal-500 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${result.confidence_emotion}%` }}
-                  />
-                </div>
+            {/* Prediction header */}
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+                {t('analysis.predictedEmotion')}
+              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-2xl font-bold text-slate-800">
+                  {localizeClassLabel(result.pred_emotion, 'emotion', lang)}
+                </span>
+                <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-bold rounded-full">
+                  {result.confidence_emotion}%
+                </span>
               </div>
-
-              {/* Gender */}
-              <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
-                  {t('analysis.predictedGender')}
-                </h3>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-slate-800">
-                    {localizeClassLabel(result.pred_gender, 'gender', lang)}
-                  </span>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-bold rounded-full">
-                    {result.confidence_gender}%
-                  </span>
+              {/* 4-class probabilities */}
+              {result.probs_emotion.length === (result.class_names.length || 4) && (
+                <div className="grid sm:grid-cols-2 gap-3 mt-4">
+                  {(result.class_names.length ? result.class_names : ['Happy','Sad','Angry','Fear']).map((name, idx) => {
+                    const p = Math.round((result.probs_emotion[idx] ?? 0) * 1000) / 10;
+                    return (
+                      <div key={name} className="space-y-1">
+                        <div className="flex justify-between text-xs text-slate-600">
+                          <span>{localizeClassLabel(name, 'emotion', lang)}</span>
+                          <span className="font-mono">{p}%</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-teal-500 rounded-full" style={{ width: `${p}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-blue-400 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${result.confidence_gender}%` }}
-                  />
-                </div>
-              </div>
+              )}
             </div>
+
+            {/* Clinical features panel */}
+            {Object.keys(result.clinical_features).length > 0 && (
+              <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+                  {t('analysis.clinicalFeatures')}
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {(result.highlighted_features.length ? result.highlighted_features : Object.keys(result.clinical_features)).map((name) => {
+                    const valid = (result.clinical_validity[name] ?? 0) === 1;
+                    const raw = result.clinical_features[name];
+                    const tier = result.feature_tiers[name] || 'low';
+                    const tierColor = tier === 'high' ? 'bg-emerald-500' : tier === 'medium' ? 'bg-amber-500' : 'bg-slate-400';
+                    const display = !valid || raw === null || raw === undefined
+                      ? '—'
+                      : (Math.abs(Number(raw)) >= 10 ? Number(raw).toFixed(1) : Number(raw).toFixed(3));
+                    const pctWidth = valid && typeof raw === 'number' ? Math.max(0, Math.min(100, Math.abs(raw) * 100)) : 0;
+                    return (
+                      <div key={name} className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-slate-700 font-mono">{name}</span>
+                          <span className={`font-mono ${valid ? 'text-slate-700' : 'text-slate-400'}`}>{display}</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${tierColor}`} style={{ width: `${pctWidth}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex gap-3 mt-4 text-[11px] text-slate-500">
+                  <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" />high</span>
+                  <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" />medium</span>
+                  <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-400" />low</span>
+                </div>
+              </div>
+            )}
 
             {/* Model explanation */}
             <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
@@ -590,33 +632,24 @@ function AnalysisPage() {
               </p>
             </div>
 
-            {/* Grad-CAM Heatmaps */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {result.heatmap_emotion_b64 && (
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                    {t('analysis.emotionHeatmap')}
-                  </h3>
-                  <img
-                    src={`data:image/jpeg;base64,${result.heatmap_emotion_b64}`}
-                    alt="Emotion Grad-CAM"
-                    className="w-full rounded-lg border border-slate-200 shadow-sm"
-                  />
-                </div>
-              )}
-              {result.heatmap_gender_b64 && (
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                    {t('analysis.genderHeatmap')}
-                  </h3>
-                  <img
-                    src={`data:image/jpeg;base64,${result.heatmap_gender_b64}`}
-                    alt="Gender Grad-CAM"
-                    className="w-full rounded-lg border border-slate-200 shadow-sm"
-                  />
-                </div>
-              )}
-            </div>
+            {/* Grad-CAM Heatmap */}
+            {result.heatmap_emotion_b64 && (
+              <div>
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                  {t('analysis.emotionHeatmap')}
+                  {result.gradcam_focus_region && (
+                    <span className="ml-2 text-slate-400 normal-case font-normal">
+                      ({t('analysis.focusRegion')}: {result.gradcam_focus_region})
+                    </span>
+                  )}
+                </h3>
+                <img
+                  src={`data:image/png;base64,${result.heatmap_emotion_b64}`}
+                  alt="Grad-CAM"
+                  className="w-full max-w-md mx-auto rounded-lg border border-slate-200 shadow-sm"
+                />
+              </div>
+            )}
 
             {/* Token attributions */}
             {result.tokens_emotion.length > 0 && (

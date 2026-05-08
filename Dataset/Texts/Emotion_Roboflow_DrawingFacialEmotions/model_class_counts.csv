@@ -1,0 +1,17 @@
+split,model_class,count
+train,NoDetection,7155
+train,angry_face,115
+train,dot_eyes,4
+train,happy_face,1691
+train,hollow eyes,26
+train,large_eyes,4
+train,neutral_face,219
+train,sad-face,14
+test,NoDetection,1291
+test,angry_face,23
+test,dot_eyes,0
+test,happy_face,279
+test,hollow eyes,4
+test,large_eyes,0
+test,neutral_face,34
+test,sad-face,1

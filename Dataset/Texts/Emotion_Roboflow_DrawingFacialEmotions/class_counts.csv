@@ -1,0 +1,13 @@
+split,label,count
+train,Angry,115
+train,Happy,1691
+train,Neutral,219
+train,NoDetection,7155
+train,OtherDetected,34
+train,Sad,14
+test,Angry,23
+test,Happy,279
+test,Neutral,34
+test,NoDetection,1291
+test,OtherDetected,4
+test,Sad,1

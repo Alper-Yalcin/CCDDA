@@ -28,3 +28,7 @@ jupyter
 fastapi
 uvicorn[standard]
 python-multipart
+
+# LLM explainer (GitHub Models, OpenAI SDK uyumlu)
+openai>=1.0.0
+python-dotenv

@@ -1,0 +1,10 @@
+{
+  "accuracy": 0.32075471698113206,
+  "precision": 0.31276737967914436,
+  "recall": 0.32115115841530933,
+  "macro_f1": 0.3061629519586711,
+  "best_val_macro_f1": 0.3863087331465894,
+  "train_samples": 984,
+  "val_samples": 212,
+  "test_samples": 212
+}

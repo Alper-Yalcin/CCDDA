@@ -1,0 +1,13 @@
+split,label,count
+train,Happiness_General,2622
+train,Affection_Belonging,1992
+train,Sadness_General,3626
+train,Anger_Conflict,371
+train,Grief_Loss,401
+train,Fear_Anxiety,216
+test,Happiness_General,446
+test,Affection_Belonging,370
+test,Sadness_General,647
+test,Anger_Conflict,64
+test,Grief_Loss,62
+test,Fear_Anxiety,43

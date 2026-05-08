@@ -1,0 +1,9 @@
+split,label,count
+train,Happy,4614
+train,Sadness,3990
+train,Anger,386
+train,Anxiety,238
+test,Happy,816
+test,Sadness,703
+test,Anger,66
+test,Anxiety,47

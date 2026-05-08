@@ -12,10 +12,10 @@
   "hero": {
     "badge": "TÜBİTAK 2209-A araştırma çıktısı",
     "title": "Çocuk çizimlerinden açıklanabilir çok modlu duygu analizi",
-    "subtitle": "Bu prototip, KIDO veri seti üzerinden eğitilen EfficientNet-B0 ve BERTurk tabanlı bir yapıyla çocuk çizimlerini ve varsa eşlik eden metni birlikte değerlendirir. Hedef, uzman değerlendirmesini destekleyecek açıklanabilir bir karar destek akışı sunmaktır.",
+    "subtitle": "Bu prototip, Qwen-selected veri seti üzerinden eğitilen EfficientNet-B0 tabanlı bir yapıyla çocuk çizimlerini değerlendirir. Çizimleri dört duygu kategorisine — Mutlu, Üzgün, Öfkeli ve Korku — sınıflandırır ve uzman değerlendirmesini destekleyen açıklanabilir karar destek çıktıları sunar.",
     "highlights": [
-      "KIDO veri seti üzerinde 10.856 örnekten oluşan çok modlu çalışma akışı",
-      "Grad-CAM ve token önem skorları ile açıklanabilir çıktı üretimi",
+      "Qwen-selected veri setinden 1.408 çizim üzerinde 4 sınıflı (Mutlu/Üzgün/Öfkeli/Korku) duygu sınıflandırıcı",
+      "Grad-CAM ve klinik özellik skorları ile açıklanabilir çıktı üretimi",
       "FastAPI servisi ve React arayüzü ile araştırma prototipi sunumu"
     ],
     "start": "Analizi Başlat",
@@ -32,9 +32,9 @@
       "EfficientNet-B0 ve BERTurk çıktıları birleştirilir; duygu ve yardımcı cinsiyet başlıkları hesaplanır."
     ],
     "panelFacts": [
-      { "label": "Duygu doğruluğu", "value": "%94,36" },
-      { "label": "Makro F1", "value": "%94,35" },
-      { "label": "ROC-AUC", "value": "0.9866" }
+      { "label": "Test doğruluğu", "value": "%43,40" },
+      { "label": "Makro F1", "value": "%43,12" },
+      { "label": "4 sınıf", "value": "M/Ü/Ö/K" }
     ],
     "quickCardOneLabel": "Model omurgası",
     "quickCardOneText": "EfficientNet-B0 görsel omurga ve dbmdz/bert-base-turkish-cased metin omurga birlikte kullanılır.",
@@ -42,24 +42,24 @@
     "quickCardTwoText": "Grad-CAM ısı haritaları ve token önem skorları model kararını saydamlaştırır.",
     "stats": [
       {
-        "value": "10.856",
+        "value": "1.408",
         "label": "Toplam örnek",
-        "note": "KIDO veri setindeki duygu ve cinsiyet etiketleri tek ana tabloda birleştirildi."
+        "note": "Qwen-selected veri setinden 4 duygu sınıfına ait çizimler."
       },
       {
-        "value": "9.226 / 1.630",
-        "label": "Eğitim / test ayrımı",
-        "note": "Orijinal veri ayrımı raporda bu şekilde korunmuştur."
+        "value": "984 / 212 / 212",
+        "label": "Eğitim / doğrulama / test",
+        "note": "Tekrar üretilebilirlik için sabit seed 42 ile %70/%15/%15 stratified bölme."
       },
       {
-        "value": "7.843 / 1.383",
-        "label": "Eğitim / doğrulama",
-        "note": "Eğitim kümesi deneyler sırasında yeniden ayrılmıştır."
+        "value": "4 sınıf",
+        "label": "Duygu kategorileri",
+        "note": "Mutlu, Üzgün, Öfkeli, Korku — bölme öncesi her sınıfta ~350 örnek."
       },
       {
-        "value": "%85 hedefi aşıldı",
-        "label": "Ana başarı eşiği",
-        "note": "Duygu sınıflandırmada proje önerisindeki doğruluk hedefi geçildi."
+        "value": "%43,40",
+        "label": "Test doğruluğu",
+        "note": "EfficientNet-B0 omurgası, en iyi checkpoint 8. epochta (val makro F1 = 0,389)."
       }
     ],
     "workflowEyebrow": "Nasıl çalışır",
@@ -68,15 +68,15 @@
     "workflowSteps": [
       {
         "title": "Veri hazırlama",
-        "body": "Duygu ve cinsiyet CSV dosyaları id ve split alanları üzerinden birleştirilir; çizim yolu ve Türkçe öncelikli metin alanı veri yapısına eklenir."
+        "body": "dataset_qwen_selected'dan 1.408 çizim, stratified örnekleme ile %70/%15/%15 oranında eğitim, doğrulama ve test kümelerine ayrılarak tekrar üretilebilir bir manifest CSV'si oluşturulur."
       },
       {
-        "title": "Çok modlu çıkarım",
-        "body": "Görsel özellikler EfficientNet-B0 ile, metin özellikleri BERTurk ile çıkarılır; füzyon katmanından sonra duygu ve yardımcı cinsiyet başlıkları üretilir."
+        "title": "Görüntü tabanlı çıkarım",
+        "body": "EfficientNet-B0 omurgasından görsel özellikler çıkarılır; klinik özellik MLP'si ile birleştirilerek 4 sınıflı duygu başlığına (Mutlu / Üzgün / Öfkeli / Korku) beslenir."
       },
       {
         "title": "Açıklama ve sunum",
-        "body": "Sonuçlar güven skorları, Grad-CAM haritaları ve metin mevcut olduğunda token önem skorları ile birlikte sunulur."
+        "body": "Sonuçlar, sınıf bazında güven skorları ve çizimdeki en etkili bölgeleri ön plana çıkaran Grad-CAM ısı haritaları ile birlikte sunulur."
       }
     ],
     "modulesEyebrow": "Sistem mimarisi",
@@ -85,15 +85,15 @@
     "modules": [
       {
         "title": "Veri ve deney katmanı",
-        "body": "master_emotion_gender.csv üretimi, deney kayıtları ve artifacts/report_run altında tekrar üretilebilir raporlama akışı hazırlandı."
+        "body": "Manifest oluşturucu (build_manifest_qwen.py) stratified bölme yaparak dataset_qwen_selected'dan tekrar üretilebilir bir CSV manifest üretir."
       },
       {
-        "title": "Çok modlu çekirdek",
-        "body": "EfficientNet-B0 ve BERTurk tabanlı mimari, duygu görevini ana eksende; cinsiyet görevini yardımcı eksende işler."
+        "title": "Görüntü sınıflandırma çekirdeği",
+        "body": "EfficientNet-B0 omurgası, bir projeksiyon başlığı ve klinik özellik MLP'sini besler; birleştirilen çıktı 4 duygu kategorisine sınıflandırılır."
       },
       {
         "title": "Açıklanabilirlik modülü",
-        "body": "Görsel odak bölgeleri Grad-CAM ile, metinsel katkı ise token tabanlı önem puanları ile gösterilir."
+        "body": "Grad-CAM ile modelin çizim üzerinde odaklandığı bölgeler görselleştirilerek uzman için şeffaf hale getirilir."
       },
       {
         "title": "Servis ve sunum",
@@ -136,13 +136,15 @@
     "emotionHeatmap": "Duygu Isı Haritası (Grad-CAM)",
     "genderHeatmap": "Cinsiyet Isı Haritası (Grad-CAM)",
     "topTokens": "En Etkili Metin Token'ları",
+    "clinicalFeatures": "Klinik Özellikler",
+    "focusRegion": "Odak bölgesi",
     "errorTitle": "Analiz başarısız",
     "backendHint": "Python API sunucusunun çalışır durumda olduğundan emin olun: uvicorn api_server:app --port 8000"
   },
   "about": {
     "eyebrow": "Proje Hakkında",
     "aboutTitle": "TÜBİTAK 2209-A proje sonuç özeti",
-    "objectiveText": "Bu projede, çocuk çizimlerinden duygu durumu tespiti yapabilen açıklanabilir bir yapay zeka sistemi geliştirilmiştir. Başlangıç hedefi çizimlerden duygu analizi yapmak olsa da nihai sistem, çizim görüntüsünü ve varsa eşlik eden metni birlikte işleyen çok modlu bir mimariye genişletilmiştir.",
+    "objectiveText": "Bu projede, çocuk çizimlerinden duygu durumu tespiti yapabilen açıklanabilir bir yapay zeka sistemi geliştirilmiştir. Sistem, çizimleri dört duygu kategorisine — Mutlu, Üzgün, Öfkeli ve Korku — sınıflandırmak için Qwen-selected veri seti üzerinde eğitilen EfficientNet-B0 omurgasını kullanır ve uzman değerlendirmesini desteklemek amacıyla Grad-CAM tabanlı görsel açıklamalar sunar.",
     "facts": [
       {
         "label": "Proje adı",
@@ -151,7 +153,7 @@
       { "label": "Yürütücü", "value": "Alper YALÇIN" },
       { "label": "Danışman", "value": "Arş. Gör. Alper ECEMİŞ" },
       { "label": "Kurum", "value": "Niğde Ömer Halisdemir Üniversitesi, Bilgisayar Mühendisliği" },
-      { "label": "Veri seti", "value": "KIDO" },
+      { "label": "Veri seti", "value": "Qwen-selected (dataset_qwen_selected)" },
       { "label": "Rapor türü", "value": "Proje Sonuç Raporu" }
     ],
     "goalsTitle": "Amaç ve kapsam",
@@ -162,13 +164,13 @@
       "Sonuçları kullanıcıya sunabilecek bir prototip sistem ortaya koymak"
     ],
     "dataTitle": "Veri seti ve hazırlık süreci",
-    "dataIntro": "Projede KIDO veri seti kullanılmış; duygu ve cinsiyet etiketleri ortak örnek kimlikleri üzerinden birleştirilerek master_emotion_gender.csv ana veri kaynağı hazırlanmıştır.",
+    "dataIntro": "Projede Qwen-selected veri seti (dataset_qwen_selected) kullanılmıştır. Görüntüler dört dengeli duygu kategorisine ayarlanmış ve tekrar üretilebilir stratified bir pipeline ile eğitim, doğrulama ve test kümelerine bölünmüştür.",
     "dataPoints": [
-      "Toplam 10.856 örnek kullanılmıştır.",
-      "Orijinal veri ayrımı 9.226 eğitim ve 1.630 test örneğinden oluşmaktadır.",
-      "Eğitim verisi deney sürecinde 7.843 eğitim ve 1.383 doğrulama örneğine ayrılmıştır.",
-      "Duygu sınıfları Happiness ve Sadness, yardımcı görev sınıfları Female ve Male olarak tanımlanmıştır.",
-      "Türkçe metin öncelikli olacak şekilde metinsel içerik veri yapısına dahil edilmiştir."
+      "4 duygu sınıfında toplam 1.408 örnek kullanılmıştır.",
+      "Sınıf dağılımı: Öfkeli 357, Mutlu 350, Üzgün 350, Korku 351 — neredeyse mükemmel denge.",
+      "Stratified %70/%15/%15 bölme: 984 eğitim, 212 doğrulama, 212 test (seed 42).",
+      "Duygu sınıfları: Mutlu, Üzgün, Öfkeli, Korku — 4 sınıflı sınıflandırma görevi.",
+      "Yalnızca görüntü tabanlı pipeline; bu eğitim çalışmasında yardımcı cinsiyet görevi kullanılmamıştır."
     ],
     "methodologyTitle": "Yöntem ve mimari",
     "methodologyIntro": "Rapor, çok modlu ve çok görevli mimariyi dört ana başlık altında tanımlamaktadır.",
@@ -176,70 +178,70 @@
       {
         "title": "Genel mimari",
         "items": [
-          "Görsel omurga olarak EfficientNet-B0 kullanılmıştır.",
-          "Metin omurgası olarak dbmdz/bert-base-turkish-cased seçilmiştir.",
-          "Görsel ve metin gömüleri füzyon katmanında birleştirilmiştir.",
-          "Duygu ve cinsiyet için iki ayrı sınıflandırma başlığı oluşturulmuştur."
+          "Görsel omurga olarak EfficientNet-B0 (ImageNet üzerinde ön-eğitimli) kullanılmıştır.",
+          "Projeksiyon MLP, omurganın 1280 boyutlu çıktısını 256 boyuta indirger.",
+          "Klinik özellik MLP'si, isteğe bağlı 18 boyutlu özellik vektörlerini işler.",
+          "Füzyon başlığı 4 sınıflı logit üretir (Mutlu / Üzgün / Öfkeli / Korku)."
         ]
       },
       {
         "title": "Ön işleme",
         "items": [
           "Görseller 224x224 boyutuna yeniden ölçeklenmiştir.",
-          "Rastgele yatay çevirme ve döndürme uygulanmıştır.",
-          "Görseller normalize edilmiştir.",
-          "Metinler en fazla 128 token olacak biçimde BERT tokenizer ile hazırlanmıştır."
+          "Eğitim artırımı: ±10° rastgele döndürme, renk sapması (parlaklık/kontrast).",
+          "Görseller ImageNet istatistikleriyle normalize edilmiştir.",
+          "Kalan sınıf dengesizliğini gidermek için ağırlıklı rastgele örnekleme kullanılmıştır."
         ]
       },
       {
         "title": "Eğitim ayarları",
         "items": [
-          "Epoch sayısı 5, batch size 16 ve öğrenme oranı 0.0001 olarak belirlenmiştir.",
-          "Optimizer AdamW, weight decay 0.0001 ve doğrulama oranı 0.15 olarak kullanılmıştır.",
-          "Seed değeri 42 seçilmiştir.",
-          "Cinsiyet görevi yardımcı görev olarak tutulmuş, ana değerlendirme ekseni duygu analizi olmuştur."
+          "40 epocha kadar, batch size 32, öğrenme oranı 1e-4, erken durdurma toleransı 8.",
+          "AdamW optimizer, weight decay 1e-4; kosinüs azaltma LR programı.",
+          "Sınıf başına ağırlıklı çapraz entropi kaybı; seed 42 sabit.",
+          "En iyi checkpoint doğrulama makro F1'e göre seçildi (8. epochta val F1 = 0,389)."
         ]
       },
       {
         "title": "Açıklanabilirlik",
         "items": [
-          "Grad-CAM ile modelin görsel üzerinde odaklandığı bölgeler ısı haritası olarak gösterilmiştir.",
-          "Token önem analizi ile metin girdisindeki kelime ve alt kelimelerin etkisi puanlanmıştır.",
-          "Çıktılar yalnızca sınıf etiketi değil, kararın dayanaklarıyla birlikte sunulmuştur."
+          "Grad-CAM ile modelin karar verirken çizimin hangi bölgelerine odaklandığı görselleştirilir.",
+          "Sınıf başına olasılık çubukları, 4 duygu kategorisinin güven değerlerini gösterir.",
+          "Çıktılar yalnızca etiket değil, kararın dayanaklarıyla birlikte sunulur."
         ]
       }
     ],
     "resultsEyebrow": "Deney sonuçları",
     "resultsTitle": "Test kümesinde elde edilen bulgular",
-    "resultsIntro": "Duygu görevi ana değerlendirme ekseni olarak raporlandı ve proje önerisindeki %85 doğruluk hedefi aşıldı.",
-    "emotionResultsTitle": "Duygu sınıflandırma görevi",
-    "emotionResultsText": "Happiness ve Sadness sınıflarında dengeli ayrım gücü elde edildi.",
+    "resultsIntro": "Qwen-selected test kümesinde (212 örnek) 4 sınıflı duygu sınıflandırması. Val makro F1 = 0,389 olan 8. epoch best checkpoint.",
+    "emotionResultsTitle": "4 sınıflı duygu sınıflandırması",
+    "emotionResultsText": "Mutlu, Üzgün, Öfkeli, Korku genelinde test seti sonuçları. Mutlu ve Korku sınıfları en yüksek F1 skorlarını elde etti (sırasıyla 0,48 ve 0,45).",
     "emotionMetrics": [
-      { "label": "Accuracy", "value": "0.9436" },
-      { "label": "Precision", "value": "0.9438" },
-      { "label": "Recall", "value": "0.9436" },
-      { "label": "F1", "value": "0.9435" }
+      { "label": "Doğruluk", "value": "0,4340" },
+      { "label": "Hassasiyet", "value": "0,4377" },
+      { "label": "Duyarlılık", "value": "0,4340" },
+      { "label": "F1 (makro)", "value": "0,4312" }
     ],
-    "genderResultsTitle": "Yardımcı cinsiyet görevi",
-    "genderResultsText": "Bu görev ana amaç değil; ortak temsil öğrenmesini güçlendiren yardımcı başlık olarak değerlendirilmiştir.",
+    "genderResultsTitle": "Sınıf bazında F1 skorları",
+    "genderResultsText": "212 örneğlik test setinde sınıf bazında F1 skorları. Her sınıfta yaklaşık 52–54 test örneği bulunmaktadır.",
     "genderMetrics": [
-      { "label": "Accuracy", "value": "0.7712" },
-      { "label": "Precision", "value": "0.7637" },
-      { "label": "Recall", "value": "0.7728" },
-      { "label": "F1", "value": "0.7658" }
+      { "label": "Mutlu", "value": "F1 0,48" },
+      { "label": "Üzgün", "value": "F1 0,40" },
+      { "label": "Öfkeli", "value": "F1 0,39" },
+      { "label": "Korku", "value": "F1 0,45" }
     ],
     "deliverablesTitle": "Ortaya konan sistem",
     "deliverables": [
-      "Eğitilmiş çok modlu model, en iyi ağırlıklar ve yeniden eğitim betikleri",
-      "Duygu ve cinsiyet için Grad-CAM görselleri ile token önem skorları üreten açıklanabilirlik katmanı",
-      "Görsel yükleme, güven skoru, açıklama ve ısı haritası döndüren FastAPI tabanlı servis katmanı",
-      "Görsel yükleme ve sonuç görüntüleme akışına sahip React tabanlı web arayüzü ve masaüstü prototip yaklaşımı"
+      "Eğitilmiş 4 sınıflı duygu modeli (8. epochta best.pt, val makro F1 = 0,389) ve tekrar üretilebilir eğitim betikleri",
+      "dataset_qwen_selected için manifest oluşturucu ve stratified bölme pipeline'ı",
+      "Tahminler, güven skorları, açıklamalar ve Grad-CAM ısı haritaları döndüren FastAPI servis katmanı",
+      "React tabanlı web arayüzü ve kullanıcıya yönelik etkileşim için masaüstü prototip yaklaşımı"
     ],
     "limitationsTitle": "Sınırlılıklar ve etik notlar",
     "limitations": [
-      "Veri seti yalnızca iki duygu sınıfı ile sınırlandırılmıştır.",
-      "Model değerlendirmesi tek veri seti üzerinde yapılmıştır.",
-      "Yardımcı cinsiyet görevi etik açıdan dikkatle ele alınması gereken bir bileşendir.",
+      "Veri seti görece küçüktür (1.408 örnek); bu durum görülmemiş çizimlere genellemeyi sınırlar.",
+      "%43,4 test doğruluğu, rastgele tahminin (%25) üzerinde anlamlı bir öğrenme olduğuna işaret eder; ancak iyileştirme için önemli alan bulunmaktadır.",
+      "Model değerlendirmesi tek veri seti üzerinde yapılmıştır; dış doğrulama gerekmektedir.",
       "Sistem klinik tanı amacıyla kullanılmamalıdır."
     ],
     "futureWorkTitle": "Gelecek çalışmalar",

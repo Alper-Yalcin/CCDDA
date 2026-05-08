@@ -8,10 +8,12 @@ def get_image_transforms(
     """
     Train ve val/test için iki ayrı transform döndürür.
     """
+    # NOT: HorizontalFlip cikarildi. Cocuk cizimlerinde sol/sag yerlesim
+    # klinik anlam tasiyor (CV/klinik raporlari).
     train_transform = transforms.Compose([
         transforms.Resize((image_size, image_size)),
-        transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandomRotation(degrees=10),
+        transforms.ColorJitter(brightness=0.15, contrast=0.15),
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.485, 0.456, 0.406],
