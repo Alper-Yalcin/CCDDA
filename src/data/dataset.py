@@ -46,6 +46,7 @@ class SigLIPDrawingDataset(Dataset):
         self.feature_lookup: Optional[pd.DataFrame] = None
         if features_csv is not None and Path(features_csv).is_file():
             feat_df = pd.read_csv(features_csv).set_index("sample_id")
+            feat_df = feat_df[~feat_df.index.duplicated(keep="first")]
             self.feature_lookup = feat_df
 
     def __len__(self) -> int:

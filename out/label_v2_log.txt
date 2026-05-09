@@ -1,0 +1,16 @@
+[init] device=cuda  ogretmen=out\model_labeled_run\checkpoints\best.pt
+[model] val_macro_f1=0.6007
+[data] 10860 goruntu
+[score] Skorlaniyor...
+  1280/10860
+  2560/10860
+  3840/10860
+  5120/10860
+  6400/10860
+  7680/10860
+  8960/10860
+  10240/10860
+
+[save] out\labels_model_v2.csv
+Tahmin dagilimi: {'Happy': 3809, 'Sad': 2953, 'Fear': 2101, 'Angry': 1997}
+Guven ort: 0.776  >=0.65: 8032  >=0.70: 7397

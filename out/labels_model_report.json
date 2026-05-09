@@ -1,0 +1,16 @@
+{
+  "total": 10860,
+  "pred_dist": {
+    "Happy": 4673,
+    "Sad": 3517,
+    "Fear": 1351,
+    "Angry": 1319
+  },
+  "orig_dist": {
+    "Happiness": 5430,
+    "Sadness": 5430
+  },
+  "conf_mean": 0.7034644878700952,
+  "conf_over_70": 5737,
+  "conf_over_80": 4015
+}

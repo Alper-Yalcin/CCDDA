@@ -1,0 +1,20 @@
+{
+  "qwen_samples": 1408,
+  "kido_selected": 2737,
+  "kido_per_label": {
+    "Angry": 452,
+    "Fear": 285,
+    "Happy": 1000,
+    "Sad": 1000
+  },
+  "total_combined": 4145,
+  "train_total": 3721,
+  "val_total": 212,
+  "test_total": 212,
+  "train_class_dist": {
+    "Happy": 1245,
+    "Sad": 1245,
+    "Angry": 701,
+    "Fear": 530
+  }
+}

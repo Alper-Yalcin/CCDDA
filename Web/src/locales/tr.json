@@ -14,7 +14,7 @@
     "title": "Çocuk çizimlerinden açıklanabilir çok modlu duygu analizi",
     "subtitle": "Bu prototip, Qwen-selected veri seti üzerinden eğitilen EfficientNet-B0 tabanlı bir yapıyla çocuk çizimlerini değerlendirir. Çizimleri dört duygu kategorisine — Mutlu, Üzgün, Öfkeli ve Korku — sınıflandırır ve uzman değerlendirmesini destekleyen açıklanabilir karar destek çıktıları sunar.",
     "highlights": [
-      "Qwen-selected veri setinden 1.408 çizim üzerinde 4 sınıflı (Mutlu/Üzgün/Öfkeli/Korku) duygu sınıflandırıcı",
+      "2.696 çizim (Qwen-selected + SigLIP filtrelenmiş) üzerinde 4 sınıflı (Mutlu/Üzgün/Öfkeli/Korku) duygu sınıflandırıcı",
       "Grad-CAM ve klinik özellik skorları ile açıklanabilir çıktı üretimi",
       "FastAPI servisi ve React arayüzü ile araştırma prototipi sunumu"
     ],
@@ -32,8 +32,8 @@
       "EfficientNet-B0 ve BERTurk çıktıları birleştirilir; duygu ve yardımcı cinsiyet başlıkları hesaplanır."
     ],
     "panelFacts": [
-      { "label": "Test doğruluğu", "value": "%43,40" },
-      { "label": "Makro F1", "value": "%43,12" },
+      { "label": "Test doğruluğu", "value": "%44,81" },
+      { "label": "Makro F1", "value": "%44,32" },
       { "label": "4 sınıf", "value": "M/Ü/Ö/K" }
     ],
     "quickCardOneLabel": "Model omurgası",
@@ -42,24 +42,24 @@
     "quickCardTwoText": "Grad-CAM ısı haritaları ve token önem skorları model kararını saydamlaştırır.",
     "stats": [
       {
-        "value": "1.408",
+        "value": "3.120",
         "label": "Toplam örnek",
-        "note": "Qwen-selected veri setinden 4 duygu sınıfına ait çizimler."
+        "note": "1.408 Qwen-selected + 1.712 SigLIP filtrelenmiş çizim (sınıf başı 428)."
       },
       {
-        "value": "984 / 212 / 212",
+        "value": "2.696 / 212 / 212",
         "label": "Eğitim / doğrulama / test",
-        "note": "Tekrar üretilebilirlik için sabit seed 42 ile %70/%15/%15 stratified bölme."
+        "note": "Eğitim seti SigLIP verisiyle genişletildi; doğrulama ve test orijinal 212'şer Qwen örneği."
       },
       {
         "value": "4 sınıf",
         "label": "Duygu kategorileri",
-        "note": "Mutlu, Üzgün, Öfkeli, Korku — bölme öncesi her sınıfta ~350 örnek."
+        "note": "Mutlu, Üzgün, Öfkeli, Korku — eğitim setinde her sınıfta ~673 örnek."
       },
       {
-        "value": "%43,40",
+        "value": "%44,81",
         "label": "Test doğruluğu",
-        "note": "EfficientNet-B0 omurgası, en iyi checkpoint 8. epochta (val makro F1 = 0,389)."
+        "note": "EfficientNet-B0 omurgası, en iyi checkpoint 7. epochta (val makro F1 = 0,394)."
       }
     ],
     "workflowEyebrow": "Nasıl çalışır",
@@ -164,13 +164,13 @@
       "Sonuçları kullanıcıya sunabilecek bir prototip sistem ortaya koymak"
     ],
     "dataTitle": "Veri seti ve hazırlık süreci",
-    "dataIntro": "Projede Qwen-selected veri seti (dataset_qwen_selected) kullanılmıştır. Görüntüler dört dengeli duygu kategorisine ayarlanmış ve tekrar üretilebilir stratified bir pipeline ile eğitim, doğrulama ve test kümelerine bölünmüştür.",
+    "dataIntro": "Projede Qwen-selected veri seti (dataset_qwen_selected) birincil kaynak olarak kullanılmış; SigLIP filtrelenmiş çizimler (Emotion_SigLIP_4Class_Filtered_045) ile genişletilmiştir.",
     "dataPoints": [
-      "4 duygu sınıfında toplam 1.408 örnek kullanılmıştır.",
-      "Sınıf dağılımı: Öfkeli 357, Mutlu 350, Üzgün 350, Korku 351 — neredeyse mükemmel denge.",
-      "Stratified %70/%15/%15 bölme: 984 eğitim, 212 doğrulama, 212 test (seed 42).",
+      "Toplam 3.120 örnek: 1.408 Qwen-selected + 1.712 SigLIP filtrelenmiş (sınıf başı 428).",
+      "Qwen-selected sınıf dağılımı: Öfkeli 357, Mutlu 350, Üzgün 350, Korku 351 — neredeyse mükemmel denge.",
+      "Eğitim seti: 2.696 örnek (~673/sınıf); doğrulama: 212; test: 212 (Qwen originals).",
       "Duygu sınıfları: Mutlu, Üzgün, Öfkeli, Korku — 4 sınıflı sınıflandırma görevi.",
-      "Yalnızca görüntü tabanlı pipeline; bu eğitim çalışmasında yardımcı cinsiyet görevi kullanılmamıştır."
+      "SigLIP verisi, güven skoru ≥ 0,45 ön filtrelemesiyle klasör etiketleri doğrudan kullanılarak eklendi."
     ],
     "methodologyTitle": "Yöntem ve mimari",
     "methodologyIntro": "Rapor, çok modlu ve çok görevli mimariyi dört ana başlık altında tanımlamaktadır.",
@@ -196,10 +196,10 @@
       {
         "title": "Eğitim ayarları",
         "items": [
-          "40 epocha kadar, batch size 32, öğrenme oranı 1e-4, erken durdurma toleransı 8.",
-          "AdamW optimizer, weight decay 1e-4; kosinüs azaltma LR programı.",
-          "Sınıf başına ağırlıklı çapraz entropi kaybı; seed 42 sabit.",
-          "En iyi checkpoint doğrulama makro F1'e göre seçildi (8. epochta val F1 = 0,389)."
+          "60 epocha kadar, batch size 32, öğrenme oranı 8e-5, erken durdurma toleransı 12.",
+          "AdamW optimizer, weight decay 2e-4; kosinüs azaltma LR programı.",
+          "Etiket düzleştirme 0,10 ile ağırlıklı çapraz entropi kaybı; seed 42 sabit.",
+          "En iyi checkpoint doğrulama makro F1'e göre seçildi (7. epochta val F1 = 0,394)."
         ]
       },
       {
@@ -213,34 +213,34 @@
     ],
     "resultsEyebrow": "Deney sonuçları",
     "resultsTitle": "Test kümesinde elde edilen bulgular",
-    "resultsIntro": "Qwen-selected test kümesinde (212 örnek) 4 sınıflı duygu sınıflandırması. Val makro F1 = 0,389 olan 8. epoch best checkpoint.",
+    "resultsIntro": "Qwen-selected test kümesinde (212 örnek) 4 sınıflı duygu sınıflandırması. Genişletilmiş eğitim, 7. epochta val makro F1 = 0,394 ile en iyi checkpoint.",
     "emotionResultsTitle": "4 sınıflı duygu sınıflandırması",
-    "emotionResultsText": "Mutlu, Üzgün, Öfkeli, Korku genelinde test seti sonuçları. Mutlu ve Korku sınıfları en yüksek F1 skorlarını elde etti (sırasıyla 0,48 ve 0,45).",
+    "emotionResultsText": "Mutlu, Üzgün, Öfkeli, Korku genelinde test seti sonuçları. Mutlu en yüksek F1 skorunu (0,55) elde etti.",
     "emotionMetrics": [
-      { "label": "Doğruluk", "value": "0,4340" },
-      { "label": "Hassasiyet", "value": "0,4377" },
-      { "label": "Duyarlılık", "value": "0,4340" },
-      { "label": "F1 (makro)", "value": "0,4312" }
+      { "label": "Doğruluk", "value": "0,4481" },
+      { "label": "Hassasiyet", "value": "0,4485" },
+      { "label": "Duyarlılık", "value": "0,4486" },
+      { "label": "F1 (makro)", "value": "0,4432" }
     ],
     "genderResultsTitle": "Sınıf bazında F1 skorları",
     "genderResultsText": "212 örneğlik test setinde sınıf bazında F1 skorları. Her sınıfta yaklaşık 52–54 test örneği bulunmaktadır.",
     "genderMetrics": [
-      { "label": "Mutlu", "value": "F1 0,48" },
-      { "label": "Üzgün", "value": "F1 0,40" },
-      { "label": "Öfkeli", "value": "F1 0,39" },
-      { "label": "Korku", "value": "F1 0,45" }
+      { "label": "Mutlu", "value": "F1 0,55" },
+      { "label": "Üzgün", "value": "F1 0,41" },
+      { "label": "Öfkeli", "value": "F1 0,35" },
+      { "label": "Korku", "value": "F1 0,46" }
     ],
     "deliverablesTitle": "Ortaya konan sistem",
     "deliverables": [
-      "Eğitilmiş 4 sınıflı duygu modeli (8. epochta best.pt, val makro F1 = 0,389) ve tekrar üretilebilir eğitim betikleri",
-      "dataset_qwen_selected için manifest oluşturucu ve stratified bölme pipeline'ı",
+      "Eğitilmiş 4 sınıflı duygu modeli (7. epochta best.pt, val makro F1 = 0,394) ve tekrar üretilebilir eğitim betikleri",
+      "Manifest oluşturucu, SigLIP veri genişletme pipeline'ı ve dataset_qwen_selected için stratified bölme",
       "Tahminler, güven skorları, açıklamalar ve Grad-CAM ısı haritaları döndüren FastAPI servis katmanı",
       "React tabanlı web arayüzü ve kullanıcıya yönelik etkileşim için masaüstü prototip yaklaşımı"
     ],
     "limitationsTitle": "Sınırlılıklar ve etik notlar",
     "limitations": [
-      "Veri seti görece küçüktür (1.408 örnek); bu durum görülmemiş çizimlere genellemeyi sınırlar.",
-      "%43,4 test doğruluğu, rastgele tahminin (%25) üzerinde anlamlı bir öğrenme olduğuna işaret eder; ancak iyileştirme için önemli alan bulunmaktadır.",
+      "Veri seti görece küçüktür (2.696 eğitim örneği); bu durum görülmemiş çizimlere genellemeyi sınırlar.",
+      "%44,81 test doğruluğu, rastgele tahminin (%25) üzerinde anlamlı bir öğrenme olduğuna işaret eder; ancak iyileştirme için önemli alan bulunmaktadır.",
       "Model değerlendirmesi tek veri seti üzerinde yapılmıştır; dış doğrulama gerekmektedir.",
       "Sistem klinik tanı amacıyla kullanılmamalıdır."
     ],

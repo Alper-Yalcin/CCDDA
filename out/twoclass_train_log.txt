@@ -1,0 +1,40 @@
+[init] device=cuda  2-sinifli model (Positive/Negative)
+[data] train=9228  val=816  test=816
+  train dist: {'Positive': 4614, 'Negative': 4614}
+  val   dist: {'Positive': 408, 'Negative': 408}
+[class_weights] [1.0, 1.0]
+
+[train] max_epochs=60  patience=12
+[01/60] tr_f1=0.5961  va_f1=0.6297  (112s) * BEST
+[02/60] tr_f1=0.6664  va_f1=0.6373  (227s) * BEST
+[03/60] tr_f1=0.6918  va_f1=0.6747  (339s) * BEST
+[04/60] tr_f1=0.7033  va_f1=0.6648  (453s)
+[05/60] tr_f1=0.7089  va_f1=0.7132  (570s) * BEST
+[06/60] tr_f1=0.7256  va_f1=0.6997  (688s)
+[07/60] tr_f1=0.7385  va_f1=0.6835  (804s)
+[08/60] tr_f1=0.7324  va_f1=0.6899  (920s)
+[09/60] tr_f1=0.7520  va_f1=0.6898  (1036s)
+[10/60] tr_f1=0.7608  va_f1=0.6850  (1120s)
+[11/60] tr_f1=0.7620  va_f1=0.6814  (1202s)
+[12/60] tr_f1=0.7713  va_f1=0.6818  (1284s)
+[13/60] tr_f1=0.7783  va_f1=0.7032  (1365s)
+[14/60] tr_f1=0.7819  va_f1=0.6923  (1448s)
+[15/60] tr_f1=0.7838  va_f1=0.6933  (1529s)
+[16/60] tr_f1=0.7964  va_f1=0.6985  (1611s)
+[17/60] tr_f1=0.8015  va_f1=0.6936  (1693s)
+[early stop] epoch 17
+
+[save] val_macro_f1=0.7132
+
+=== TEST (816 ornek, Emotion/test 2. yarisi) ===
+Accuracy: 0.7402  Precision: 0.7404  Recall: 0.7402  F1: 0.7401
+              precision    recall  f1-score   support
+
+    Positive       0.75      0.73      0.74       408
+    Negative       0.73      0.75      0.74       408
+
+    accuracy                           0.74       816
+   macro avg       0.74      0.74      0.74       816
+weighted avg       0.74      0.74      0.74       816
+
+[save] out\twoclass_run/test_results.json

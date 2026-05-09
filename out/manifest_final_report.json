@@ -1,0 +1,17 @@
+{
+  "total": 5763,
+  "train": 5339,
+  "val": 212,
+  "test": 212,
+  "train_class_dist": {
+    "Happy": 2000,
+    "Sad": 1922,
+    "Angry": 744,
+    "Fear": 673
+  },
+  "train_source_dist": {
+    "kido": 2737,
+    "siglip_pseudo": 1618,
+    "qwen": 984
+  }
+}

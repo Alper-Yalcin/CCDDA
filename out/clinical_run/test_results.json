@@ -1,0 +1,17 @@
+{
+  "accuracy": 0.3632075471698113,
+  "precision": 0.34985049400841317,
+  "recall": 0.3637954899747352,
+  "macro_f1": 0.35018036580536577,
+  "per_class_f1": {
+    "Happy": 0.5238095238095238,
+    "Sad": 0.34234234234234234,
+    "Angry": 0.2708333333333333,
+    "Fear": 0.26373626373626374
+  },
+  "best_val_macro_f1": 0.40979715485160134,
+  "train_samples": 984,
+  "val_samples": 212,
+  "test_samples": 212,
+  "features_csv": "out\\features_qwen.csv"
+}

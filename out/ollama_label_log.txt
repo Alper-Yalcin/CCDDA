@@ -1,0 +1,5 @@
+[init] 10860 goruntu  model=qwen2.5vl:7b
+[resume] 700 goruntu zaten islendi
+  [800/10860] failed=0  rate=0.04/s  ETA=74.0h
+  [900/10860] failed=0  rate=0.02/s  ETA=146.8h
+  [1000/10860] failed=0  rate=0.01/s  ETA=218.4h

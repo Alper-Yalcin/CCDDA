@@ -1,0 +1,29 @@
+{
+  "total": 2517,
+  "train": 2093,
+  "val": 212,
+  "test": 212,
+  "sources": {
+    "qwen": 1408,
+    "kaggle": 702,
+    "newarts2": 407
+  },
+  "train_class_dist": {
+    "Sad": 532,
+    "Fear": 528,
+    "Angry": 521,
+    "Happy": 512
+  },
+  "val_class_dist": {
+    "Angry": 54,
+    "Fear": 53,
+    "Sad": 53,
+    "Happy": 52
+  },
+  "test_class_dist": {
+    "Angry": 54,
+    "Fear": 53,
+    "Happy": 53,
+    "Sad": 52
+  }
+}

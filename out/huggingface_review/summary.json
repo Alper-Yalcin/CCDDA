@@ -1,0 +1,236 @@
+{
+  "sample_count": 12,
+  "per_category_sampled": {
+    "나무": 12
+  },
+  "mean_saturation_avg": 0.0838103230794271,
+  "p95_saturation_avg": 0.0,
+  "gray_pixel_fraction_avg": 0.9776441446940103,
+  "mean_channel_diff_avg": 0.11892740885416665,
+  "nonwhite_fraction_avg": 0.05178212483723957,
+  "sizes": [
+    [
+      "(1280, 1280)",
+      12
+    ]
+  ],
+  "examples": [
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00013",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.0294403076171875,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.052830810546875,
+      "gray_pixel_fraction": 0.98861572265625,
+      "nonwhite_fraction": 0.0418804931640625
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00022",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.0991583251953125,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.15458251953125,
+      "gray_pixel_fraction": 0.9687579345703125,
+      "nonwhite_fraction": 0.049952392578125
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00023",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.154090576171875,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.172801513671875,
+      "gray_pixel_fraction": 0.968602294921875,
+      "nonwhite_fraction": 0.0630682373046875
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00040",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.020751953125,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.0374169921875,
+      "gray_pixel_fraction": 0.9920819091796875,
+      "nonwhite_fraction": 0.0324072265625
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00051",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.080361328125,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.11049072265625,
+      "gray_pixel_fraction": 0.977437744140625,
+      "nonwhite_fraction": 0.060816650390625
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00064",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.10880615234375,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.1187109375,
+      "gray_pixel_fraction": 0.979312744140625,
+      "nonwhite_fraction": 0.0322503662109375
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00065",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.078582763671875,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.110743408203125,
+      "gray_pixel_fraction": 0.9783514404296875,
+      "nonwhite_fraction": 0.05333251953125
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00124",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.0254669189453125,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.0450146484375,
+      "gray_pixel_fraction": 0.990772705078125,
+      "nonwhite_fraction": 0.0514422607421875
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00148",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.0732745361328125,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.11355712890625,
+      "gray_pixel_fraction": 0.9776092529296875,
+      "nonwhite_fraction": 0.0521142578125
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00175",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.11526123046875,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.183203125,
+      "gray_pixel_fraction": 0.9635028076171875,
+      "nonwhite_fraction": 0.0670086669921875
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00182",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.0860809326171875,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.13724853515625,
+      "gray_pixel_fraction": 0.97232177734375,
+      "nonwhite_fraction": 0.0664801025390625
+    },
+    {
+      "file": "train-00000-of-00007.parquet",
+      "category": "나무",
+      "category_en": "나무",
+      "age": "10",
+      "gender": "남",
+      "id": "00188",
+      "size": [
+        1280,
+        1280
+      ],
+      "mode": "RGB",
+      "mean_saturation": 0.1344488525390625,
+      "p95_saturation": 0.0,
+      "mean_channel_diff": 0.190528564453125,
+      "gray_pixel_fraction": 0.9743634033203125,
+      "nonwhite_fraction": 0.05063232421875
+    }
+  ],
+  "contact_sheet": "out/huggingface_review\\sample_contact_sheet.jpg"
+}

@@ -1,0 +1,17 @@
+{
+  "accuracy": 0.44339622641509435,
+  "precision": 0.46847759067908323,
+  "recall": 0.44347349889802723,
+  "macro_f1": 0.45076107846863267,
+  "per_class_f1": {
+    "Happy": 0.6086956521739131,
+    "Sad": 0.3865546218487395,
+    "Angry": 0.4339622641509434,
+    "Fear": 0.37383177570093457
+  },
+  "best_val_macro_f1": 0.46235793167841843,
+  "backbone": "openai/clip-vit-base-patch32",
+  "train_samples": 2696,
+  "val_samples": 212,
+  "test_samples": 212
+}

@@ -14,7 +14,7 @@
     "title": "Explainable multimodal emotion analysis from children's drawings",
     "subtitle": "This prototype evaluates children's drawings with an EfficientNet-B0 based architecture trained on the Qwen-selected dataset. It classifies drawings into four emotion categories — Happy, Sad, Angry, and Fear — and provides explainable decision-support outputs to assist expert review.",
     "highlights": [
-      "A 4-class emotion classifier (Happy / Sad / Angry / Fear) trained on 1,408 Qwen-selected drawings",
+      "A 4-class emotion classifier (Happy / Sad / Angry / Fear) trained on 2,696 drawings (Qwen-selected + SigLIP-filtered)",
       "Explainable outputs with Grad-CAM and clinical feature scoring",
       "A research prototype delivered through a FastAPI service and React interface"
     ],
@@ -32,8 +32,8 @@
       "EfficientNet-B0 and BERTurk outputs are fused, then emotion and auxiliary gender heads are evaluated."
     ],
     "panelFacts": [
-      { "label": "Test accuracy", "value": "43.40%" },
-      { "label": "Macro F1", "value": "43.12%" },
+      { "label": "Test accuracy", "value": "44.81%" },
+      { "label": "Macro F1", "value": "44.32%" },
       { "label": "4 classes", "value": "H/S/A/F" }
     ],
     "quickCardOneLabel": "Model backbone",
@@ -42,24 +42,24 @@
     "quickCardTwoText": "Grad-CAM heatmaps and token importance scores make model decisions more transparent.",
     "stats": [
       {
-        "value": "1,408",
+        "value": "3,120",
         "label": "Total samples",
-        "note": "Drawings curated from the Qwen-selected dataset across 4 emotion classes."
+        "note": "1,408 Qwen-selected drawings plus 1,712 SigLIP-filtered drawings (428 per class)."
       },
       {
-        "value": "984 / 212 / 212",
+        "value": "2,696 / 212 / 212",
         "label": "Train / val / test",
-        "note": "Stratified 70 / 15 / 15 split with fixed seed 42 for reproducibility."
+        "note": "Train expanded with SigLIP data; val and test remain the original 212 Qwen-selected samples each."
       },
       {
         "value": "4 classes",
         "label": "Emotion categories",
-        "note": "Happy, Sad, Angry, Fear — balanced at ~350 samples each before splitting."
+        "note": "Happy, Sad, Angry, Fear — balanced at ~673 training samples each."
       },
       {
-        "value": "43.40%",
+        "value": "44.81%",
         "label": "Test accuracy",
-        "note": "EfficientNet-B0 backbone, best checkpoint at epoch 8 (val macro F1 = 0.389)."
+        "note": "EfficientNet-B0 backbone, best checkpoint at epoch 7 (val macro F1 = 0.394)."
       }
     ],
     "workflowEyebrow": "How it works",
@@ -164,13 +164,13 @@
       "Deliver a prototype system that presents the results to users"
     ],
     "dataTitle": "Dataset and preparation pipeline",
-    "dataIntro": "The project used the Qwen-selected dataset (dataset_qwen_selected). Images were curated into four balanced emotion categories and split into train, validation, and test sets using a reproducible stratified pipeline.",
+    "dataIntro": "The project used the Qwen-selected dataset (dataset_qwen_selected) as the primary source, expanded with SigLIP-filtered drawings (Emotion_SigLIP_4Class_Filtered_045). Images were curated into four balanced emotion categories for training.",
     "dataPoints": [
-      "A total of 1,408 samples were used across 4 emotion classes.",
-      "Class distribution: Angry 357, Happy 350, Sad 350, Fear 351 — near-perfectly balanced.",
-      "Stratified 70/15/15 split: 984 training, 212 validation, 212 test samples (seed 42).",
+      "A total of 3,120 samples: 1,408 Qwen-selected + 1,712 SigLIP-filtered (428 per class).",
+      "Qwen-selected class distribution: Angry 357, Happy 350, Sad 350, Fear 351 — near-perfectly balanced.",
+      "Train set: 2,696 samples (~673 per class); val: 212; test: 212 (Qwen originals preserved).",
       "Emotion classes: Happy, Sad, Angry, Fear — a 4-class classification task.",
-      "Image-only pipeline; no auxiliary gender task in this training run."
+      "Image-only pipeline; SigLIP data added with folder labels (confidence ≥ 0.45 pre-filtered)."
     ],
     "methodologyTitle": "Methodology and architecture",
     "methodologyIntro": "The report describes the multimodal and multi-task design across four main areas.",
@@ -196,10 +196,10 @@
       {
         "title": "Training setup",
         "items": [
-          "Up to 40 epochs, batch size 32, learning rate 1e-4, early stopping patience 8.",
-          "AdamW optimizer with weight decay 1e-4; cosine annealing LR schedule.",
-          "Weighted cross-entropy loss per class; random seed fixed at 42.",
-          "Best checkpoint selected by validation macro F1 (best at epoch 8, val F1 = 0.389)."
+          "Up to 60 epochs, batch size 32, learning rate 8e-5, early stopping patience 12.",
+          "AdamW optimizer with weight decay 2e-4; cosine annealing LR schedule.",
+          "Weighted cross-entropy loss (label smoothing 0.10); random seed fixed at 42.",
+          "Best checkpoint selected by validation macro F1 (best at epoch 7, val F1 = 0.394)."
         ]
       },
       {
@@ -213,27 +213,27 @@
     ],
     "resultsEyebrow": "Experimental results",
     "resultsTitle": "Findings on the test set",
-    "resultsIntro": "4-class emotion classification on the Qwen-selected test set (212 samples). Best checkpoint from epoch 8 with validation macro F1 = 0.389.",
+    "resultsIntro": "4-class emotion classification on the Qwen-selected test set (212 samples). Best checkpoint from epoch 7 (expanded training) with validation macro F1 = 0.394.",
     "emotionResultsTitle": "4-class emotion classification",
-    "emotionResultsText": "Test set results across Happy, Sad, Angry, Fear. Happy and Fear classes achieved the highest F1 scores (0.48 and 0.45 respectively).",
+    "emotionResultsText": "Test set results across Happy, Sad, Angry, Fear. Happy achieved the highest F1 score (0.55), followed by Fear (0.46).",
     "emotionMetrics": [
-      { "label": "Accuracy", "value": "0.4340" },
-      { "label": "Precision", "value": "0.4377" },
-      { "label": "Recall", "value": "0.4340" },
-      { "label": "F1 (macro)", "value": "0.4312" }
+      { "label": "Accuracy", "value": "0.4481" },
+      { "label": "Precision", "value": "0.4485" },
+      { "label": "Recall", "value": "0.4486" },
+      { "label": "F1 (macro)", "value": "0.4432" }
     ],
     "genderResultsTitle": "Per-class F1 scores",
     "genderResultsText": "Individual class F1 scores on the 212-sample test set. Each class has approximately 52–54 test examples.",
     "genderMetrics": [
-      { "label": "Happy", "value": "F1 0.48" },
-      { "label": "Sad", "value": "F1 0.40" },
-      { "label": "Angry", "value": "F1 0.39" },
-      { "label": "Fear", "value": "F1 0.45" }
+      { "label": "Happy", "value": "F1 0.55" },
+      { "label": "Sad", "value": "F1 0.41" },
+      { "label": "Angry", "value": "F1 0.35" },
+      { "label": "Fear", "value": "F1 0.46" }
     ],
     "deliverablesTitle": "Integrated system delivered",
     "deliverables": [
-      "A trained 4-class emotion model (best.pt at epoch 8, val macro F1 = 0.389) with reproducible training scripts",
-      "Manifest builder and stratified split pipeline for dataset_qwen_selected",
+      "A trained 4-class emotion model (best.pt at epoch 7, val macro F1 = 0.394) with reproducible training scripts",
+      "Manifest builder, SigLIP data expansion pipeline, and stratified split pipeline for dataset_qwen_selected",
       "A FastAPI service layer that returns predictions, confidence scores, explanations, and Grad-CAM heatmaps",
       "A React-based web interface and desktop prototype approach for user-facing interaction"
     ],

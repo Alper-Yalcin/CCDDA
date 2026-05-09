@@ -1,0 +1,16 @@
+{
+  "siglip": {
+    "Angry": 43,
+    "Fear": 143,
+    "Happy": 1200,
+    "Sad": 677
+  },
+  "siglip_total": 2063,
+  "pseudo_total": 2063,
+  "pseudo_class_dist": {
+    "Happy": 1200,
+    "Sad": 677,
+    "Fear": 143,
+    "Angry": 43
+  }
+}

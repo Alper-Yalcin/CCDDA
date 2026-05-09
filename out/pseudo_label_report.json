@@ -1,0 +1,18 @@
+{
+  "threshold": 0.7,
+  "siglip_total": 8345,
+  "siglip_scored": 8345,
+  "accepted": 1545,
+  "rejected": 6800,
+  "class_distribution_accepted": {
+    "Angry": 69,
+    "Fear": 8,
+    "Sad": 239,
+    "Happy": 1229
+  },
+  "original_qwen_samples": 1408,
+  "total_expanded_samples": 2953,
+  "train_samples": 2529,
+  "val_samples": 212,
+  "test_samples": 212
+}
