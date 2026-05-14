@@ -1,0 +1,36 @@
+{
+  "threshold": 0.75,
+  "max_per_class": 6000,
+  "total_rows": 23396,
+  "pseudo_selected": 22287,
+  "split_dist": {
+    "test": {
+      "Fear": 43,
+      "Sad": 43,
+      "Angry": 41,
+      "Happy": 40
+    },
+    "train": {
+      "Sad": 6201,
+      "Angry": 6190,
+      "Happy": 6187,
+      "Fear": 4485
+    },
+    "val": {
+      "Sad": 43,
+      "Fear": 42,
+      "Angry": 41,
+      "Happy": 40
+    }
+  },
+  "pseudo_dist": {
+    "Happy": 6000,
+    "Sad": 6000,
+    "Angry": 6000,
+    "Fear": 4287
+  },
+  "pseudo_source_dist": {
+    "huggingface": 13726,
+    "dataset_images": 8561
+  }
+}

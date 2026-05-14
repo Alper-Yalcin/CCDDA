@@ -1,0 +1,139 @@
+{
+  "k": 4,
+  "k_selection_silhouette": {},
+  "train_silhouette": 0.13953618705272675,
+  "rows": 240,
+  "split_cluster_counts": {
+    "test": {
+      "0": 12,
+      "1": 2,
+      "2": 42,
+      "3": 24
+    },
+    "train": {
+      "0": 22,
+      "1": 5,
+      "2": 31,
+      "3": 22
+    },
+    "val": {
+      "0": 11,
+      "1": 4,
+      "2": 44,
+      "3": 21
+    }
+  },
+  "label_cluster_counts": {
+    "Happy": {
+      "0": 13,
+      "1": 7,
+      "2": 71,
+      "3": 29
+    },
+    "Sad": {
+      "0": 32,
+      "1": 4,
+      "2": 46,
+      "3": 38
+    }
+  },
+  "feature_validity_mean": 0.9995370370370371,
+  "cluster_summaries": {
+    "0": {
+      "train_count": 22,
+      "label_dist": {
+        "Sad": 14,
+        "Happy": 8
+      },
+      "top_high_features": {
+        "top_mass_ratio": 1.0147207013684272,
+        "empty_space_ratio": 0.7567764606017727,
+        "warm_ratio": 0.6128628007300904,
+        "dominant_orientation_abs": 0.23157377548518315,
+        "sharp_angle_ratio": 0.03123145081501017,
+        "figure_integrity_proxy": -0.09332140424454267
+      },
+      "top_low_features": {
+        "bottom_mass_ratio": -1.0147207132494531,
+        "centroid_y_norm": -1.0034687493369103,
+        "stroke_darkness_std": -0.8705043273710423,
+        "unique_hue_count": -0.8667275356874444,
+        "bbox_area_ratio": -0.8457665176600963,
+        "fg_area_ratio": -0.7567764784818491
+      },
+      "mean_distance": 3.618175647475503
+    },
+    "1": {
+      "train_count": 5,
+      "label_dist": {
+        "Happy": 3,
+        "Sad": 2
+      },
+      "top_high_features": {
+        "skeleton_break_count_norm": 2.776723264721016,
+        "fg_area_ratio": 2.562739514327808,
+        "component_count_norm": 2.4469326637225826,
+        "dark_color_ratio": 1.8104806783743492,
+        "figure_integrity_proxy": 1.2045571480177824,
+        "bbox_area_ratio": 0.5382372919819101
+      },
+      "top_low_features": {
+        "empty_space_ratio": -2.562739541263842,
+        "dominant_orientation_abs": -0.518235940092331,
+        "unique_hue_count": -0.3136185162026937,
+        "centroid_y_norm": -0.08509319879408775,
+        "stroke_darkness_std": -0.08234411489527138,
+        "bottom_mass_ratio": -0.05474753000383077
+      },
+      "mean_distance": 4.429652881622315
+    },
+    "2": {
+      "train_count": 31,
+      "label_dist": {
+        "Happy": 19,
+        "Sad": 12
+      },
+      "top_high_features": {
+        "centroid_y_norm": 0.5612943385960755,
+        "bottom_mass_ratio": 0.5176212753109489,
+        "unique_hue_count": 0.46132272060783325,
+        "bbox_area_ratio": 0.4228871295744231,
+        "component_count_norm": 0.3696372553798009,
+        "fg_area_ratio": 0.2767878743141002
+      },
+      "top_low_features": {
+        "top_mass_ratio": -0.5176212629657218,
+        "warm_ratio": -0.5071636792209855,
+        "dominant_orientation_abs": -0.4578798518972449,
+        "figure_integrity_proxy": -0.44818151043131804,
+        "shading_ratio": -0.31966865895237534,
+        "empty_space_ratio": -0.2767878577998075
+      },
+      "mean_distance": 2.513173557096912
+    },
+    "3": {
+      "train_count": 22,
+      "label_dist": {
+        "Sad": 12,
+        "Happy": 10
+      },
+      "top_high_features": {
+        "shading_ratio": 1.07095110195648,
+        "stroke_darkness_std": 0.9603442399357981,
+        "stroke_darkness_mean": 0.8979662944049706,
+        "dominant_orientation_abs": 0.5314014567546461,
+        "figure_integrity_proxy": 0.45108690803008633,
+        "bottom_mass_ratio": 0.2977879003121671
+      },
+      "top_low_features": {
+        "component_count_norm": -0.546514258603369,
+        "skeleton_break_count_norm": -0.42369270920103574,
+        "top_mass_ratio": -0.2977879016585192,
+        "fg_area_ratio": -0.21568359767161258,
+        "centroid_x_norm": -0.19497418443733605,
+        "warm_ratio": 0.07182889418815432
+      },
+      "mean_distance": 3.4149416251616045
+    }
+  }
+}

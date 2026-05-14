@@ -1,0 +1,1 @@
+sample_id,image_path,sha256,source,width,height,label_a,label_id_a,confidence_a,label_b,label_id_b,confidence_b,label,label_id,confidence,reason,ok,teacher

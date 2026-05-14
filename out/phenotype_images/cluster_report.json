@@ -1,0 +1,139 @@
+{
+  "k": 4,
+  "k_selection_silhouette": {},
+  "train_silhouette": 0.136262446641922,
+  "rows": 10860,
+  "split_cluster_counts": {
+    "test": {
+      "0": 393,
+      "1": 355,
+      "2": 615,
+      "3": 269
+    },
+    "train": {
+      "0": 1792,
+      "1": 1895,
+      "2": 2877,
+      "3": 1279
+    },
+    "val": {
+      "0": 281,
+      "1": 343,
+      "2": 543,
+      "3": 218
+    }
+  },
+  "label_cluster_counts": {
+    "Happy": {
+      "0": 1104,
+      "1": 1046,
+      "2": 2213,
+      "3": 1067
+    },
+    "Sad": {
+      "0": 1362,
+      "1": 1547,
+      "2": 1822,
+      "3": 699
+    }
+  },
+  "feature_validity_mean": 0.9998158379373849,
+  "cluster_summaries": {
+    "0": {
+      "train_count": 1792,
+      "label_dist": {
+        "Sad": 993,
+        "Happy": 799
+      },
+      "top_high_features": {
+        "shading_ratio": 1.2597857718653198,
+        "stroke_darkness_mean": 1.091253386284459,
+        "stroke_darkness_std": 0.9887109803879957,
+        "dark_color_ratio": 0.6174398838359383,
+        "figure_integrity_proxy": 0.4601754801297809,
+        "warm_ratio": 0.45476483084236613
+      },
+      "top_low_features": {
+        "component_count_norm": -0.4172841074282303,
+        "skeleton_break_count_norm": -0.23908744647650662,
+        "top_mass_ratio": -0.1766127097124461,
+        "empty_space_ratio": -0.06468303356085096,
+        "dominant_orientation_abs": -0.05441744771022552,
+        "centroid_x_norm": 0.06412769383947027
+      },
+      "mean_distance": 3.6204116717646166
+    },
+    "1": {
+      "train_count": 1895,
+      "label_dist": {
+        "Sad": 1120,
+        "Happy": 775
+      },
+      "top_high_features": {
+        "top_mass_ratio": 0.9812975313970085,
+        "empty_space_ratio": 0.6693778177819835,
+        "dominant_orientation_abs": 0.5468522132558054,
+        "warm_ratio": 0.21383904860180727,
+        "figure_integrity_proxy": 0.03269151550346961,
+        "centroid_x_norm": -0.12622083925620597
+      },
+      "top_low_features": {
+        "bottom_mass_ratio": -0.9812975344816154,
+        "centroid_y_norm": -0.9595310137706956,
+        "fg_area_ratio": -0.6693778212526085,
+        "bbox_area_ratio": -0.6024229977822834,
+        "skeleton_break_count_norm": -0.5857974755609898,
+        "unique_hue_count": -0.5713444309516659
+      },
+      "mean_distance": 3.6988301029935045
+    },
+    "2": {
+      "train_count": 2877,
+      "label_dist": {
+        "Happy": 1570,
+        "Sad": 1307
+      },
+      "top_high_features": {
+        "centroid_y_norm": 0.6921400398345036,
+        "bottom_mass_ratio": 0.6911621169121179,
+        "empty_space_ratio": 0.2900143973682232,
+        "bbox_area_ratio": 0.15640202040483606,
+        "unique_hue_count": 0.09741555694821705,
+        "centroid_x_norm": -0.04701943336286305
+      },
+      "top_low_features": {
+        "top_mass_ratio": -0.6911621146032569,
+        "figure_integrity_proxy": -0.5417785560603425,
+        "shading_ratio": -0.5132642776614568,
+        "stroke_darkness_mean": -0.48181129393957844,
+        "stroke_darkness_std": -0.3084924840590341,
+        "warm_ratio": -0.29085156633272985
+      },
+      "mean_distance": 2.8635545377728007
+    },
+    "3": {
+      "train_count": 1279,
+      "label_dist": {
+        "Happy": 777,
+        "Sad": 502
+      },
+      "top_high_features": {
+        "skeleton_break_count_norm": 1.6673949014587401,
+        "component_count_norm": 1.567090342471426,
+        "fg_area_ratio": 1.5535030448448786,
+        "figure_integrity_proxy": 0.5254980637325734,
+        "bbox_area_ratio": 0.4432816169075719,
+        "top_mass_ratio": 0.34824437648236395
+      },
+      "top_low_features": {
+        "empty_space_ratio": -1.553503041269895,
+        "dominant_orientation_abs": -0.4973061195844396,
+        "stroke_darkness_std": -0.4416485360389775,
+        "bottom_mass_ratio": -0.3482443775808321,
+        "centroid_y_norm": -0.323467999102017,
+        "warm_ratio": -0.29867821337693956
+      },
+      "mean_distance": 3.175460984177474
+    }
+  }
+}

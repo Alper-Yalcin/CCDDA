@@ -1,0 +1,20 @@
+[
+  {
+    "threshold_tag": "consensus_3of3_ab075_c060",
+    "accuracy": 0.5748502994011976,
+    "precision": 0.636437908496732,
+    "recall": 0.5789882302892797,
+    "macro_f1": 0.5721447112264763,
+    "per_class_f1": {
+      "Happy": 0.8059701492537313,
+      "Sad": 0.3,
+      "Angry": 0.6956521739130435,
+      "Fear": 0.48695652173913045
+    },
+    "best_val_macro_f1": 0.575359005532135,
+    "best_phase": "p2",
+    "train_samples": 7980,
+    "val_samples": 166,
+    "test_samples": 167
+  }
+]

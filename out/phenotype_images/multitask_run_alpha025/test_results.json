@@ -1,0 +1,18 @@
+{
+  "accuracy": 0.727328431372549,
+  "precision": 0.727848901533112,
+  "recall": 0.727328431372549,
+  "macro_f1": 0.7271726280033495,
+  "per_class_f1": {
+    "Happy": 0.7336923997606224,
+    "Sad": 0.7206528562460766
+  },
+  "phenotype_accuracy": 0.8143382352941176,
+  "phenotype_macro_f1": 0.8197857911556253,
+  "best_val_emotion_macro_f1": 0.7427348393775463,
+  "best_phase": "p2",
+  "alpha": 0.25,
+  "train_samples": 7843,
+  "val_samples": 1385,
+  "test_samples": 1632
+}

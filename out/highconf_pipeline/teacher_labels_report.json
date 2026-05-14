@@ -1,0 +1,12 @@
+{
+  "total_labeled": 55660,
+  "pred_dist": {
+    "Angry": 19211,
+    "Sad": 15520,
+    "Happy": 10541,
+    "Fear": 10388
+  },
+  "conf_mean": 0.7305861047583864,
+  "conf_ge_085": 18786,
+  "conf_ge_075": 28314
+}

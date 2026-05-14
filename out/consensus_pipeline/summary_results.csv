@@ -1,0 +1,2 @@
+threshold_tag,accuracy,precision,recall,macro_f1,per_class_f1,best_val_macro_f1,best_phase,train_samples,val_samples,test_samples
+consensus_3of3_ab075_c060,0.5748502994011976,0.636437908496732,0.5789882302892797,0.5721447112264763,"{'Happy': 0.8059701492537313, 'Sad': 0.3, 'Angry': 0.6956521739130435, 'Fear': 0.48695652173913045}",0.575359005532135,p2,7980,166,167

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Phenotype Cluster Report</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; margin: 24px; color: #202124; }
+    h1 { margin-bottom: 4px; }
+    .meta { color: #5f6368; margin-bottom: 20px; }
+    img.scatter { max-width: 980px; width: 100%; border: 1px solid #ddd; }
+    section { border-top: 1px solid #ddd; padding-top: 18px; margin-top: 24px; }
+    .cols { display: grid; grid-template-columns: repeat(2, minmax(260px, 1fr)); gap: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    figure { margin: 0; border: 1px solid #ddd; padding: 6px; background: #fafafa; }
+    figure img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: white; }
+    figcaption { font-size: 11px; color: #555; overflow-wrap: anywhere; }
+    code { background: #f1f3f4; padding: 2px 4px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+  <h1>Clinical Phenotype Discovery</h1>
+  <div class="meta">
+    k=4, rows=240, train silhouette=0.14293165504932404,
+    projection=PCA
+  </div>
+  <img class="scatter" src="phenotype_report_assets/clusters_scatter.png">
+  <h2>Split Cluster Counts</h2>
+  <pre>{
+  &quot;train&quot;: {
+    &quot;0&quot;: 57,
+    &quot;1&quot;: 46,
+    &quot;2&quot;: 58,
+    &quot;3&quot;: 79
+  }
+}</pre>
+  
+        <section>
+          <h2>Cluster 0</h2>
+          <p><b>Train count:</b> 57
+             <b>Label dist:</b> {&quot;Sad&quot;: 21, &quot;Angry&quot;: 17, &quot;Fear&quot;: 12, &quot;Happy&quot;: 7}</p>
+          <div class="cols">
+            <div><h3>High features</h3><ul><li>empty_space_ratio: 0.97z</li><li>top_mass_ratio: 0.77z</li><li>dominant_orientation_abs: 0.23z</li><li>warm_ratio: 0.18z</li><li>centroid_x_norm: 0.11z</li><li>component_count_norm: -0.07z</li></ul></div>
+            <div><h3>Low features</h3><ul><li>fg_area_ratio: -0.97z</li><li>figure_integrity_proxy: -0.94z</li><li>shading_ratio: -0.90z</li><li>centroid_y_norm: -0.79z</li><li>bottom_mass_ratio: -0.77z</li><li>unique_hue_count: -0.72z</li></ul></div>
+          </div>
+          <div class="grid"><figure><img src='phenotype_report_assets/cluster_0_000_real_train_000169.jpg' loading='lazy'><figcaption>Sad<br>real_train_000169</figcaption></figure><figure><img src='phenotype_report_assets/cluster_0_001_real_train_000181.jpg' loading='lazy'><figcaption>Sad<br>real_train_000181</figcaption></figure><figure><img src='phenotype_report_assets/cluster_0_002_real_train_000154.jpg' loading='lazy'><figcaption>Fear<br>real_train_000154</figcaption></figure><figure><img src='phenotype_report_assets/cluster_0_003_real_train_000056.jpg' loading='lazy'><figcaption>Fear<br>real_train_000056</figcaption></figure></div>
+        </section>
+        
+        <section>
+          <h2>Cluster 1</h2>
+          <p><b>Train count:</b> 46
+             <b>Label dist:</b> {&quot;Happy&quot;: 23, &quot;Sad&quot;: 11, &quot;Fear&quot;: 8, &quot;Angry&quot;: 4}</p>
+          <div class="cols">
+            <div><h3>High features</h3><ul><li>bottom_mass_ratio: 1.31z</li><li>centroid_y_norm: 1.31z</li><li>empty_space_ratio: 0.43z</li><li>unique_hue_count: 0.20z</li><li>centroid_x_norm: 0.05z</li><li>stroke_darkness_std: -0.07z</li></ul></div>
+            <div><h3>Low features</h3><ul><li>top_mass_ratio: -1.31z</li><li>stroke_darkness_mean: -0.86z</li><li>shading_ratio: -0.78z</li><li>figure_integrity_proxy: -0.54z</li><li>dark_color_ratio: -0.52z</li><li>dominant_orientation_abs: -0.52z</li></ul></div>
+          </div>
+          <div class="grid"><figure><img src='phenotype_report_assets/cluster_1_000_real_train_000054.jpg' loading='lazy'><figcaption>Happy<br>real_train_000054</figcaption></figure><figure><img src='phenotype_report_assets/cluster_1_001_real_train_000129.jpg' loading='lazy'><figcaption>Happy<br>real_train_000129</figcaption></figure><figure><img src='phenotype_report_assets/cluster_1_002_real_train_000204.jpg' loading='lazy'><figcaption>Happy<br>real_train_000204</figcaption></figure><figure><img src='phenotype_report_assets/cluster_1_003_real_train_000073.jpg' loading='lazy'><figcaption>Happy<br>real_train_000073</figcaption></figure></div>
+        </section>
+        
+        <section>
+          <h2>Cluster 2</h2>
+          <p><b>Train count:</b> 58
+             <b>Label dist:</b> {&quot;Fear&quot;: 19, &quot;Sad&quot;: 16, &quot;Angry&quot;: 15, &quot;Happy&quot;: 8}</p>
+          <div class="cols">
+            <div><h3>High features</h3><ul><li>shading_ratio: 0.84z</li><li>stroke_darkness_mean: 0.71z</li><li>dark_color_ratio: 0.64z</li><li>stroke_darkness_std: 0.46z</li><li>dominant_orientation_abs: 0.44z</li><li>top_mass_ratio: 0.34z</li></ul></div>
+            <div><h3>Low features</h3><ul><li>skeleton_break_count_norm: -0.40z</li><li>unique_hue_count: -0.35z</li><li>bottom_mass_ratio: -0.34z</li><li>component_count_norm: -0.31z</li><li>centroid_y_norm: -0.28z</li><li>bbox_area_ratio: -0.25z</li></ul></div>
+          </div>
+          <div class="grid"><figure><img src='phenotype_report_assets/cluster_2_000_real_train_000116.jpg' loading='lazy'><figcaption>Fear<br>real_train_000116</figcaption></figure><figure><img src='phenotype_report_assets/cluster_2_001_real_train_000212.jpg' loading='lazy'><figcaption>Fear<br>real_train_000212</figcaption></figure><figure><img src='phenotype_report_assets/cluster_2_002_real_train_000043.jpg' loading='lazy'><figcaption>Sad<br>real_train_000043</figcaption></figure><figure><img src='phenotype_report_assets/cluster_2_003_real_train_000077.jpg' loading='lazy'><figcaption>Angry<br>real_train_000077</figcaption></figure></div>
+        </section>
+        
+        <section>
+          <h2>Cluster 3</h2>
+          <p><b>Train count:</b> 79
+             <b>Label dist:</b> {&quot;Fear&quot;: 22, &quot;Angry&quot;: 21, &quot;Sad&quot;: 21, &quot;Happy&quot;: 15}</p>
+          <div class="cols">
+            <div><h3>High features</h3><ul><li>fg_area_ratio: 1.10z</li><li>skeleton_break_count_norm: 0.92z</li><li>figure_integrity_proxy: 0.89z</li><li>unique_hue_count: 0.61z</li><li>shading_ratio: 0.48z</li><li>stroke_darkness_mean: 0.45z</li></ul></div>
+            <div><h3>Low features</h3><ul><li>empty_space_ratio: -1.10z</li><li>warm_ratio: -0.20z</li><li>dominant_orientation_abs: -0.19z</li><li>top_mass_ratio: -0.04z</li><li>centroid_x_norm: 0.00z</li><li>centroid_y_norm: 0.01z</li></ul></div>
+          </div>
+          <div class="grid"><figure><img src='phenotype_report_assets/cluster_3_000_real_train_000214.jpg' loading='lazy'><figcaption>Happy<br>real_train_000214</figcaption></figure><figure><img src='phenotype_report_assets/cluster_3_001_real_train_000199.jpg' loading='lazy'><figcaption>Fear<br>real_train_000199</figcaption></figure><figure><img src='phenotype_report_assets/cluster_3_002_real_train_000190.jpg' loading='lazy'><figcaption>Sad<br>real_train_000190</figcaption></figure><figure><img src='phenotype_report_assets/cluster_3_003_real_train_000004.jpg' loading='lazy'><figcaption>Happy<br>real_train_000004</figcaption></figure></div>
+        </section>
+        
+</body>
+</html>

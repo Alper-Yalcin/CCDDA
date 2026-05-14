@@ -1,0 +1,147 @@
+{
+  "k": 4,
+  "k_selection_silhouette": {},
+  "train_silhouette": 0.14293165504932404,
+  "rows": 240,
+  "split_cluster_counts": {
+    "train": {
+      "0": 57,
+      "1": 46,
+      "2": 58,
+      "3": 79
+    }
+  },
+  "label_cluster_counts": {
+    "Angry": {
+      "0": 17,
+      "1": 4,
+      "2": 15,
+      "3": 21
+    },
+    "Fear": {
+      "0": 12,
+      "1": 8,
+      "2": 19,
+      "3": 22
+    },
+    "Happy": {
+      "0": 7,
+      "1": 23,
+      "2": 8,
+      "3": 15
+    },
+    "Sad": {
+      "0": 21,
+      "1": 11,
+      "2": 16,
+      "3": 21
+    }
+  },
+  "feature_validity_mean": 0.9962962962962963,
+  "cluster_summaries": {
+    "0": {
+      "train_count": 57,
+      "label_dist": {
+        "Sad": 21,
+        "Angry": 17,
+        "Fear": 12,
+        "Happy": 7
+      },
+      "top_high_features": {
+        "empty_space_ratio": 0.9669487738575937,
+        "top_mass_ratio": 0.7733709818098692,
+        "dominant_orientation_abs": 0.228782147068052,
+        "warm_ratio": 0.18241726462719793,
+        "centroid_x_norm": 0.10559631431021405,
+        "component_count_norm": -0.07072525010995603
+      },
+      "top_low_features": {
+        "fg_area_ratio": -0.9669487543426255,
+        "figure_integrity_proxy": -0.943326420173898,
+        "shading_ratio": -0.8984120360013228,
+        "centroid_y_norm": -0.785409656109525,
+        "bottom_mass_ratio": -0.7733710008615815,
+        "unique_hue_count": -0.7222986404655639
+      },
+      "mean_distance": 3.5022735846670052
+    },
+    "1": {
+      "train_count": 46,
+      "label_dist": {
+        "Happy": 23,
+        "Sad": 11,
+        "Fear": 8,
+        "Angry": 4
+      },
+      "top_high_features": {
+        "bottom_mass_ratio": 1.3117385897116356,
+        "centroid_y_norm": 1.305576908925463,
+        "empty_space_ratio": 0.42999888090694804,
+        "unique_hue_count": 0.19999817556626295,
+        "centroid_x_norm": 0.046077729707932516,
+        "stroke_darkness_std": -0.07264994555943852
+      },
+      "top_low_features": {
+        "top_mass_ratio": -1.3117386209398934,
+        "stroke_darkness_mean": -0.8552946190031349,
+        "shading_ratio": -0.7818696079720293,
+        "figure_integrity_proxy": -0.53950768201067,
+        "dark_color_ratio": -0.5171162309899283,
+        "dominant_orientation_abs": -0.5161682170500321
+      },
+      "mean_distance": 3.0898450664851977
+    },
+    "2": {
+      "train_count": 58,
+      "label_dist": {
+        "Fear": 19,
+        "Sad": 16,
+        "Angry": 15,
+        "Happy": 8
+      },
+      "top_high_features": {
+        "shading_ratio": 0.8446116295821341,
+        "stroke_darkness_mean": 0.7112137509834228,
+        "dark_color_ratio": 0.6435611032986539,
+        "stroke_darkness_std": 0.46453128275823263,
+        "dominant_orientation_abs": 0.4404023087551455,
+        "top_mass_ratio": 0.33703944318554424
+      },
+      "top_low_features": {
+        "skeleton_break_count_norm": -0.3986368809184505,
+        "unique_hue_count": -0.34825113022446824,
+        "bottom_mass_ratio": -0.3370394331141977,
+        "component_count_norm": -0.3134766740141246,
+        "centroid_y_norm": -0.27831796075295273,
+        "bbox_area_ratio": -0.24808491966151996
+      },
+      "mean_distance": 3.777796880952243
+    },
+    "3": {
+      "train_count": 79,
+      "label_dist": {
+        "Fear": 22,
+        "Angry": 21,
+        "Sad": 21,
+        "Happy": 15
+      },
+      "top_high_features": {
+        "fg_area_ratio": 1.0959275970562936,
+        "skeleton_break_count_norm": 0.9191616504246212,
+        "figure_integrity_proxy": 0.8920808288131602,
+        "unique_hue_count": 0.6083756290670599,
+        "shading_ratio": 0.4833925759876579,
+        "stroke_darkness_mean": 0.4519023767782944
+      },
+      "top_low_features": {
+        "empty_space_ratio": -1.095927593215538,
+        "warm_ratio": -0.19638888558382464,
+        "dominant_orientation_abs": -0.18785035830855584,
+        "top_mass_ratio": -0.041651355755555605,
+        "centroid_x_norm": 0.0025796767934518003,
+        "centroid_y_norm": 0.01081334571320288
+      },
+      "mean_distance": 2.9665380671054504
+    }
+  }
+}

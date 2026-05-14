@@ -1,0 +1,20 @@
+{
+  "scope": "ab_agree",
+  "min_conf": 0.75,
+  "total_joined": 55660,
+  "selected": 23728,
+  "a_dist": {
+    "Angry": 7735,
+    "Sad": 6356,
+    "Happy": 5603,
+    "Fear": 4034
+  },
+  "b_dist": {
+    "Angry": 7735,
+    "Sad": 6356,
+    "Happy": 5603,
+    "Fear": 4034
+  },
+  "ab_agree_count": 41717,
+  "ab_highconf_agree_count": 23728
+}

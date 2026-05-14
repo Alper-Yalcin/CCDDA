@@ -1,0 +1,32 @@
+{
+  "mode": "3of3",
+  "min_c_conf": 0.6,
+  "max_per_class": 6000,
+  "total_rows": 8313,
+  "pseudo_selected": 7204,
+  "pseudo_dist": {
+    "Happy": 4807,
+    "Sad": 2349,
+    "Angry": 48
+  },
+  "split_dist": {
+    "test": {
+      "Fear": 43,
+      "Sad": 43,
+      "Angry": 41,
+      "Happy": 40
+    },
+    "train": {
+      "Happy": 4994,
+      "Sad": 2550,
+      "Angry": 238,
+      "Fear": 198
+    },
+    "val": {
+      "Sad": 43,
+      "Fear": 42,
+      "Angry": 41,
+      "Happy": 40
+    }
+  }
+}

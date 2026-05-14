@@ -1,0 +1,10 @@
+{
+  "raw_files": 78489,
+  "unique_hashes": 56459,
+  "source_dist": {
+    "huggingface": 44800,
+    "dataset_images": 10860,
+    "real_data": 696,
+    "real_newarts2": 103
+  }
+}
