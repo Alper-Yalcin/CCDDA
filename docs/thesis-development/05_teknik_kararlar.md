@@ -1,6 +1,6 @@
 # 05 — Teknik Kararlar
 
-Bu dosya, projede alınan önemli teknik kararları belgeler. Her karar için kanıt, olası gerekçe ve avantaj/dezavantajlar sunulmuştur.
+Bu dosya, projede alınan önemli teknik kararları belgeler. Kaynak koddan ve commit diff'lerinden çıkarılabilen kararlar kanıta dayalı biçimde açıklanmıştır. Repository içinde teknik gerekçesi bulunamayan kararlar için bu durum açıkça belirtilmiştir.
 
 ---
 
@@ -13,8 +13,8 @@ Görüntü özellik çıkarımı için EfficientNet-B0 (ImageNet ön eğitimli) 
 `src/models/multimodal_effnet_bert.py` (`b8b32b2`): `from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights`
 `run_highconf_pipeline.py`: Daha sonra B2 ve B3 varyantları da eklendi.
 
-### Olası Gerekçe
-EfficientNet ailesi, parametre sayısı-doğruluk dengesi açısından benchmark değerlendirmelerinde üstün performans göstermektedir. B0, serinin en hafif modelidir ve görece sınırlı GPU kaynaklarında bile çalışabilir. Transfer öğrenimi ile ImageNet ağırlıkları aktarılarak küçük veri setlerinde bile iyi başlangıç noktası elde edilmiştir.
+### Gerekçe
+EfficientNet ailesi, parametre sayısı-doğruluk dengesi açısından benchmark değerlendirmelerinde üstün performans göstermektedir. B0, serinin en hafif modelidir ve görece sınırlı GPU kaynaklarında bile çalışabilir. Transfer öğrenimi ile ImageNet ağırlıkları aktarılarak küçük veri setlerinde iyi başlangıç noktası elde edilmektedir. Commit geçmişinde EfficientNet seçiminin gerekçesini açıklayan ek belge bulunmamaktadır.
 
 ### Avantajları
 - Parametre etkinliği: ResNet veya VGG'ye kıyasla daha az parametre, benzer doğruluk
@@ -39,8 +39,8 @@ Metin kodlayıcı olarak `dbmdz/bert-base-turkish-cased` seçildi.
 ### Kanıt
 `src/train/train_multimodal.py` (`ec7d0f8`): `parser.add_argument("--bert_model", type=str, default="dbmdz/bert-base-turkish-cased")`
 
-### Olası Gerekçe
-Veri kümesi Türk okul çocuklarına aittir ve olasılıkla metin verisi de Türkçedir. Türkçe'ye özgü BERT modeli, dil özelliklerini (eklemeli yapı, morfoji) daha iyi temsil etmektedir. `dbmdz/bert-base-turkish-cased` HuggingFace üzerinde yaygın kullanılan ve iyi belgelenmiş bir Türkçe BERT modelidir.
+### Gerekçe
+Veri kümesi Türk okul çocuklarına aittir. Türkçe'ye özgü BERT modeli, dil özelliklerini (eklemeli yapı, morfoji) daha iyi temsil etmektedir. `dbmdz/bert-base-turkish-cased` HuggingFace üzerinde yaygın kullanılan ve iyi belgelenmiş bir Türkçe BERT modelidir. Metin verisinin tam içeriği commit geçmişinde belirtilmemiştir; bu bilgi `12_eksik_bilgiler_ve_durust_notlar.md` dosyasında kayıt altına alınmıştır.
 
 ### Avantajları
 - Türkçe morfolojisini doğal olarak işler
@@ -63,7 +63,7 @@ Eğitim sırasında BERT parametreleri varsayılan olarak dondurulmuş (`freeze_
 ### Kanıt
 `src/train/train_multimodal.py` (`ec7d0f8`): `parser.set_defaults(freeze_bert=True, freeze_effnet=False)`
 
-### Olası Gerekçe
+### Gerekçe
 Bu asimetrik dondurma stratejisi standart bir transfer öğrenimi tekniğidir. BERT'in 110M+ parametresi küçük veri setlerinde aşırı öğrenmeye (overfitting) yol açabilir; dondurma bunu önler. EfficientNet'in görüntüye özgü alt katmanlarının ince ayara (fine-tuning) ihtiyacı daha büyüktür.
 
 ### Avantajları
@@ -73,7 +73,7 @@ Bu asimetrik dondurma stratejisi standart bir transfer öğrenimi tekniğidir. B
 
 ### Dezavantajları / Sınırlamaları
 - Frozen BERT, alana özgü metin bilgisini öğrenemez
-- Metin ve görüntü özelliklerinin entegrasyonu daha zayıf olabilir
+- Dondurulmuş BERT, bu spesifik alana (çocuk çizimi metinleri) özgü özellikler öğrenemez
 
 ### Tezde Kullanılabilecek Anlatım
 Eğitim kararlılığını sağlamak ve aşırı öğrenmeyi önlemek amacıyla BERT parametreleri dondurulmuş, yalnızca projeksiyon katmanları ve görüntü kodlayıcısı eğitime dahil edilmiştir. Bu strateji, 116 milyon parametreli modelde eğitilebilir parametre sayısını 5.6 milyona indirmiştir.
@@ -88,7 +88,7 @@ Backend için FastAPI, frontend için React + Vite seçildi.
 ### Kanıt
 `08e1303` commitinde `api_server.py` (FastAPI) ve `Web/` (React) eş zamanlı eklendi.
 
-### Olası Gerekçe
+### Gerekçe
 FastAPI, Python tabanlı ML modellerini HTTP API'sine dönüştürmek için günümüzdeki de facto standarttır. Otomatik API dokümantasyonu (Swagger UI), tip güvenliği ve asenkron destek sunar. React, bileşen tabanlı UI mimarisi ve zengin ekosistemiyle modern web uygulamalarının standart seçimidir. Bu ikili, full-stack Python+JS web uygulamaları için yaygın bir kombinasyondur.
 
 ### Avantajları
@@ -115,7 +115,7 @@ Kullanıcı arayüzü başından itibaren Türkçe/İngilizce çift dil desteği
 ### Kanıt
 `3b481f8`: "feat: implement internationalization support with language selection" — React kurulumundan hemen sonraki commit.
 
-### Olası Gerekçe
+### Gerekçe
 Projenin klinik ortamlarda kullanılabilmesi için Türkçe şarttır; ancak akademik ve uluslararası değerlendirme için İngilizce de gereklidir. Çok dil desteğinin başından eklenmesi, sonradan eklemekten çok daha kolaydır.
 
 ### Avantajları
@@ -139,7 +139,7 @@ Model tahminleri için Grad-CAM (Gradient-weighted Class Activation Mapping) gö
 ### Kanıt
 `d494e7b`: `src/explain/gradcam.py` eklendi; commit'te Grad-CAM çıktı görselleri de dahil edildi.
 
-### Olası Gerekçe
+### Gerekçe
 Tıp ve klinik psikoloji uygulamalarında kara kutu modeller kabul görmemektedir. Grad-CAM, modelin "nereye baktığını" görselleştirerek klinisyenin modelin kararını anlamasına yardımcı olur. Bu, tezin "açıklanabilir yapay zeka" (XAI) boyutunu güçlendirir.
 
 ### Avantajları
@@ -164,7 +164,7 @@ Veri kıtlığına karşı öğretmen-öğrenci (teacher-student) pseudo-etiketl
 ### Kanıt
 `run_highconf_pipeline.py`, `run_consensus_pipeline.py`, `label_with_*.py` dosyaları (`73ff5de`, `a846643`).
 
-### Olası Gerekçe
+### Gerekçe
 Manuel etiketleme pahalı ve zaman alıcıdır. El çizimi çocuk resmi için uzman etiketçi bulmak da kolay değildir. Pseudo-etiketleme, mevcut modelin yüksek güvenilirlikli tahminlerini yeni eğitim verisi olarak kullanarak veri kümesini büyütür.
 
 ### Avantajları
@@ -190,8 +190,8 @@ Python uygulaması PyInstaller ile bağımsız Windows uygulaması olarak paketl
 ### Kanıt
 `2a6895c`: `desktop_app.spec`, `requirements-desktop.txt`, Inno Setup scripti eklendi.
 
-### Olası Gerekçe
-Klinik ortamlarda internet bağlantısı kısıtlı olabilir ya da kurulum yapma yetkisi bulunmayabilir. Bağımsız `.exe` formatı bu engeli ortadan kaldırır. PyInstaller, Python bağımlılıklarını tek bir pakette toplar.
+### Gerekçe
+Klinik ortamlarda internet bağlantısının kısıtlı olabileceği `api_server.py` içindeki README güncellemesinde belirtilmektedir. PyInstaller, Python bağımlılıklarını tek bir pakette toplar. Repository içinde bu kararın başka teknik gerekçesini doğrulayan log bulunamadı.
 
 ### Avantajları
 - Kurulum gerektirmeden çalışır

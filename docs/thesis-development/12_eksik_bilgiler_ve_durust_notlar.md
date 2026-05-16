@@ -1,132 +1,125 @@
-# 12 — Eksik Bilgiler ve Dürüst Notlar
+# 12 — Eksik Bilgiler ve Dürüst Notlar (Güncellenmiş)
 
-Bu dosya, Git geçmişinden net olarak çıkarılamayan bilgileri ve tez yazarına yönelik dürüst uyarıları içermektedir. Bu dosya, tezde yanlış veya abartılı ifade kullanılmasının önüne geçmek amacıyla hazırlanmıştır.
-
----
-
-# Net Olarak Çıkarılamayan Bilgiler
-
-## 1. Projenin Tam Adı ve Tez Başlığı
-
-Git commit'leri ve kaynak kodunda projenin resmi adı açıkça belirtilmemiştir. `CCDDA` kısaltması dosya sisteminden gelmektedir. `Alper_YALÇIN_Cocuk_Cizimlerinden_Duygu_Analizi.docx` dosyası, tez başlığının "Çocuk Çizimlerinden Duygu Analizi" veya benzeri olduğuna işaret etmektedir; ancak kesin başlık tez yazarı tarafından belirtilmelidir.
-
-## 2. Metin Verisinin İçeriği (İlk Çok Modlu Model)
-
-Multimodal modelde BERT kodlayıcısına verilen "metin" verisinin tam olarak ne olduğu kesin tespit edilememiştir. Dosya adı şemasından cinsiyet ve duygu zaten bilinmektedir; bu durumda metin verisi şunlardan biri olabilir:
-- Öğretmen veya psikolog tarafından yazılmış çizim açıklamaları
-- Okul/sınıf meta verileri
-- Başka bir metin kaynağı
-
-`master_emotion_gender.csv` dosyasına ve `text_tr`, `text_en` sütunlarına yapılan referanslar mevcuttur (`REPORT.md`'den); ancak bu sütunların içeriği commit'lerden belirlenemiyor.
-
-## 3. Neden Çok Modlu Mimariden Vazgeçildi
-
-`5311334` commit mesajı ("chore: remove legacy dataset and reset old AI stack") ve README güncellemesi bu kararın gerçekleştirildiğini belgeler; ancak kararın gerekçesi açıkça ifade edilmemiştir. Olası nedenler (hepsi tahmini):
-- Modelin yeterli performans göstermemesi
-- Metin verisinin tutarsızlığı veya kalite sorunları
-- Tez danışmanı önerisi
-- Araştırma kapsamının yeniden tanımlanması
-- Yeni 4-sınıflı hedefle multimodal yaklaşımın uyumsuzluğu
-
-**Tez yazarı bu kararın nedenini kendi ifadesiyle belgelemelidir.**
-
-## 4. Model Eğitim Sonuçlarının Nasıl Değerlendirildiği
-
-Raporlama altyapısı mevcut olmakla birlikte, sonuçların tez danışmanına sunulup sunulmadığı, klinisyenlerle değerlendirilip değerlendirilmediği ya da yinelemeli iyileştirmeye yol açıp açmadığı commit geçmişinde görünmemektedir.
-
-## 5. Sessiz Dönemlerde Yapılanlar
-
-Üç sessiz dönem tespit edilmiştir:
-- Kasım 2025 sonu – Şubat 2026: ~3 ay
-- Mart 2026 sonu – Nisan 2026: ~5 hafta
-- Nisan 2026 ortası – Mayıs 2026: ~2.5 hafta
-
-Bu dönemlerde neler yapıldığı (literatür tarama, danışman görüşmesi, yerel kodlama, veri toplama vb.) bilinmemektedir.
-
-## 6. KIDO Veri Setinin Kaynağı ve Etiketleme Süreci
-
-KIDO veri setinin tam olarak nereden geldiği, kimlerin tarafından etiketlendiği, hangi standartlara göre Happiness/Sadness ve Anger/Fear/Happiness/Sadness sınıflarına ayrıldığı commit geçmişinden kesin olarak belirlenemiyor.
-
-**Bu bilgi tez için kritiktir ve mutlaka belgelenmelidir.**
-
-## 7. Klinik Geçerlilik
-
-Sistemin bir klinisyen veya psikoloji uzmanı tarafından değerlendirilip değerlendirilmediği commit geçmişinde görünmemektedir.
-
-## 8. Yeni 4-Sınıflı Modelin Performansı
-
-`eval_test.py` yazılmış olmakla birlikte, yeni 4-sınıflı sistemin değerlendirme sonuçları repo'da mevcut değildir. Bu, model eğitiminin henüz tamamlanmadığını veya sonuçların commit'lenmediğini göstermektedir.
-
-## 9. Consensus ve Highconf Pipeline'larının Fiili Eğitim Başarısı
-
-`out/` klasöründe pipeline çıktıları mevcuttur; ancak bu pseudo-etiketli verilerle eğitilen öğrenci modelinin test performansı belgelenmemiştir.
+Bu dosya, forensic repository analizi sonrasında hâlâ kanıtlanamayan bilgileri ve tez yazarına yönelik dürüst uyarıları içermektedir. Repository içindeki metrik dosyaları, training logları ve pipeline raporları incelendikten sonra güncellenmiştir.
 
 ---
 
-# Tahmine Dayalı Yorumlar
+# Forensic Analizden Sonra Netleşen Bilgiler
 
-Bu belgede yapılan yorumlar arasında şunlar kesin kanıta dayanmamaktadır:
+Aşağıdaki bilgiler önceki versiyonda belirsizdi; şimdi somut kanıt mevcuttur:
 
-| Yorum | Kanıt Düzeyi |
-|---|---|
-| "Metin verisi Türkçe metinlerden oluşuyordu" | Zayıf (dbmdz/bert-base-turkish-cased seçiminden çıkarım) |
-| "Tkinter'dan React'e geçiş performans sorunlarından değil mimari tercihten" | Tahmini |
-| "Sessiz dönemde yerel geliştirme yapıldı" | Tahmini |
-| "Çok modlu yaklaşım performans sorunundan terk edildi" | Tahmini — gerçek neden bilinmiyor |
-| "KIDO veri setinde dengesiz sınıf dağılımı var" | Orta (cinsiyet sınıfı için görülen, duygu için test setinde dengeli) |
-| "label_with_model_v2.py, v1'deki hataları düzeltiyor" | Tahmini (isimlendirmeden) |
+| Konu | Önceki Durum | Şimdiki Kanıt | Kaynak |
+|---|---|---|---|
+| 0.75 vs 0.85 threshold karşılaştırması | Bilinmiyor | 0.75: F1=0.6694 (daha iyi); 0.85: F1=0.6495 | `out/highconf_pipeline/summary_results.csv` |
+| Consensus pipeline performansı | Bilinmiyor | Accuracy=57.49%, F1=0.5721 (highconf'tan düşük) | `out/consensus_pipeline/summary_results.csv` |
+| Multitask öğrenme sonucu | Bilinmiyor | Accuracy=72.73%, F1=0.7272 (en iyi 4-sınıf sonuç) | `out/phenotype_images/multitask_run_alpha025/test_results.json` |
+| 4-sınıf temel model performansı | Bilinmiyor | Accuracy=67.06%, F1=0.5775 | `artifacts/v1_backend/eval/metrics.json` |
+| Overfitting kanıtı | Tahmindi | Train F1=0.9039 vs Val F1=0.6135 (0.29 fark) | `artifacts/v1_backend/train/train.log` |
+| Kalibrasyon kalitesi | Bilinmiyor | ECE=0.1698 (overconfident) | `artifacts/v1_backend/eval/calibration.json` |
+| Öğretmen model etiket dağılımı | Bilinmiyor | Angry=19.211 (en çok), Fear=10.388 (en az) | `out/highconf_pipeline/teacher_labels_report.json` |
+| Toplam pseudo-etiketleme kapsamı | Bilinmiyor | 55.660 görüntü etiketlendi | `out/highconf_pipeline/teacher_labels_report.json` |
 
 ---
 
-# Tez Yazarken Dikkat Edilmesi Gerekenler
+# Hâlâ Kanıtlanamayan Bilgiler
 
-### 1. "Çok modlu modelin başarısız olduğu" yazılmamalı
-Bu kesin olarak belgelenmiş değildir. Doğru ifade: "çok modlu yaklaşımdan yalnızca görüntü tabanlı mimariye geçiş yapılmıştır."
+## 1. Multimodal Mimariden Vazgeçilmesinin Teknik Nedeni
 
-### 2. %94 doğruluk oranı dikkatli kullanılmalı
-Bu sonuç yalnızca 5 epoch eğitim ve dondurulmuş BERT ile elde edilmiştir. Tam fine-tuning veya daha uzun eğitim farklı sonuçlar verebilirdi. Ayrıca bu sonuç 2-sınıflı dengeli duygu görevine aittir; 4-sınıflı görev için analogy kurmak yanıltıcı olabilir.
+**Durum:** Repository içinde bu kararın teknik nedenini doğrulayan log veya metrik bulunamadı.
 
-### 3. Pseudo-etiket sayısı veri sayısı olarak sunulmamalı
-~23.000 "pseudo-etiketli örnek" gerçek anlamda etiketlenmiş örnek değildir. "Model tarafından etiketlenmiş" veya "pseudo-etiketlenmiş" olarak net biçimde tanımlanmalıdır.
+**Mevcut kanıt:** Commit `5311334` mesajı yalnızca "chore: remove legacy dataset and reset old AI stack" demektedir; performans karşılaştırması, ablation study veya başarısızlık logu içermemektedir.
+
+**Tez yazarı eklemelidir:** Bu kararın gerçek nedeni (danışman önerisi mi? Performans sorunu mu? Kapsam değişikliği mi?).
+
+## 2. KIDO Veri Setinin Kaynağı ve Etiketleme Süreci
+
+**Durum:** Repository içinde etiketleme protokolü, etiketleyen kişi/kurum ve güvenilirlik analizi bulunamadı.
+
+**Mevcut kanıt:** Yalnızca dosya adı şeması (`[okul_id]-[sınıf]-[öğrenci_id]-[cinsiyet]-[duygu].jpg`).
+
+**Tez için kritik:** Etiketlerin kaynağı ve güvenilirliği tezde mutlaka belgelenmelidir.
+
+## 3. Sessiz Dönemlerdeki Çalışmalar
+
+Tespit edilen üç sessiz dönem:
+- Aralık 2025 – Şubat 2026 (~3 ay)
+- Mart–Nisan 2026 (~5 hafta)
+- Nisan–Mayıs 2026 (~2.5 hafta)
+
+Bu dönemlerde neler yapıldığı commit geçmişinde görünmemektedir.
+
+## 4. Çok Modlu Modelde Metin Verisinin İçeriği
+
+`dbmdz/bert-base-turkish-cased` modeli kullanılmış; ancak BERT'e verilen metin verisinin tam olarak ne olduğu (öğretmen açıklamaları? meta veriler? başka bir kaynak?) commit geçmişinden belirlenemiyor.
+
+## 5. Klinik Geçerlilik
+
+Repository içinde bir klinisyen veya psikoloji uzmanının sistemi değerlendirdiğine dair belge bulunmamaktadır.
+
+## 6. Consensus Pipeline Sad F1=0.30'un Nedeni
+
+Consensus pipeline neden Sad sınıfında F1=0.30 elde ettiği, bunu açıklayan analiz logu bulunamadı. Mevcut kanıt yalnızca sonucu göstermektedir.
+Kaynak: `out/consensus_pipeline/summary_results.csv`
+
+## 7. Etik Kurul Onayı
+
+Çocuklara ait veri toplandığı için etik kurul onay bilgisi tez için kritiktir. Repository içinde bu belge bulunmamaktadır.
+
+## 8. HuggingFace ve Roboflow Veri Setlerinin Lisans Durumu
+
+Harici veri setlerinin lisansları tez yazarı tarafından doğrulanmalıdır.
+
+---
+
+# Tez Yazarken Dikkat Edilmesi Gerekenler (Kanıta Dayalı)
+
+### 1. %94 ile %67 doğruluk karşılaştırılmamalı
+- %94.36: 2-sınıflı, dengeli test seti (Happy=815, Sad=815), 5 epoch eğitim
+- %67.06: 4-sınıflı, dengesiz test seti (Happy=626, Angry=67), farklı model
+Bu iki rakam farklı görevler için olup doğrudan karşılaştırma yanıltıcıdır.
+Kaynak: `artifacts/report_run/REPORT.md`, `artifacts/v1_backend/eval/metrics.json`
+
+### 2. "Consensus pipeline daha güvenilir" yazılmamalı
+Kanıt: Consensus pipeline Macro F1=0.5721 iken Highconf 0.75 pipeline Macro F1=0.6694. Consensus pipeline her metrikte highconf pipeline'ının altında kalmıştır.
+Kaynak: `out/consensus_pipeline/summary_results.csv`, `out/highconf_pipeline/summary_results.csv`
+
+### 3. Pseudo-etiket sayısı gerçek etiket olarak sunulmamalı
+23.063 "pseudo-etiketli örnek" uzman etiketli değildir. ECE=0.1698 göz önünde bulundurulduğunda, yüksek güven skoru bile doğruluğu garanti etmemektedir.
+Kaynak: `artifacts/v1_backend/eval/calibration.json`
 
 ### 4. Klinik doğrulama olmadığını belirtmek şart
-Sistem bir klinisyen tarafından doğrulanmamıştır. "Klinik karar destek sistemi" değil, "araştırma prototipi" olarak tanımlanmalıdır.
+Sistem klinisyen tarafından doğrulanmamıştır. "Araştırma prototipi" olarak tanımlanmalıdır.
 
-### 5. Cinsiyet sınıflandırması artık hedef değil
-Yeni 4-sınıflı sistemde cinsiyet sınıflandırması yer almamaktadır. Tezde bu değişiklik açıkça belirtilmelidir.
+### 5. Öğretmen model Angry sınıfına bias'lıdır
+Öğretmen model 19.211 Angry etiketi üretmiş, ancak aynı modelin Angry F1=0.370. Bu bias pseudo-etiket kalitesini etkilemiştir.
+Kaynak: `out/highconf_pipeline/teacher_labels_report.json`, `artifacts/v1_backend/eval/metrics.json`
 
 ---
 
-# Öğrencinin Sonradan Ekleyebileceği Bilgiler
+# Tez Yazarının Eklemesi Gereken Bilgiler
 
-Aşağıdaki bilgiler tez yazarı tarafından eklenmelidir çünkü bunlar commit geçmişinden çıkarılamaz:
-
+- [ ] Multimodal mimariden vazgeçilmesinin gerçek nedeni
+- [ ] KIDO veri setinin kaynağı ve etiketleme protokolü
+- [ ] Tez danışmanının yönlendirmeleri
+- [ ] Sessiz dönemlerde yapılan çalışmalar
+- [ ] Klinik değerlendirme sonuçları (varsa)
+- [ ] Etik kurul onay durumu
+- [ ] Harici veri setlerinin lisans bilgileri
 - [ ] Projenin tam tez başlığı ve araştırma sorusu
-- [ ] KIDO veri setinin kaynağı ve etiket üretim süreci
-- [ ] Multimodal modelden vazgeçilmesinin gerçek nedeni
-- [ ] Tez danışmanının yönlendirmeleri ve aldığı kararlar
-- [ ] Sessiz dönemlerde yapılan çalışmalar (literatür tarama, klinik görüşmeler vb.)
-- [ ] Grad-CAM görsellerinin klinik anlamı (bir uzmanla tartışıldıysa)
-- [ ] Yeni 4-sınıflı modelin eğitim ve test sonuçları
-- [ ] Kullanıcı testi veya klinik değerlendirme sonuçları (varsa)
-- [ ] Çalışmanın etik kurul onayı durumu (çocuk verisi söz konusu olduğundan önemli)
-- [ ] HuggingFace ve Roboflow veri setlerinin lisans durumu
 
 ---
 
-# Commit Mesajı Kalitesi Hakkında Not
+# Forensic Analiz Kaynak Referansları
 
-Projedeki commit mesajları iki farklı kalite seviyesindedir:
-
-**İyi mesajlar** (genellikle `feat:` veya `chore:` önekli):
-- `feat: initialize React project with Vite, Tailwind CSS, and TypeScript`
-- `feat: add desktop application with embedded FastAPI server`
-- `chore: remove legacy dataset and reset old AI stack`
-
-**Yetersiz mesajlar** (analizi zorlaştıran):
-- `Ağırlık düzenleme` — neyin değiştiği tam anlaşılmıyor
-- `Ezber cümleler ve GUI eklendi` — teknik ayrıntı eksik
-- `Save: push all local changes` — hiçbir bilgi vermiyor
-- `Auto-commit: save changes before push (assistant)` — otomatik oluşturulmuş
-
-Yetersiz commit mesajlı değişikliklerin analizi, diff içeriğine dayandırılmıştır; bu nedenle bu bölümlerdeki yorumlar tahmine dayalıdır.
+| Dosya | İçerik |
+|---|---|
+| `artifacts/report_run/REPORT.md` | İlk multimodal model metrikleri |
+| `artifacts/v1_backend/eval/metrics.json` | 4-sınıf temel model, 1257 test örneği |
+| `artifacts/v1_backend/eval/confusion_matrix.csv` | 4-sınıf confusion matrix |
+| `artifacts/v1_backend/train/train.log` | Epoch bazlı training/validation metrikleri |
+| `artifacts/v1_backend/eval/calibration.json` | ECE ve güven analizi |
+| `artifacts/v1_backend/eval/high_confidence_errors.csv` | Yüksek güvenle yanlış tahminler |
+| `out/highconf_pipeline/summary_results.csv` | Pipeline karşılaştırma sonuçları |
+| `out/consensus_pipeline/summary_results.csv` | Consensus pipeline sonuçları |
+| `out/highconf_pipeline/teacher_labels_report.json` | Öğretmen model istatistikleri |
+| `out/phenotype_images/multitask_run_alpha025/test_results.json` | Multitask model sonuçları |

@@ -1,150 +1,206 @@
 # 04 — Karşılaşılan Problemler ve Çözümler
 
-Bu dosya, commit geçmişi, kod değişimleri ve mevcut dosya yapısından çıkarılabilen teknik problemleri ve uygulanan çözümleri belgeler. Kesin neden belirtilemeyen durumlarda yoruma dayalı ifadeler kullanılmıştır.
+Bu dosya, repository içindeki metrik dosyaları, commit diff'leri ve pipeline çıktılarından elde edilen somut kanıtlara dayalı olarak teknik problemleri belgeler. Kanıtlanmayan durumlar için "Repository içinde bu kararın teknik nedenini doğrulayan log veya metrik bulunamadı." ifadesi kullanılmıştır.
 
 ---
 
-## Problem 1: Metin Açıklamaları Statik Kalmaktaydı ("Ezber Cümleler")
+## Problem 1: 4-Sınıflı Modelde Overfitting
 
-### Problem Nasıl Anlaşılıyor?
-`d494e7b` commitinin mesajı "Ezber cümleler ve GUI eklendi" ifadesini içermektedir. `src/explain/rule_based_explainer.py` dosyası, olasılıkla önceden belirlenmiş şablon cümleler içermektedir. "Ezber cümleler" ifadesi bu şablonların sabit ve tekrar eden bir yapıda olduğuna işaret etmektedir.
+### Problem Kanıtı
+Kaynak: `artifacts/v1_backend/train/train.log`
 
-### İlgili Commitler
-- `d494e7b` — kural tabanlı açıklayıcı eklendi
-- `08e1303`, `1476c63`, `ef0af36` — API'ye açıklama alanı eklendi ve zenginleştirildi
+| Metrik | Değer |
+|---|---|
+| Final Training F1 | 0.9039 |
+| Best Validation F1 | 0.6135 |
+| Fark | **0.2904** |
+| Validation Loss Aralığı | 1.0132 – 1.2129 (tüm epoch'lar boyunca yüksek) |
+| Training Loss Seyri | 0.8939 (ep1) → 0.0671 (ep21) |
+
+Training loss %92.5 düştüğü halde validation F1 yalnızca 0.6135'te kalmıştır.
 
 ### Uygulanan Çözüm
-Hem kural tabanlı açıklayıcı (`rule_based_explainer.py`) korunurken hem de daha dinamik açıklama üretimi API katmanına eklendi. `api_server.py` içinde bir LLM (büyük dil modeli) entegrasyonu için "GITHUB_TOKEN" gibi ortam değişkeni desteği de görülmektedir; bu, dinamik açıklama üretimi için harici bir LLM'ye sorgu atılmasına olanak tanıyor olabilir. Mevcut `src/explain/llm_explainer.py` dosyası bu amaçla yazılmış görünmektedir.
+Sınıf ağırlıklarıyla dengeleme (`[0.512, 0.834, 4.906, 1.551]`) ve WeightedRandomSampler uygulandı.
+Kaynak: `artifacts/v1_backend/train/train.log` — "Class Imbalance Weights" alanı
 
 ### Çözümün Etkisi
-Açıklama sistemi katmanlı hale geldi: LLM mevcut değilse kural tabanlı açıklama devreye giriyor; LLM mevcutsa daha zengin ve bağlamsal açıklama üretiliyor.
-
-### Tezde Kullanılabilecek Açıklama
-Sistemin açıklanabilirlik katmanı kural tabanlı bir fallback mekanizmasıyla desteklenmiştir. Bu yaklaşım, yapay zeka modellerinin "kara kutu" sorununa karşı ilk cevabı oluşturmakta; Grad-CAM görselleştirmesiyle birlikte çok katmanlı bir açıklanabilirlik çerçevesi sunmaktadır.
+4-sınıf temel modelde Accuracy=67.06%, F1=0.5775 elde edildi. Multitask öğrenme (duygu + fenotip) ise overfitting'i kısmen azaltarak F1=0.7272'ye ulaştı.
+Kaynak: `artifacts/v1_backend/eval/metrics.json`, `out/phenotype_images/multitask_run_alpha025/test_results.json`
 
 ---
 
-## Problem 2: Tkinter GUI'de Uzun Açıklamaların Görüntülenememesi
+## Problem 2: Sınıf Dengesizliği — Angry Sınıfı
 
-### Problem Nasıl Anlaşılıyor?
-`339a738` commitinin mesajı "Add scrollable text widget for explanation and refactor explanation generation" içermektedir. Bu, kaydırma olmadan uzun açıklamaların tam görüntülenemediğine işaret etmektedir.
+### Problem Kanıtı
+Kaynak: `artifacts/v1_backend/eval/metrics.json`
 
-### İlgili Commitler
-- `339a738` — kaydırılabilir metin alanı eklendi
+| Sınıf | Test Örneği | F1 |
+|---|---|---|
+| Happy | 626 | 0.773 |
+| Sad | 356 | 0.660 |
+| Fear | 208 | 0.507 |
+| **Angry** | **67** | **0.370** |
+
+Angry sınıfı, toplam test setinin yalnızca %5.3'ünü oluşturmaktadır. F1=0.370 diğer sınıfların çok altındadır.
+
+Ayrıca `Dataset/Texts/GoldTest_Candidates_Auto4Class/class_counts.csv`:
+- Happy: 5.430
+- Sad: 3.720
+- Angry: 1.420
+- Fear: 290
+
+Fear sınıfı 290 örnekle (Happy'nin %5.3'ü) en az temsil edilen sınıftır.
 
 ### Uygulanan Çözüm
-Tkinter'da `Text` widget'ı ile kaydırma çubuğu (`Scrollbar`) birleştirilerek açıklama alanı kaydırılabilir hale getirildi.
+Sınıf ağırlığı Angry için 4.906 (diğer sınıfların 3–9 katı) olarak belirlendi.
+Kaynak: `artifacts/v1_backend/train/train.log` — "Class Imbalance Weights: [0.512, 0.834, 4.906, 1.551]"
 
 ### Çözümün Etkisi
-Kullanıcı artık tam açıklama metnini okuyabilmektedir. Aynı commit açıklama üretim mantığını da yeniden düzenlemiş; bu, açıklamanın artık daha uzun veya yapılandırılmış metin ürettiğini gösteriyor olabilir.
-
-### Tezde Kullanılabilecek Açıklama
-Prototip değerlendirme sürecinde kullanıcı arayüzünde işlevsel eksiklikler tespit edilmiş ve bu eksiklikler iteratif iyileştirmelerle giderilmiştir.
+Ağırlıklandırmaya rağmen Angry F1=0.370 olarak kalmaktadır. Bu değer, 67 test örneğiyle 27 doğru tahmin anlamına gelmektedir.
+Kaynak: `artifacts/v1_backend/eval/confusion_matrix.csv`
 
 ---
 
-## Problem 3: Frontend ve Backend Arasındaki İletişim
+## Problem 3: Model Kalibrasyonu — Yüksek Güven Yanıltıcı
 
-### Problem Nasıl Anlaşılıyor?
-`08e1303` commitinde `Web/vite.config.ts` değiştirilmiştir. Vite yapılandırma dosyasındaki değişiklik genellikle proxy ayarlarına yapılır; bu, React dev sunucusunun FastAPI arka ucuna istek yönlendirmesi için gereklidir.
+### Problem Kanıtı
+Kaynak: `artifacts/v1_backend/eval/calibration.json`
 
-### İlgili Commitler
-- `08e1303` — vite.config.ts güncellendi, FastAPI eklendi
+**ECE (Expected Calibration Error): 0.1698**
 
-### Uygulanan Çözüm
-Vite proxy yapılandırması eklenerek React dev ortamındaki `/api` yoluna gelen istekler FastAPI sunucusuna (`localhost:8000`) yönlendirildi. CORS middleware de FastAPI'ye eklendi.
-
-### Çözümün Etkisi
-Frontend ve backend ayrı portlarda çalışabilir hale geldi (React: 3000, FastAPI: 8000) ve CORS hataları ortadan kalktı.
-
-### Tezde Kullanılabilecek Açıklama
-İstemci-sunucu mimarisi kurulumunda çapraz kaynaklı istek (CORS) sorunları giderilmiş ve geliştirme ortamı için proxy yapılandırması yapılmıştır.
-
----
-
-## Problem 4: Eski AI Yığınının Sürdürülemezliği
-
-### Problem Nasıl Anlaşılıyor?
-`5311334` commit mesajı: "chore: remove legacy dataset and reset old AI stack". README'de şu ifade yer almaktadır: "eski multimodal AI hattı bu repodan temizlendi" ve "legacy AI giris noktalari bilincli olarak devre disi birakildi".
-
-### İlgili Commitler
-- `5311334` — eski yığın tamamen kaldırıldı
-
-### Uygulanan Çözüm
-Radikal bir temizlik yapıldı. BERT tabanlı bileşenler, eski eğitim verileri ve eski model entegrasyon noktaları kaldırıldı. API `/predict` endpoint'i geçici olarak `503` döndürecek şekilde devre dışı bırakıldı. Yeni sistem için temiz bir başlangıç noktası oluşturuldu.
-
-### Çözümün Etkisi
-Repo daha az karmaşık hale geldi. Yeni geliştirme yönü (4-sınıflı görüntü-only) netleşti. Ancak eski sistemin bıraktığı çalışan bir model geçici olarak ortadan kalktı.
-
-### Tezde Kullanılabilecek Açıklama
-Geliştirme sürecinde mimari bir yeniden yapılanmaya gidilmiş; mevcut çok modlu sistemin karmaşıklığı ve akademik odağın yeniden tanımlanması doğrultusunda sistem, daha sade ve odaklı bir görüntü tabanlı mimariye dönüştürülmüştür.
-
----
-
-## Problem 5: Etiketlenmiş Veri Kıtlığı
-
-### Problem Nasıl Anlaşılıyor?
-Beş farklı manifest scripti (`build_manifest_*.py`) ve iki büyük pseudo-etiketleme pipeline'ı (`run_highconf_pipeline.py`, `run_consensus_pipeline.py`) mevcut olması, etiketli veri yetersizliğinin temel bir sorun olduğunu göstermektedir. HuggingFace parquet veri kümesi eklenmesi de bu sorunu aşmak için harici kaynağa başvurulduğunu göstermektedir.
-
-### İlgili Commitler
-- `73ff5de` — pseudo-etiketleme scriptleri eklendi
-- `a846643` — pipeline çıktıları üretildi
-
-### Uygulanan Çözüm
-Üç katmanlı veri büyütme yaklaşımı:
-1. **Harici veri entegrasyonu**: HuggingFace parquet ve Roboflow Drawing Facial Emotions veri seti
-2. **Yüksek güvenilirlikli pseudo-etiketleme**: Öğretmen modelin ≥0.75 veya ≥0.85 güvenle tahmin ettiği örnekler yeni eğitim verisi olarak kullanılıyor
-3. **Consensus etiketleme**: 3 farklı modelin (HuggingFace VLM, Ollama, mevcut model) aynı etiketi ürettiği örnekler seçiliyor
-
-### Çözümün Etkisi
-`out/highconf_pipeline/` çıktısına göre `manifest_highconf_075.csv` ~23,000 örnek, `manifest_highconf_085.csv` ~19,000 örnek içermektedir. Bu, orijinal KIDO veri setinin çok üzerinde bir veri büyütmesini temsil etmektedir.
-
-### Tezde Kullanılabilecek Açıklama
-Derin öğrenme modellerinin yüksek başarı oranına ulaşabilmesi için büyük miktarda etiketli veriye ihtiyaç duyduğu bilinmektedir. Bu projede, sınırlı insan etiketli verinin yarattığı kısıtı aşmak amacıyla yarı denetimli öğrenme yaklaşımı benimsenmiş; pseudo-etiketleme ile veri kümesi genişletilmiştir.
-
----
-
-## Problem 6: Masaüstü Dağıtımı (Paketleme)
-
-### Problem Nasıl Anlaşılıyor?
-`2a6895c` commitinin detaylı mesajı, masaüstü uygulamanın birden fazla bileşeninin (PyInstaller spec, Inno Setup, build script, `app_paths.py`) aynı anda eklenmesi gerektiğini ortaya koymaktadır. `app_paths.py` özellikle paketlenmiş uygulamada dosya yollarının doğru çözümlenmesi için eklenmiştir — bu, PyInstaller paketlerinde yaygın bir sorundur.
-
-### İlgili Commitler
-- `2a6895c` — masaüstü uygulama altyapısı
-
-### Uygulanan Çözüm
-`src/app_paths.py` ile geliştirme ve paketlenmiş ortamlar için dosya yolları dinamik olarak çözümleniyor. PyInstaller spec dosyasında gerekli tüm veri dosyaları (web statik dosyalar, model ağırlıkları) dahil edildi.
-
-### Çözümün Etkisi
-Uygulama tek bir `.exe` dosyasına ya da kurulum paketine dönüştürülebilir hale geldi.
-
-### Tezde Kullanılabilecek Açıklama
-Sistemin bağımsız masaüstü uygulaması olarak dağıtılabilmesi için paketleme altyapısı oluşturulmuş; kurulum gerektirmeyen çalıştırılabilir format sağlanmıştır.
-
----
-
-## Problem 7: Model Değerlendirme Metrikleri ve Raporlama
-
-### Problem Nasıl Anlaşılıyor?
-`bab2958` commiti özellikle bir "rapor çalıştırıcı" (`run_report.py`) ve konfigürasyon dosyası (`run_args.json`) eklemiştir. Bu, standart bir değerlendirme sürecinin olmadığını ve her seferinde ayrı ayrı metrik hesaplama yapıldığını göstermektedir. İlk modelin değerlendirme raporu (`artifacts/report_run/REPORT.md`) mevcut olup önemli metrikler içermektedir.
-
-### İlgili Commitler
-- `bab2958` — raporlama altyapısı
-
-### Uygulanan Çözüm
-Eğitim, değerlendirme ve rapor üretimini tek bir komutla çalıştıran otomasyon scripti yazıldı. Çıktılar:
-- Confusion matrix görseli
-- ROC eğrisi görseli
-- Sayısal metrikler tablosu (accuracy, precision, recall, F1)
-
-**Elde Edilen Sonuçlar (İlk Model):**
-| Görev | Accuracy | F1 (macro) | ROC-AUC |
+| Güven Aralığı | Ortalama Güven | Ortalama Doğruluk | Overconfidence Miktarı |
 |---|---|---|---|
-| Duygu (2 sınıf) | %94.36 | 0.9435 | 0.9866 |
-| Cinsiyet (2 sınıf) | %77.12 | 0.7658 | 0.8542 |
+| 0.9 – 1.0 | 0.967 | 0.805 | **+0.162** |
+| 0.8 – 0.9 | 0.853 | 0.626 | **+0.227** |
+| 0.7 – 0.8 | 0.752 | 0.520 | **+0.232** |
+
+Kaynak: `artifacts/v1_backend/eval/high_confidence_errors.csv` — Güven > 0.95 olan yanlış tahminler:
+- Sad → Fear: 20+ örnek, güven 0.96–0.99
+- Happy → Fear: 30+ örnek, güven 0.87–0.99
+
+### Uygulanan Çözüm
+Pseudo-etiketleme pipeline'larında 0.75 ve 0.85 güven eşikleri test edildi. Her iki eşikte de highconf verisiyle eğitim yapılarak karşılaştırmalı sonuçlar alındı.
 
 ### Çözümün Etkisi
-Tekrar üretilebilir, belgelenmiş bir değerlendirme süreci oluşturuldu. Bu metrikler tezde doğrudan referans verilebilir.
+0.75 eşiği (Accuracy=67.07%, F1=0.6694) 0.85 eşiğinden (Accuracy=64.67%, F1=0.6495) daha iyi sonuç verdi.
+Kaynak: `out/highconf_pipeline/summary_results.csv`
 
-### Tezde Kullanılabilecek Açıklama
-İlk multimodal model, 10.856 örneklik KIDO veri seti üzerinde değerlendirilmiş ve duygu sınıflandırmasında %94.36 doğruluk oranına, ROC-AUC değeri 0.987'ye ulaşmıştır. Cinsiyet sınıflandırması ise %77.12 doğrulukla daha zor bir görev olarak öne çıkmıştır.
+---
+
+## Problem 4: Consensus Pipeline'ın Düşük Sad F1'i
+
+### Problem Kanıtı
+Kaynak: `out/consensus_pipeline/summary_results.csv`
+
+| Metrik | Consensus 3/3 | Highconf 0.75 |
+|---|---|---|
+| Sad F1 | **0.3000** | 0.5195 |
+| Macro F1 | 0.5721 | 0.6694 |
+| Accuracy | 57.49% | 67.07% |
+
+Consensus pipeline Sad sınıfında F1=0.30 elde etmiştir; bu, random tahmin seviyesine yakın bir değerdir.
+
+### Neden Bu Kadar Düşük?
+Repository içinde consensus pipeline'ın Sad sınıfındaki başarısızlığının nedenini doğrulayan ek log veya analiz bulunamadı. Mevcut kanıt, consensus 3/3 koşulunun Sad örneklerini orantısız biçimde elediğini göstermektedir (7.980 eğitim örneği vs 23.063).
+
+---
+
+## Problem 5: Öğretmen Model Sınıf Bias'ı
+
+### Problem Kanıtı
+Kaynak: `out/highconf_pipeline/teacher_labels_report.json`
+
+**Öğretmen model etiket dağılımı:**
+| Sınıf | Pseudo-Etiket | Test F1 |
+|---|---|---|
+| Angry | **19.211** | 0.370 |
+| Sad | 15.520 | 0.660 |
+| Happy | 10.541 | 0.773 |
+| Fear | 10.388 | 0.507 |
+
+Öğretmen model en çok Angry etiketi üretmiştir (19.211); ancak aynı modelin test setinde Angry sınıfı F1=0.370 ile en düşük performansı göstermektedir. Bu, öğretmen modelin Angry sınıfına aşırı etiket ürettiği (overpredict) ancak gerçekte bu sınıfı iyi tanımadığı anlamına gelmektedir.
+
+### Uygulanan Çözüm
+Manifest oluşturma scriptlerinde (`build_manifest_*.py`) sınıf bazlı maksimum örnek sınırı (6.000 per class) uygulandı.
+Kaynak: `out/highconf_pipeline/manifests/manifest_highconf_075_report.json`
+
+---
+
+## Problem 6: Metin Açıklamalarının Statik Kalması
+
+### Problem Kanıtı
+`d494e7b` commit mesajı: "Ezber cümleler ve GUI eklendi"
+`src/explain/rule_based_explainer.py` dosyası commit `d494e7b`'de eklendi.
+
+### Uygulanan Çözüm
+`api_server.py` içine `GITHUB_TOKEN` ortam değişkeni ile LLM entegrasyonu eklendi. `src/explain/llm_explainer.py` dosyası yazıldı. Katmanlı fallback: LLM mevcut değilse kural tabanlı açıklama, mevcutsa dinamik açıklama.
+Kaynak: `api_server.py` kaynak kodu, `1476c63` commit
+
+---
+
+## Problem 7: Tkinter GUI'de Uzun Açıklamaların Görüntülenememesi
+
+### Problem Kanıtı
+`339a738` commit mesajı: "Add scrollable text widget for explanation and refactor explanation generation"
+
+### Uygulanan Çözüm
+Tkinter `Text` widget'ı ile `Scrollbar` birleştirildi.
+Kaynak: `339a738` commit diff
+
+---
+
+## Problem 8: Masaüstü Paketlemede Dosya Yolu Sorunları
+
+### Problem Kanıtı
+`2a6895c` commit'inde `src/app_paths.py` özellikle eklenmiştir. `sys.frozen` kontrolü içermektedir — bu, PyInstaller paketlenmiş ortamında dosya yollarının farklı çözümlenmesine yönelik bilinen bir geliştirme gereksinimidir.
+Kaynak: `src/app_paths.py` kaynak kodu
+
+### Uygulanan Çözüm
+```python
+if getattr(sys, 'frozen', False):
+    # PyInstaller paketlenmiş ortam
+    base = sys._MEIPASS
+else:
+    # Geliştirme ortamı
+    base = project_root
+```
+
+---
+
+## Problem 9: Eski AI Yığınının Kaldırılması
+
+### Problem Kanıtı
+`5311334` commit mesajı: "chore: remove legacy dataset and reset old AI stack"
+
+README içeriği (commit `5311334`): "eski multimodal AI hattı bu repodan temizlendi", "legacy AI giris noktalari bilincli olarak devre disi birakildi"
+
+`api_server.py` içinde `/predict` endpoint'i geçici olarak `503 Service Unavailable` dönmektedir.
+
+### Neden Kaldırıldı?
+Repository içinde çok modlu yaklaşımdan vazgeçilmesinin teknik nedenini doğrulayan log veya metrik bulunamadı. Commit mesajı teknik gerekçe içermemektedir.
+
+### Çözümün Etkisi
+4-sınıflı, görüntü-only yeni sistem inşa edildi. İlk model metrikleri (2-sınıf, F1=0.9435) artık karşılaştırma noktası olarak kullanılamaz (farklı görev sayısı ve sınıf tanımı).
+
+---
+
+## Problem 10: Veri Kıtlığı ve Pseudo-Etiket Üretimi
+
+### Problem Kanıtı
+KIDO veri seti: 10.856 örnek
+Pipeline hedef: 20.000+ örnek
+
+Kaynak: `out/highconf_pipeline/teacher_labels_report.json` — Toplam 55.660 görüntü etiketlendi, 23.063'ü 0.75 güven eşiğini geçti.
+
+### Uygulanan Çözüm
+Üç kaynak:
+1. KIDO veri seti (orijinal)
+2. HuggingFace parquet veri kümesi (eklendi)
+3. Roboflow Drawing Facial Emotions veri seti (eklendi)
+
+Kaynak: `out/highconf_pipeline/manifests/manifest_highconf_075_report.json`:
+- HuggingFace: 13.726 örnek
+- Dataset_Images (KIDO): 8.561 örnek
+
+### Çözümün Etkisi
+23.063 pseudo-etiketli örnek ile eğitim yapılmış; temel modele (6.024 örnek) kıyasla ~4x veri artışı sağlanmıştır.

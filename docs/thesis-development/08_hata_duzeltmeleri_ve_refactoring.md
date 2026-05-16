@@ -150,7 +150,7 @@ Yapılandırma düzenleme
 Bazı geçici dosyalar, derleme çıktıları veya büyük dosyalar versiyonlama kapsamındaydı.
 
 ### Sonraki Durum
-`2a6895c`'de eklenen 9 satır muhtemelen PyInstaller derleme dizinleri (`build/`, `dist/`), pywebview geçici dosyaları veya `__pycache__` gibi klasörleri kapsıyor. `72d8a7b`'de eklenen 4 satır masaüstü paketlemeyle ilgili ek dizinleri içeriyor olabilir.
+Commit diff'lerinde `.gitignore` değişikliklerinin tam içeriği görülmektedir. `2a6895c`'de eklenen 9 satır masaüstü paketleme altyapısıyla eş zamanlı olarak eklendi. `72d8a7b`'de 4 satır daha eklendi. Hangi dizinlerin kapsandığı `.gitignore` dosyasının mevcut içeriğinden okunabilir.
 
 ### Teknik Etki
 Repo gereksiz derleme artefaktlarından temizlendi.

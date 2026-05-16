@@ -1,93 +1,90 @@
 # 02 — Geliştirme Aşamaları
 
-Bu dosya, commit geçmişinden çıkarılan geliştirme sürecini anlamlı aşamalara gruplamaktadır. Aşamalar kronolojik sıradadır ve her biri ilgili commit ID'leri ile belgelenmiştir.
+Bu dosya, commit geçmişinden çıkarılan geliştirme sürecini anlamlı aşamalara gruplamaktadır. Aşamalar kronolojik sıradadır ve her biri ilgili commit ID'leri ile belgelenmiştir. Kanıt bulunmayan kararlar için bu durum açıkça belirtilmiştir.
 
 ---
 
 # Aşama 1: Proje Kurulumu ve İlk Çok Modlu Model
 
-**Dönem:** Kasım 2025 (30 Kasım 2025)
+**Dönem:** 30 Kasım 2025
 **İlgili Commitler:** `ec7d0f8`, `b8b32b2`, `d494e7b`
 
-## Yapılan İşler
+## Yapılan İşler (Kanıta Dayalı)
 
 - KIDO veri seti (çocuk çizimleri) projeye dahil edildi. Görüntüler `Dataset/Images/Education/test/Primary/` altında düzenlendi.
-- Veri dosya adlandırma formatı belirlendi: `[okul_id]-[sınıf]-[öğrenci_id]-[cinsiyet]-[duygu].jpg` (örn. `101-1A-369-F-H.jpg`)
-- Çok modlu sinir ağı mimarisi tasarlandı:
+- Veri dosya adlandırma formatı: `[okul_id]-[sınıf]-[öğrenci_id]-[cinsiyet]-[duygu].jpg` (örn. `101-1A-369-F-H.jpg`). Kaynak: Commit `ec7d0f8` diff.
+- Çok modlu sinir ağı mimarisi tasarlandı (Kaynak: `src/models/multimodal_effnet_bert.py`, commit `b8b32b2`):
   - **Görüntü kodlayıcı:** EfficientNet-B0 (ImageNet ağırlıklarıyla)
   - **Metin kodlayıcı:** `dbmdz/bert-base-turkish-cased` (Türkçe BERT)
-  - **Birleştirme:** Projeksiyon katmanlarıyla gömme boyutu 512'ye indirgendi, sonra concat
+  - **Birleştirme:** Her modaliteden 512 boyutlu projeksiyon, concat → 1024 boyutlu birleşik vektör
   - **Çıkış kafaları:** Duygu kafası (Happiness/Sadness, 2 sınıf) + Cinsiyet kafası (Female/Male, 2 sınıf)
-- EfficientNet varsayılan olarak eğitilebilir, BERT varsayılan olarak dondurulmuş (freeze) olarak başlatıldı.
-- Tkinter tabanlı masaüstü GUI oluşturuldu.
-- Grad-CAM açıklanabilirlik modülü geliştirildi — modelin görüntünün hangi bölgesine odaklandığı görselleştiriliyor.
-- Kural tabanlı açıklayıcı (`rule_based_explainer.py`) ve metin tabanlı açıklayıcı (`text_explain.py`) eklendi.
-- Bir harici API (muhtemelen görüntü analiz amaçlı) için `perception_api.py` oluşturuldu.
+- Parametre yapılandırması (`src/train/train_multimodal.py`, commit `b8b32b2`): `freeze_bert=True` (varsayılan), `freeze_effnet=False` (varsayılan). Toplam: 116.2M parametre, eğitilebilir: 5.6M.
+- Tkinter tabanlı masaüstü GUI oluşturuldu (`src/app/gui_multimodal.py`).
+- Grad-CAM açıklanabilirlik modülü geliştirildi (`src/explain/gradcam.py`). Commit `d494e7b`'e Grad-CAM görsel çıktıları dahil edildi.
+- Kural tabanlı açıklayıcı (`rule_based_explainer.py`) eklendi. Commit mesajındaki "ezber cümleler" bu şablon açıklamalara karşılık gelmektedir.
 
-## Teknik Değerlendirme
+## Teknik Değerlendirme (Kanıta Dayalı)
 
-Bu aşamanın en dikkat çekici özelliği, projenin başlangıcından itibaren **iki ayrı sınıflandırma görevini** (duygu + cinsiyet) aynı anda hedeflemesidir. Bu çok görevli (multi-task) öğrenme yaklaşımı, hem veri etiketlemesinin de zaten bu iki boyutu içerdiğini (dosya adı şemasından anlaşılmaktadır) hem de araştırmacının iki boyuttaki sinyali birden yakalamayı planladığını göstermektedir.
+Commit `b8b32b2`'nin diff içeriği iki sınıflandırma kafasını (duygu + cinsiyet) açıkça göstermektedir. Bu çok görevli yapı, KIDO dosya adı şemasında da cinsiyet ve duygu bilgisinin kodlanmış olmasıyla uyumludur.
 
-BERT'in dondurulmuş başlatılması standart bir transfer öğrenimi stratejisidir: büyük dil modelinin ağırlıklarını eğitim başında sabit tutmak, özellikle küçük veri setlerinde aşırı öğrenmeyi azaltır.
-
-Commit mesajındaki "ezber cümleler" ifadesi, kural tabanlı açıklayıcıda kullanılan önceden tanımlı açıklama şablonlarına işaret etmektedir. Bu yaklaşım, LLM tabanlı açıklamadan daha belirleyici (deterministik) bir alternatiftir.
+BERT'in dondurulmuş başlatılması (`freeze_bert=True`) kaynak kodda doğrudan görülmektedir.
 
 ## Tezde Kullanılabilecek Anlatım
 
-Projenin ilk aşamasında çok görevli bir derin öğrenme mimarisi benimsenmiştir. Bu mimaride görüntü bilgisi EfficientNet-B0 ile, metin bilgisi ise Türkçe BERT modeliyle kodlanmış; her iki modaliteden elde edilen özellikler birleştirilmiş ve iki bağımsız sınıflandırma kafasına aktarılmıştır. Açıklanabilirlik ön planda tutulmuş, Grad-CAM görselleştirmesi ve kural tabanlı metin açıklamaları sisteme entegre edilmiştir.
+Projenin ilk aşamasında çok görevli bir derin öğrenme mimarisi oluşturulmuştur. EfficientNet-B0 görüntü kodlayıcı ve Türkçe BERT metin kodlayıcının çıktıları birleştirilerek iki bağımsız sınıflandırma kafasına (duygu ve cinsiyet) aktarılmıştır. BERT parametreleri dondurulmuş olup toplam 116.2M parametrenin yalnızca 5.6M'i eğitilebilir olarak yapılandırılmıştır.
 
 ---
 
-# Aşama 2: Tkinter GUI Olgunlaştırma (Ara Dönem)
+# Aşama 2: Tkinter GUI Olgunlaştırma
 
-**Dönem:** Kasım 2025 – Şubat 2026
+**Dönem:** 22 Şubat 2026
 **İlgili Commitler:** `339a738`
 
-## Yapılan İşler
+## Yapılan İşler (Kanıta Dayalı)
 
 - Tkinter GUI'de açıklama metni için kaydırılabilir metin alanı eklendi.
 - Açıklama üretim mantığı yeniden düzenlendi.
+- Commit mesajı: "Add scrollable text widget for explanation and refactor explanation generation"
 
 ## Teknik Değerlendirme
 
-Bu tek commit, yaklaşık 3 aylık bir sessizlikten sonra gelmiştir. Bu süreçte yerel geliştirme yapıldığı ancak commitlenmediği tahmin edilmektedir. Yapılan değişiklik küçük ama işlevsel: kullanıcı açıklamayı görmek için kaydırma yapabilsin diye UI iyileştirilmiş.
+Commit 3 (`d494e7b`, 2025-11-30) ile bu commit (`339a738`, 2026-02-22) arasında yaklaşık 3 ay geçmiştir. Bu dönemde repository'de commit yoktur.
 
 ## Tezde Kullanılabilecek Anlatım
 
-İlk prototip aşamasında Tkinter kütüphanesi ile yerel masaüstü arayüzü geliştirilmiş; kullanıcı deneyimi geri bildirimleri doğrultusunda kaydırılabilir açıklama alanı gibi UI iyileştirmeleri yapılmıştır.
+Tkinter arayüzünde, uzun açıklama metinlerini görüntülemek için kaydırılabilir metin alanı eklenmiştir (commit `339a738`).
 
 ---
 
 # Aşama 3: Web Arayüzü ve FastAPI Backend'e Geçiş
 
-**Dönem:** 22 Şubat 2026 (yoğun tek gün)
+**Dönem:** 22 Şubat 2026 (tek gün, 7 commit)
 **İlgili Commitler:** `a04e560`, `3b481f8`, `08e1303`, `1476c63`, `ef0af36`, `bab2958`
 
-## Yapılan İşler
+## Yapılan İşler (Kanıta Dayalı)
 
-- **Mimari geçiş:** Tkinter masaüstü uygulamasından React web uygulamasına geçildi.
-- React + Vite + TypeScript + Tailwind CSS ile web projesi kuruldu.
-- Türkçe/İngilizce çoklu dil desteği (i18next) eklendi.
-- FastAPI tabanlı REST API arka ucu (`api_server.py`) oluşturuldu:
+- React + Vite + TypeScript + Tailwind CSS ile web projesi kuruldu (commit `a04e560`).
+- i18next ile Türkçe/İngilizce çoklu dil desteği eklendi (commit `3b481f8`).
+- FastAPI tabanlı REST API arka ucu (`api_server.py`) oluşturuldu (commit `08e1303`):
+  - 131 satır ilk versiyon
   - `/health` endpoint'i
-  - `/predict` endpoint'i: resim + metin girişi alıp model çıktısı + açıklama döndürüyor
-  - CORS middleware (React dev sunucusuyla iletişim için)
-- API yanıtına açıklama (explanation) alanı eklendi.
-- Duygu ve cinsiyet etiketleri için dil bazlı yerelleştirme desteği API'ye entegre edildi.
-- Eğitim, değerlendirme ve raporlama otomasyonu (`run_report.py`) eklendi.
-- Confusion matrix ve ROC eğrisi grafikleri üretildi.
+  - `/predict` endpoint'i: resim + metin girişi → model çıktısı + açıklama
+  - CORS middleware
+  - `vite.config.ts`'de proxy yapılandırması
+- API yanıtına `explanation` alanı eklendi (commit `1476c63`).
+- Duygu ve cinsiyet etiketleri için dil bazlı yerelleştirme API'ye entegre edildi; 189 satır ekleme (commit `ef0af36`).
+- Model değerlendirme ve raporlama altyapısı eklendi (commit `bab2958`):
+  - `run_report.py`
+  - `artifacts/report_run/REPORT.md` — **Duygu Accuracy=%94.36, F1=0.9435, ROC-AUC=0.9866**
+  - Confusion matrix ve ROC eğrisi görselleri
 
-## Teknik Değerlendirme
+## Teknik Değerlendirme (Kanıta Dayalı)
 
-Bu aşama, tek bir gün içinde gerçekleştirilmiş yoğun bir geliştirme sprintidir (7 commit, 22 Şubat 2026). Tkinter'dan React'e geçiş önemli bir mimari karardır; web tabanlı arayüz daha geniş erişilebilirlik, daha kolay güncelleme ve daha modern kullanıcı deneyimi sağlar.
-
-Vite proxy yapılandırması güncellenerek React dev ortamı FastAPI arka ucuna yönlendirilmiştir — bu standart bir full-stack geliştirme düzenidir.
-
-Raporlama altyapısının eklenmesi (confusion matrix, ROC), projenin akademik değerlendirme boyutunu ciddiye aldığını göstermektedir.
+22 Şubat 2026'da tek günde 7 commit yapılmıştır. Commit `08e1303`'ün diff'i `api_server.py`'nin 131 satır ile ilk kez oluşturulduğunu göstermektedir. Commit `bab2958`'in diff'i `REPORT.md` içindeki somut metrikleri içermektedir.
 
 ## Tezde Kullanılabilecek Anlatım
 
-Sistemin kullanılabilirlik ve erişilebilirlik gereksinimlerini karşılamak amacıyla yerel masaüstü arayüzünden modern web teknolojilerine geçiş yapılmıştır. React ve FastAPI kullanılarak istemci-sunucu mimarisi oluşturulmuş; çok dilli arayüz desteği ile sistem hem Türkçe hem İngilizce kullanıcıya hitap edebilir hale getirilmiştir.
+22 Şubat 2026'da tek günde React web arayüzü, FastAPI backend, i18n desteği, açıklama API'si ve model değerlendirme raporlama altyapısı oluşturulmuştur. Bu tarihte elde edilen değerlendirme sonuçları: Duygu sınıflandırması Accuracy=%94.36, F1=0.9435 (KIDO test seti, 1.630 örnek, dengeli).
 
 ---
 
@@ -96,28 +93,25 @@ Sistemin kullanılabilirlik ve erişilebilirlik gereksinimlerini karşılamak am
 **Dönem:** 12 Mart 2026
 **İlgili Commitler:** `16fa3d3`, `2a6895c`, `72d8a7b`
 
-## Yapılan İşler
+## Yapılan İşler (Kanıta Dayalı)
 
-- Markdown'dan DOCX formatına dönüştürme scripti (`build_report_docx.py`) geliştirildi. DOCX şablonu referans alınarak başlıklar, tablolar, listeler ve görseller dönüştürülüyor.
+- Markdown'dan DOCX formatına dönüştürme scripti (`build_report_docx.py`) geliştirildi (commit `16fa3d3`).
 - Tez belgesi şablonu (`Alper_YALÇIN_Cocuk_Cizimlerinden_Duygu_Analizi.docx`) repo'ya eklendi.
-- FastAPI + React'i saran masaüstü uygulaması (`desktop_app.py`) oluşturuldu:
-  - Uygulama başladığında FastAPI sunucu arka planda başlatılıyor.
-  - pywebview ile yerel tarayıcı penceresi açılıyor.
+- FastAPI + React'i saran masaüstü uygulaması (`desktop_app.py`) oluşturuldu (commit `2a6895c`):
+  - FastAPI sunucu arka planda başlatılıyor
+  - pywebview ile yerel tarayıcı penceresi açılıyor
+- `src/app_paths.py` — `sys.frozen` kontrolü ile paketlenmiş ortamda dosya yolu çözümlemesi yapılıyor.
 - PyInstaller spec dosyası (`desktop_app.spec`) yapılandırıldı.
 - Windows kurulum paketi için Inno Setup scripti oluşturuldu.
-- Derleme otomasyonu için PowerShell scripti (`build_desktop.ps1`) yazıldı.
-- Web uygulamasının `/about` sayfasına performans grafikleri eklendi.
-- Kod yapısı okunabilirlik açısından yeniden düzenlendi.
+- Web uygulamasının `/about` sayfasına confusion matrix ve ROC eğrisi görselleri eklendi (commit `72d8a7b`).
 
-## Teknik Değerlendirme
+## Teknik Değerlendirme (Kanıta Dayalı)
 
-Bu aşama projenin "dağıtım" (deployment) boyutunu kapsamaktadır. PyInstaller + pywebview kombinasyonu, bir Python uygulamasını kendi içinde tüm bağımlılıklarını barındıran çalıştırılabilir bir masaüstü uygulamasına dönüştürmek için yaygın kullanılan bir yaklaşımdır.
-
-Hem web uygulaması hem masaüstü paket olarak dağıtım seçeneğinin korunması, farklı kullanıcı senaryolarını (klinik ortam, araştırma, demo) karşılamayı hedeflemiş olabilir.
+`src/app_paths.py` kaynak kodu `sys.frozen` kontrolü içermektedir — bu, PyInstaller paketlenmiş ortamında çalışma zamanı yolu sorununu çözen standart bir yapıdır.
 
 ## Tezde Kullanılabilecek Anlatım
 
-Sistemin hem web tarayıcısından hem de bağımsız masaüstü uygulaması olarak çalışabilmesi sağlanmıştır. PyInstaller ile Windows çalıştırılabilir paketi oluşturulmuş; bu sayede internet bağlantısı gerektirmeyen klinik ortamlarda kullanım mümkün hale getirilmiştir.
+Sistem, PyInstaller ve pywebview kullanılarak bağımsız Windows masaüstü uygulaması olarak paketlenmiştir. FastAPI sunucusu ve React arayüzü tek bir çalıştırılabilir pakette birleştirilmiştir.
 
 ---
 
@@ -126,65 +120,53 @@ Sistemin hem web tarayıcısından hem de bağımsız masaüstü uygulaması ola
 **Dönem:** 19–20 Nisan 2026
 **İlgili Commitler:** `5311334`, `fb8602a`
 
-## Yapılan İşler
+## Yapılan İşler (Kanıta Dayalı)
 
-- **Eski AI yığını tamamen kaldırıldı:**
-  - BERT tabanlı metin kodlayıcı
-  - Çok modlu (multimodal) füzyon katmanı
-  - Eski eğitim veri seti
-  - Eski model checkpoint'leri ve explainability modülleri
-- README yeniden yazılarak projenin yeni yönü açıklandı.
-- Backend V1 için mikro-sprint yürütme planı oluşturuldu.
+Commit `5311334` diff'inden:
+- `Dataset/Images/Education/` klasöründeki çok sayıda görüntü silindi.
+- BERT tabanlı metin kodlayıcı ve çok modlu füzyon katmanı kaldırıldı.
+- Eski model checkpoint'leri ve explainability modülleri kaldırıldı.
+- README yeniden yazılarak projenin yeni yönü açıklandı: "eski multimodal AI hattı bu repodan temizlendi", "legacy AI giris noktalari bilincli olarak devre disi birakildi".
+- `api_server.py` içinde `/predict` endpoint `503 reset_in_progress` döndürecek şekilde değiştirildi.
+
+Commit `fb8602a`: Backend V1 için mikro-sprint yürütme planı eklendi.
 
 ## Teknik Değerlendirme
 
-Bu, projenin en önemli dönüm noktasıdır. README'deki açıklama (Nisan 2026 tarihli, `api_server.py` yorumundan okunmuştur) bu kararın gerekçesini özetlemektedir: eski yapı "emotion + gender çok görevli sınıflandırma + BERT tabanlı multimodal akış" içeriyordu; yeni hedef ise "yeni etiketli görüntü-only veriyle sıfırdan kurulacak yeni AI sistemi"dir.
+Repository içinde bu kararın teknik gerekçesini doğrulayan performans karşılaştırması, ablation study veya başarısızlık logu bulunamadı. Commit mesajı ("remove legacy dataset and reset old AI stack") ve README içeriği kararın alındığını belgeler; gerekçeyi açıklamaz.
 
-Bu geçişin nedeni commit geçmişinde açıkça belirtilmemiştir. Olası gerekçeler:
-- Çok modlu yaklaşımın beklenen performansı sağlamamış olması
-- Metin verisinin kalitesi veya tutarlılığıyla ilgili sorunlar
-- Akademik odağın daraltılması (tez kapsamı)
-- Yeni 4-sınıflı duygu taksonomisine geçiş gerekliliği (ikili sınıflandırmadan Anger/Fear/Happiness/Sadness'a)
+## Tezde Nasıl Anlatılmalı
 
-## Tezde Kullanılabilecek Anlatım
-
-Geliştirme sürecinde, çok modlu yaklaşımdan vazgeçilerek yalnızca görüntü tabanlı bir mimariye geçilmesine karar verilmiştir. Bu karar, sınıflandırma hedefinin de iki sınıftan dört sınıfa (Anger, Fear, Happiness, Sadness) genişletilmesiyle eş zamanlı alınmıştır. Böylece sistem daha net ve ölçülebilir bir araştırma hedefine yönlendirilmiştir.
+"Nisan 2026'da eski çok modlu sistem kaldırılarak yalnızca görüntü tabanlı mimariye geçilmiştir. Bu geçişin teknik gerekçesi commit geçmişinde belgelenmemiştir. [Tez yazarı gerçek nedeni eklemeli.]"
 
 ---
 
 # Aşama 6: Yeni Veri Hattı — Pseudo-Etiketleme
 
-**Dönem:** Mayıs 2026 (8–14 Mayıs 2026)
+**Dönem:** 8–14 Mayıs 2026
 **İlgili Commitler:** `dc64027`, `73ff5de`, `a846643`
 
-## Yapılan İşler
+## Yapılan İşler (Kanıta Dayalı)
 
-- Ortam değişkeni altyapısı (`env`, `.env.example`) kuruldu.
-- Yeni 4-sınıflı veri kümesi yapılandırması oluşturuldu: `Dataset/Images/Emotion_4Class/` (Anger/Fear/Happy/Sad)
-- Birden fazla pseudo-etiketleme scripti geliştirildi:
-  - `label_with_hf.py`: HuggingFace modelleriyle etiketleme
-  - `label_with_ollama.py`: Ollama (yerel) LLM ile etiketleme
-  - `label_with_model.py` / `label_with_model_v2.py`: Mevcut eğitilmiş model ile etiketleme
-  - `ollama_annotate.py`: Ollama annotasyon scripti
-- Veri manifesti oluşturma scriptleri geliştirildi:
-  - `build_manifest_kido.py`
-  - `build_manifest_expanded.py`
-  - `build_manifest_v2.py`
-  - `build_manifest_final.py`
-  - `build_manifest_qwen.py`
-- İki büyük pipeline oluşturuldu:
-  - `run_highconf_pipeline.py`: Yüksek güvenilirlikli pseudo-etiketleme (güven eşiği: 0.75 / 0.85)
-  - `run_consensus_pipeline.py`: Çoklu model uzlaşmasına dayalı etiketleme (3/3 model mutabakatı)
-- Pipeline çıktıları (`out/highconf_pipeline/`, `out/consensus_pipeline/`) üretildi ve repo'ya eklendi.
+Commit `73ff5de` diff'inden:
+- Yeni 4-sınıflı veri kümesi yapılandırması: `Dataset/Images/Emotion_4Class/` (Anger/Fear/Happy/Sad)
+- Pseudo-etiketleme scriptleri: `label_with_hf.py`, `label_with_ollama.py`, `label_with_model.py`, `label_with_model_v2.py`
+- Veri manifesti scriptleri: `build_manifest_kido.py`, `build_manifest_expanded.py`, `build_manifest_v2.py`, `build_manifest_final.py`, `build_manifest_qwen.py`
+- İki pipeline: `run_highconf_pipeline.py` (güven eşiği 0.75/0.85), `run_consensus_pipeline.py` (3/3 model mutabakatı)
 
-## Teknik Değerlendirme
+Commit `a846643` — pipeline çıktıları (Kaynak: `out/highconf_pipeline/summary_results.csv`, `out/consensus_pipeline/summary_results.csv`):
 
-Bu aşama, etiketli veri kıtlığı sorununa yönelik **öğretmen-öğrenci (teacher-student) öğrenme** yaklaşımını yansıtmaktadır. Mevcut eğitilmiş model ("öğretmen") etiketsiz görüntüleri tahmin ediyor; yüksek güvenilirlikli tahminler yeni eğitim verisi olarak kullanılıyor ("öğrenci" modeli bu veriyle eğitilecek).
+| Pipeline | Eğitim Örnekleri | Accuracy | Macro F1 |
+|---|---|---|---|
+| Highconf 0.75 | 23.063 | 67.07% | 0.6694 |
+| Highconf 0.85 | 18.783 | 64.67% | 0.6495 |
+| Consensus 3/3 | 7.980 | 57.49% | 0.5721 |
 
-İkinci yaklaşım olan "consensus pipeline" ise birden fazla farklı modelin (Qwen VL, HuggingFace modelleri, yerel öğretmen) aynı görüntü için aynı etiketi vermesini şart koşuyor (3/3 mutabakat). Bu, gürültülü pseudo-etiketleme çıktılarını filtrelemek için güçlü bir yöntemdir.
+## Teknik Değerlendirme (Kanıta Dayalı)
 
-HuggingFace parquet veri kümesinin varlığı (`Dataset/huggingface/`) ve `run_highconf_pipeline.py` içindeki ayıklama kodu, projenin çevrimiçi çizim/duygu veri kümelerini de dahil etmeye çalıştığını göstermektedir.
+Öğretmen model 55.660 görüntüyü etiketledi; ortalama güven=0.7306. Güven ≥0.75 olan: 28.314 örnek (%50.9). Güven ≥0.85 olan: 18.786 örnek (%33.8).
+Kaynak: `out/highconf_pipeline/teacher_labels_report.json`
 
 ## Tezde Kullanılabilecek Anlatım
 
-Veri kıtlığı sorununu aşmak amacıyla pseudo-etiketleme (yarı denetimli öğrenme) yaklaşımı benimsenmiştir. Bu yaklaşımda önceden eğitilmiş bir öğretmen modeli, etiketsiz görüntüleri sınıflandırmakta; belirli bir güven eşiğini (0.75 ve 0.85) aşan tahminler yeni eğitim verisi olarak değerlendirilmektedir. Ek olarak, birden fazla modelin mutabakatını gerektiren uzlaşma (consensus) tabanlı etiketleme stratejisi ile etiket gürültüsü azaltılmıştır.
+Mayıs 2026'da öğretmen-öğrenci pseudo-etiketleme yaklaşımı uygulanmıştır. Öğretmen model 55.660 görüntüyü etiketlemiş; güven eşiği 0.75 kullanan pipeline 23.063 eğitim örneği üretmiş ve Macro F1=0.6694 elde etmiştir. Consensus pipeline (3/3 model mutabakatı) 7.980 örnek üretmiş ve Macro F1=0.5721 elde etmiştir.

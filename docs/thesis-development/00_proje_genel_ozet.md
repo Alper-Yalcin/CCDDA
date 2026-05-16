@@ -4,7 +4,7 @@
 
 **CCDDA** — *Children's Drawing-Based Duygu/Emotion Analizi*
 
-Proje dizin adı `CCDDA`'dır. Commit geçmişi ve dosya yapısından çıkarıldığı kadarıyla bu kısaltma, "Children's Chart/Drawing Duygu Analizi" ya da benzer bir Türkçe-İngilizce karışık isimlendirmeye karşılık gelmektedir. Kesin açılımı commit ya da README'de belirtilmemiştir.
+Proje dizin adı `CCDDA`'dır. Repository içinde bu kısaltmanın resmi açılımı belirtilmemiştir. `Alper_YALÇIN_Cocuk_Cizimlerinden_Duygu_Analizi.docx` dosya adı tez başlığını ima etmektedir.
 
 ---
 

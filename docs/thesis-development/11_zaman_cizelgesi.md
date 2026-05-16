@@ -1,6 +1,6 @@
 # 11 — Zaman Çizelgesi
 
-Bu dosya, commit tarihlerine ve içeriklerine dayalı proje zaman çizelgesini sunmaktadır.
+Bu dosya, commit tarihlerine dayalı proje zaman çizelgesini sunmaktadır. Yalnızca repository'de commit bulunan tarihler ve olaylar yer almaktadır. Commit'e yansımayan faaliyetler bu dosyada yer almaz.
 
 ---
 
@@ -8,27 +8,27 @@ Bu dosya, commit tarihlerine ve içeriklerine dayalı proje zaman çizelgesini s
 
 | Tarih | Geliştirme Aşaması | İlgili Commitler | Açıklama |
 |---|---|---|---|
-| 2025-11-30 (Gün 1) | **Proje Kuruluşu + İlk Model** | `ec7d0f8` | İlk commit: KIDO veri seti, eğitim scripti, .gitignore |
-| 2025-11-30 (Gün 1) | **Multimodal Model Mimarisi** | `b8b32b2` | EfficientNet-B0 + Türkçe BERT modeli, ağırlık dondurma |
-| 2025-11-30 (Gün 2) | **GUI + Açıklanabilirlik** | `d494e7b` | Tkinter GUI, Grad-CAM, kural tabanlı açıklayıcı |
-| *2025-12 — 2026-01* | **Sessiz Dönem (yaklaşık 3 ay)** | — | Bu dönemde commitlenmemiş yerel çalışmalar yapılmış olabilir |
+| 2025-11-30 | **Proje Kuruluşu + İlk Model** | `ec7d0f8` | İlk commit: KIDO veri seti, eğitim scripti, .gitignore |
+| 2025-11-30 | **Multimodal Model Mimarisi** | `b8b32b2` | EfficientNet-B0 + Türkçe BERT modeli, freeze parametreleri |
+| 2025-11-30 | **GUI + Açıklanabilirlik** | `d494e7b` | Tkinter GUI, Grad-CAM, kural tabanlı açıklayıcı |
+| *2025-12-01 — 2026-02-21* | **Commit Yok** | — | Bu tarih aralığında repository'de commit yoktur |
 | 2026-02-22 | **GUI İyileştirme** | `339a738` | Kaydırılabilir metin alanı, açıklama yeniden düzenleme |
 | 2026-02-22 | **React Projesi Kurulumu** | `a04e560` | Vite + TypeScript + Tailwind CSS |
 | 2026-02-22 | **Çok Dil Desteği** | `3b481f8` | i18n (Türkçe/İngilizce) |
 | 2026-02-22 | **FastAPI Backend** | `08e1303` | REST API, analiz sayfası, CORS |
 | 2026-02-22 | **Açıklama API Entegrasyonu** | `1476c63` | API yanıtına explanation alanı eklendi |
 | 2026-02-22 | **Etiket Yerelleştirmesi** | `ef0af36` | Duygu/cinsiyet etiketleri dil bazlı |
-| 2026-02-22 | **Raporlama Altyapısı** | `bab2958` | run_report.py, confusion matrix, ROC eğrisi |
+| 2026-02-22 | **Raporlama Altyapısı** | `bab2958` | run_report.py, confusion matrix — **Duygu F1=0.9435** |
 | 2026-03-12 | **DOCX Rapor Üretici** | `16fa3d3` | Markdown → DOCX dönüştürücü, tez şablonu |
-| 2026-03-12 | **Masaüstü Uygulama** | `2a6895c` | PyInstaller, pywebview, Inno Setup, büyük UI güncellemesi |
+| 2026-03-12 | **Masaüstü Uygulama** | `2a6895c` | PyInstaller, pywebview, Inno Setup |
 | 2026-03-12 | **Refactoring + Grafikler** | `72d8a7b` | Kod yapısı, /about sayfası görselleri |
-| *2026-03-13 — 2026-04-18* | **Sessiz Dönem (yaklaşık 5 hafta)** | — | Muhtemelen analiz ve karar değerlendirme dönemi |
+| *2026-03-13 — 2026-04-18* | **Commit Yok** | — | Bu tarih aralığında repository'de commit yoktur |
 | 2026-04-19 | **Mimari Sıfırlama** | `5311334` | Eski AI yığını kaldırıldı, README yeniden yazıldı |
 | 2026-04-20 | **Yeni Plan** | `fb8602a` | Backend V1 mikro-sprint yürütme planı |
-| *2026-04-21 — 2026-05-07* | **Sessiz Dönem (yaklaşık 2.5 hafta)** | — | Yeni sistem kurulumu, yerel geliştirme |
-| 2026-05-08 | **Yeni Altyapı (Auto-commit)** | `dc64027` | .env, dataset reorganizasyonu, Claude config |
+| *2026-04-21 — 2026-05-07* | **Commit Yok** | — | Bu tarih aralığında repository'de commit yoktur |
+| 2026-05-08 | **Yeni Altyapı** | `dc64027` | .env, dataset reorganizasyonu |
 | 2026-05-10 | **Pseudo-Etiketleme Scriptleri** | `73ff5de` | label_with_*.py, build_manifest_*.py, pipeline scriptleri |
-| 2026-05-14 | **Pipeline Çıktıları** | `a846643` | highconf + consensus pipeline manifest'leri |
+| 2026-05-14 | **Pipeline Çıktıları** | `a846643` | highconf (F1=0.6694) + consensus (F1=0.5721) pipeline çıktıları |
 
 ---
 
@@ -36,54 +36,56 @@ Bu dosya, commit tarihlerine ve içeriklerine dayalı proje zaman çizelgesini s
 
 ```
 2025-11     ████ [Proje başlangıcı: multimodal model + GUI + Grad-CAM]
-2025-12     ░░░░ [Sessiz dönem - commitlenmemiş çalışma olabilir]
-2026-01     ░░░░ [Sessiz dönem]
-2026-02-22  ████████ [YOĞUN SPRINT: React + FastAPI + i18n + Raporlama]
+2025-12     ░░░░ [Commit yok]
+2026-01     ░░░░ [Commit yok]
+2026-02-22  ████████ [YOĞUN SPRINT: React + FastAPI + i18n + Raporlama — Duygu F1=0.9435]
 2026-03-12  ████ [Masaüstü paketleme + DOCX + Refactoring]
-2026-03     ░░░░ [Sessiz dönem]
+2026-03-13  ░░░░ [Commit yok]
 2026-04-19  ██ [SIFIRLAMA: Legacy AI kaldırıldı]
 2026-04-20  █  [Yeni plan dokümantasyonu]
-2026-04     ░░░░ [Sessiz dönem]
+2026-04-21  ░░░░ [Commit yok]
 2026-05-08  █  [Ortam yapılandırması]
 2026-05-10  ██ [Pseudo-etiketleme altyapısı]
-2026-05-14  █  [Pipeline çıktıları]
+2026-05-14  █  [Pipeline çıktıları — highconf F1=0.6694, consensus F1=0.5721]
 ```
 
 ---
 
 # Geliştirme Yoğunluğu Analizi
 
-| Dönem | Commit Sayısı | Yoğunluk |
+| Dönem | Commit Sayısı | Durum |
 |---|---|---|
-| Kasım 2025 | 3 | Düşük (başlangıç) |
-| Aralık 2025 – Şubat 2026 | 1 | Çok düşük (sessiz dönem) |
-| 22 Şubat 2026 | 7 | **Çok yüksek (tek gün sprinti)** |
-| 12 Mart 2026 | 3 | Orta |
-| Nisan 2026 | 2 | Düşük (karar dönemi) |
-| Mayıs 2026 | 3 | Orta |
+| Kasım 2025 | 3 | Aktif |
+| Aralık 2025 – 21 Şubat 2026 | 0 | **Commit yok** |
+| 22 Şubat 2026 | 7 | **En yoğun gün** |
+| 12 Mart 2026 | 3 | Aktif |
+| 13 Mart – 18 Nisan 2026 | 0 | **Commit yok** |
+| 19–20 Nisan 2026 | 2 | Aktif |
+| 21 Nisan – 7 Mayıs 2026 | 0 | **Commit yok** |
+| 8–14 Mayıs 2026 | 3 | Aktif |
 
 ---
 
 # Önemli Tarih Notları
 
-1. **22 Şubat 2026 — Kritik Gün:** Projenin en yoğun geliştirme günü. Tek günde React projesi kuruldu, i18n eklendi, FastAPI yazıldı, 6 farklı commit yapıldı. Muhtemelen öncesinde yerel geliştirme yapılmış ve hazır hale gelen kod tek seferde push edilmiştir.
+1. **22 Şubat 2026 — En Yoğun Gün:** Tek günde React projesi, i18n, FastAPI, açıklama API'si ve raporlama altyapısı oluşturuldu. 7 commit. Bu tarihte `bab2958` commiti ile ölçülen değerler: Duygu Accuracy=%94.36, F1=0.9435, ROC-AUC=0.9866.
 
-2. **19 Nisan 2026 — Dönüm Noktası:** Eski sistem kaldırıldı. Projenin yaklaşık 5 aylık geliştirme birikiminin önemli bir kısmı devre dışı bırakıldı. Bu karar tez kapsamı açısından kritik öneme sahiptir.
+2. **19 Nisan 2026 — Mimari Sıfırlama:** Eski çok modlu sistem `5311334` commiti ile kaldırıldı. Bu kararın teknik gerekçesini doğrulayan log veya metrik repository'de bulunmamaktadır.
 
-3. **Sessiz Dönemler:** Üç belirgin sessiz dönem mevcuttur. Bu dönemlerde yerel geliştirme, analiz, okuma veya klinisyen görüşmeleri yapılmış olabilir. Commit geçmişi bu dönemleri belgelemez.
+3. **Commit Olmayan Dönemler:** Üç ayrı dönemde (Aralık 2025 – Şubat 2026, Mart – Nisan 2026, Nisan – Mayıs 2026) repository'de commit yoktur. Bu dönemlerde neler yapıldığı commit geçmişinden belirlenememektedir.
 
 ---
 
-# Toplam Zaman Dağılımı (Tahmini)
+# Commit Bazlı Aktif Geliştirme Süresi
 
-| Aşama | Süre | Dönem |
-|---|---|---|
-| İlk prototip + GUI | ~2 gün | Kasım 2025 |
-| Sessiz dönem | ~3 ay | Aralık 2025 – Şubat 2026 |
-| Web + API geliştirme | ~1 gün (yoğun sprint) | Şubat 2026 |
-| Masaüstü + Raporlama | ~1 gün | Mart 2026 |
-| Karar ve sıfırlama | ~5 hafta | Mart–Nisan 2026 |
-| Yeni sistem geliştirme | ~2 hafta | Nisan–Mayıs 2026 |
-| **Toplam aktif süre** | **~6 ay** | **Kasım 2025 – Mayıs 2026** |
+| Aşama | Süre (commit tarihlerine göre) |
+|---|---|
+| İlk prototip + GUI | 1 gün (30 Kasım 2025) |
+| Web + API geliştirme | 1 gün (22 Şubat 2026) |
+| Masaüstü + Raporlama | 1 gün (12 Mart 2026) |
+| Karar ve sıfırlama | 2 gün (19–20 Nisan 2026) |
+| Yeni sistem geliştirme | 3 gün (8–14 Mayıs 2026) |
+| **Commit bulunan toplam gün sayısı** | **8 gün** |
+| **Toplam takvim süresi** | **~6 ay (30 Kasım 2025 – 14 Mayıs 2026)** |
 
-> Not: Bu tahminler commit tarihlerine dayalıdır. Gerçek çalışma süresi commit yoğunluğundan farklı olabilir.
+**Not:** Aktif geliştirme süresi commit sayısına göre değil, commit tarihlerine göre hesaplanmıştır. Bu tablo yalnızca repository'ye yansıyan faaliyetleri kapsamaktadır.

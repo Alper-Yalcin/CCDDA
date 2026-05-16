@@ -90,7 +90,7 @@ Açıklama sistemi, hem kural tabanlı hem büyük dil modeli tabanlı yaklaşı
 3. Sonraki aşamalarda aktif geliştirme yapılmadı (React'e geçildi)
 
 ### Teknik Açıklama
-`gui_multimodal.py`, 394 satırlık kapsamlı bir Tkinter uygulamasıdır. Dosya boyutundan ve adından, görüntü yükleme, model çalıştırma ve sonuç gösterimi işlevlerini içerdiği anlaşılmaktadır. `tk_app.py` daha sade bir wrapper olabilir.
+`gui_multimodal.py`, 394 satırlık Tkinter uygulamasıdır. `tk_app.py` aynı committe eklenen ikinci GUI dosyasıdır. Her iki dosyanın işlev dağılımı commit diff'inde belirtilmemiştir.
 
 ### Tezde Kullanılabilecek Anlatım
 Sistemin ilk kullanıcı arayüzü Tkinter kütüphanesiyle geliştirilmiş, yerel masaüstü uygulaması olarak çalıştırılmıştır. Bu prototip, kullanıcı akışının tanımlanmasında önemli bir referans noktası oluşturmuştur.
@@ -118,12 +118,7 @@ Sistemin ilk kullanıcı arayüzü Tkinter kütüphanesiyle geliştirilmiş, yer
 7. **72d8a7b**: Hakkında sayfasına performans görselleri eklendi
 
 ### Teknik Açıklama
-`App.tsx` birden fazla commit sonunda 555+ satıra ulaşmıştır. Uygulama muhtemelen şu ekranları içermektedir:
-- Ana sayfa / karşılama
-- Analiz sayfası (görüntü yükleme + tahmin)
-- Hakkında sayfası (model metrikleri, grafikler)
-
-Dil seçimi kullanıcı tarafından değiştirilebilmektedir.
+`App.tsx` birden fazla commit sonunda 555+ satıra ulaşmıştır. Commit diff'lerinden doğrulanan ekranlar: Analiz sayfası (commit `08e1303`: görüntü yükleme + tahmin + hata yönetimi), Hakkında sayfası (commit `72d8a7b`: performans görselleri). Dil seçimi commit `3b481f8`'den itibaren kullanıcı tarafından değiştirilebilmektedir.
 
 ### Tezde Kullanılabilecek Anlatım
 Modern web teknolojileriyle geliştirilen arayüz, Türkçe ve İngilizce dil desteğiyle klinik ve araştırma kullanımına yönelik olarak tasarlanmıştır.
