@@ -59,7 +59,7 @@ Thumbs.db
 
 # --- Dataset (eğer komple track etmek istemezsen) ---
 # Dataset klasörünü versiyon kontrolüne almak istemiyorsan aşağıyı aç:
-# Dataset/
+Dataset/
 # Eğer sadece büyük dosyaları hariç tutmak istersen, altına özel pattern ekleyebilirsin.
 
 # --- Config / çalışma sırasında oluşabilecek dosyalar ---
