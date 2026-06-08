@@ -1,0 +1,270 @@
+{
+  "nav": {
+    "home": "Anasayfa",
+    "analysis": "Analizi Çalıştır",
+    "about": "Proje Hakkında"
+  },
+  "brand": {
+    "title": "ÇocukÇizim",
+    "accent": "Analiz",
+    "subtitle": "NÖHÜ Bilgisayar Müh. Lisans Tez Prototipi"
+  },
+  "hero": {
+    "badge": "Lisans Tez Araştırma Çıktısı — 2026",
+    "title": "Çocuk çizimlerinden açıklanabilir çok modlu duygu analizi",
+    "subtitle": "Bu prototip, KIDO veri seti üzerinde eğitilen ResNet-50 + Klinik Özellik füzyon mimarisini kullanarak çocuk çizimlerini dört duygu kategorisine sınıflandırır ve klinisyeni destekleyen açıklanabilir karar destek çıktıları üretir.",
+    "highlights": [
+      "6.619 çizimle (KIDO, elle etiketlenmiş) eğitilmiş 4 sınıflı duygu sınıflandırıcı: Mutlu / Üzgün / Öfkeli / Korku",
+      "ResNet-50 + 18 klinik özellik füzyonu — Test Makro F1: 0,833 / Doğruluk: %83,2",
+      "Sıcaklık Ölçekleme (T*=2,65) ile kalibre model, Grad-CAM görselleştirme ve LLM rapor üretimi"
+    ],
+    "start": "Analizi Başlat",
+    "methodology": "Proje Detayları"
+  },
+  "home": {
+    "panelEyebrow": "Araştırma özeti",
+    "panelTitle": "Raporun çekirdeği bu ekranda",
+    "panelSubtitle": "Sistem, çizim görüntüsünü ve 18 OpenCV tabanlı klinik özelliği birlikte işleyerek duygu sınıflandırması yapar; Sıcaklık Ölçekleme ile güven kalibrasyonu, Grad-CAM ile görsel açıklanabilirlik ve LLM ile klinik rapor üretimi sunar.",
+    "flowTitle": "Yerel çalışma akışı",
+    "panelFlow": [
+      "Çizim görüntüsü alınır, 224×224'e yeniden boyutlandırılır ve ImageNet normalizasyonu uygulanır.",
+      "OpenCV ile 18 klinik özellik (çizgi yoğunluğu, renk dağılımı, keskin köşe oranı vb.) çıkarılır.",
+      "ResNet-50 görsel dalı ve Klinik MLP çıktıları birleştirilerek 4 sınıflı duygu kararı üretilir; T*=2,65 ile kalibre edilir."
+    ],
+    "panelFacts": [
+      { "label": "Test doğruluğu", "value": "%83,2" },
+      { "label": "Makro F1", "value": "0,833" },
+      { "label": "4 sınıf", "value": "M/Ü/Ö/K" }
+    ],
+    "quickCardOneLabel": "Model omurgası",
+    "quickCardOneText": "ResNet-50 görsel omurgası (2048 boyutlu çıktı) ve 18 özellikli Klinik MLP bir füzyon başlığında birleştirilerek 25M parametreli sınıflandırıcı oluşturulur.",
+    "quickCardTwoLabel": "Açıklanabilirlik",
+    "quickCardTwoText": "Grad-CAM ısı haritaları + LLM tabanlı klinik bağlamlı metin raporu. Güven eşiği altındaki durumlar 'Belirsiz' olarak işaretlenir.",
+    "stats": [
+      {
+        "value": "5.177",
+        "label": "Orijinal örnek (KIDO)",
+        "note": "Mutlu: 2.963, Üzgün: 1.456, Öfkeli: 359, Korku: 399 — elle etiketlenmiş."
+      },
+      {
+        "value": "6.619",
+        "label": "Artırılmış eğitim seti",
+        "note": "Azınlık sınıfları (Öfkeli, Korku) 1.100'e yükseltildi. Test seti saf kalındı."
+      },
+      {
+        "value": "993",
+        "label": "Test örnekleri",
+        "note": "Mutlu: 445, Üzgün: 218, Öfkeli: 165, Korku: 165 — artırılmamış orijinal örnekler."
+      },
+      {
+        "value": "%83,2",
+        "label": "Test doğruluğu",
+        "note": "ResNet-50 + Klinik (B3) — 7 deney konfigürasyonu arasında en yüksek başarım."
+      }
+    ],
+    "workflowEyebrow": "Nasıl çalışır",
+    "workflowTitle": "Çizimden açıklanabilir klinik rapora",
+    "workflowIntro": "Sistem, çizimi sadece sınıflandırmakla kalmaz; klinisyene görsel kanıt ve yorumlanabilir rapor sunan bir karar destek aracı olarak tasarlanmıştır.",
+    "workflowSteps": [
+      {
+        "title": "Veri hazırlama",
+        "body": "KIDO veri setinden 5.177 çizim elle etiketlendi. Azınlık sınıfları (Öfkeli, Korku) veri artırma ile 1.100'e dengelendi; test seti saf tutuldu."
+      },
+      {
+        "title": "Çok modlu çıkarım",
+        "body": "ResNet-50 görsel özellikleri ve 18 OpenCV tabanlı klinik özellik füzyon katmanında birleştirilir; Sıcaklık Ölçekleme (T*=2,65) ile ECE 0,1324'ten 0,0231'e indirildi."
+      },
+      {
+        "title": "Açıklama ve sunum",
+        "body": "Grad-CAM ısı haritası, kural tabanlı ve LLM destekli açıklama raporu, güven skoru ve düşük güvende 'Belirsiz' uyarısı birlikte sunulur."
+      }
+    ],
+    "modulesEyebrow": "Sistem mimarisi",
+    "modulesTitle": "Model, kalibrasyon, açıklanabilirlik ve arayüz birlikte tasarlandı",
+    "modulesIntro": "Proje yalnızca bir sınıflandırıcı üretmekle kalmadı; klinik kullanılabilirlik için kalibrasyon, açıklanabilirlik ve belirsizlik tespiti katmanlarını da entegre etti.",
+    "modules": [
+      {
+        "title": "Veri ve deney katmanı",
+        "body": "KIDO veri seti elle etiketlendi; 7 farklı mimari konfigürasyonu karşılaştırmalı olarak eğitildi (A1–A4: EfficientNet, B3–B5: ResNet-50, ResNet-18, ViT)."
+      },
+      {
+        "title": "Çok modlu sınıflandırma çekirdeği",
+        "body": "ResNet-50 (görsel dal, 2048→256) ve Klinik MLP (18→128→64) birleştirilir; 320 boyutlu füzyon vektörü 4 duygu sınıfına sınıflandırılır."
+      },
+      {
+        "title": "Kalibrasyon modülü",
+        "body": "Sıcaklık Ölçekleme post-hoc kalibrasyonu (T*=2,65) model güven skorlarını gerçek doğrulukla hizalar; ECE 0,1324'ten 0,0231'e düştü."
+      },
+      {
+        "title": "Açıklanabilirlik ve servis",
+        "body": "Grad-CAM ısı haritaları, LLM tabanlı klinik rapor ve FastAPI + PyWebView masaüstü uygulamasıyla araştırma çıktısı klinik prototipe dönüştürüldü."
+      }
+    ],
+    "outcomesEyebrow": "Araştırma çıktısı",
+    "outcomesTitle": "Sınıflandırıcının ötesinde bütünleşik bir karar destek sistemi",
+    "outcomesIntro": "Projenin çıktısı tek bir model ağırlığından ibaret değil; doğrulanabilir deney altyapısı, kalibrasyon, açıklanabilirlik ve klinik sunum zinciri.",
+    "outcomes": [
+      "7 deney konfigürasyonu için yeniden üretilebilir eğitim, değerlendirme ve kalibrasyon betikleri",
+      "Grad-CAM görselleştirme + LLM klinik rapor üretimi ile açıklanabilir çıktı",
+      "Sıcaklık Ölçekleme kalibrasyonu ve güven eşiği tabanlı 'Belirsiz' karar mekanizması",
+      "FastAPI REST API servisi ve PyWebView masaüstü uygulaması"
+    ],
+    "previewTitle": "Analiz Görselleştirme Önizlemesi",
+    "ethicsTitle": "Kullanım sınırı",
+    "ethicsText": "Bu sistem klinik tanı aracı değildir. Uzman değerlendirmesini desteklemek için tasarlanmış açıklanabilir bir karar destek prototipidir; tüm sonuçlar nitelikli bir uzman tarafından yorumlanmalıdır."
+  },
+  "analysis": {
+    "title": "Analizi Çalıştır",
+    "subtitle": "Duygusal çıkarım raporu oluşturmak için bir çizim yükleyin.",
+    "drop": "Görseli buraya bırakın veya yüklemek için tıklayın",
+    "support": "JPG, PNG desteklenir",
+    "run": "Çıkarım Modelini Çalıştır",
+    "processing": "Model işleniyor...",
+    "predicted": "Tahmin Edilen Sınıf",
+    "confidence": "Güven",
+    "heatmapTitle": "Dikkat Isı Haritası (Grad-CAM)",
+    "heatmapPlaceholder": "Isı Haritası Görselleştirmesi",
+    "disclaimerTitle": "Araştırma Feragatnamesi",
+    "disclaimer": "Bu araç yalnızca akademik araştırma amaçlı bir prototiptir. Sonuçlar olasılıksaldır ve klinik tanı olarak yorumlanmamalıdır. Profesyonel değerlendirme için nitelikli bir uzmana başvurulmalıdır.",
+    "textLabel": "Açıklama Metni (isteğe bağlı)",
+    "textPlaceholder": "Çizimle ilgili açıklama girin...",
+    "inferenceResult": "Çıkarım Sonucu",
+    "predictedEmotion": "Tahmin Edilen Duygu",
+    "predictedGender": "Tahmin Edilen Cinsiyet",
+    "resultExplanation": "Bu Sonucun Nedeni",
+    "noExplanation": "Bu sonuç için backend tarafında açıklama üretilmedi.",
+    "emotionHeatmap": "Duygu Isı Haritası (Grad-CAM)",
+    "genderHeatmap": "Cinsiyet Isı Haritası (Grad-CAM)",
+    "topTokens": "En Etkili Metin Token'ları",
+    "clinicalFeatures": "Klinik Özellikler",
+    "focusRegion": "Odak bölgesi",
+    "errorTitle": "Analiz başarısız",
+    "backendHint": "Python API sunucusunun çalışır durumda olduğundan emin olun: uvicorn api_server:app --port 8000"
+  },
+  "about": {
+    "eyebrow": "Proje Hakkında",
+    "aboutTitle": "Lisans tez proje özeti",
+    "objectiveText": "Bu tez çalışmasında, çocukların el çizimi resimlerinden otomatik ve açıklanabilir duygu sınıflandırması gerçekleştiren çok modlu bir derin öğrenme sistemi geliştirilmiştir. ResNet-50 görsel omurgası ile 18 OpenCV tabanlı klinik özelliğin füzyonuna dayanan sistem; Sıcaklık Ölçekleme kalibrasyonu, Grad-CAM görsel açıklanabilirliği ve LLM tabanlı klinik rapor üretimini entegre eder.",
+    "facts": [
+      {
+        "label": "Proje adı",
+        "value": "Çocukların Yaptıkları Çizimlerden Derin Öğrenme Yöntemleri ile Duygu Durumu Analizi"
+      },
+      { "label": "Yürütücü", "value": "Alper YALÇIN" },
+      { "label": "Danışman", "value": "Doç. Dr. Erkan ÇALIŞKAN" },
+      { "label": "Kurum", "value": "Niğde Ömer Halisdemir Üniversitesi, Bilgisayar Mühendisliği" },
+      { "label": "Veri seti", "value": "KIDO (elle etiketlenmiş, 5.177 çizim)" },
+      { "label": "En iyi model", "value": "ResNet-50 + Klinik Füzyon (B3)" }
+    ],
+    "goalsTitle": "Amaç ve kapsam",
+    "goals": [
+      "KIDO veri setini dört duygu kategorisi için elle etiketleyerek güvenilir bir eğitim kaynağı oluşturmak",
+      "ResNet-50 omurgası ve 18 klinik özelliği füzyon mimarisiyle birleştiren çok modlu bir sınıflandırıcı geliştirmek",
+      "Sıcaklık Ölçekleme kalibrasyonu ile model güven skorlarını gerçek doğrulukla hizalamak",
+      "Grad-CAM ve LLM destekli açıklama katmanıyla klinisyen için şeffaf karar destek çıktıları üretmek"
+    ],
+    "dataTitle": "Veri seti ve hazırlık süreci",
+    "dataIntro": "KIDO (Kinetic Family Drawing) veri seti birincil kaynak olarak kullanıldı. Tüm etiketler tek araştırmacı tarafından elle atandı; pseudo-etiket veya model güdümlü etiket kullanılmadı.",
+    "dataPoints": [
+      "Orijinal toplam: 5.177 çizim — Mutlu: 2.963, Üzgün: 1.456, Öfkeli: 359, Korku: 399.",
+      "Azınlık sınıfları (Öfkeli, Korku) veri artırma ile 1.100'e yükseltildi; test seti artırma dışı tutuldu.",
+      "Artırılmış toplam: ~6.619 örnek. Test seti: 993 örnek (Mutlu: 445, Üzgün: 218, Öfkeli: 165, Korku: 165).",
+      "Duygu sınıfları: Mutlu, Üzgün, Öfkeli, Korku — 4 sınıflı sınıflandırma görevi.",
+      "Eğitim artırımı: ±15° döndürme, yatay çevirme, renk sapması; val/test seti yalnızca yeniden boyutlandırma ve normalizasyon."
+    ],
+    "methodologyTitle": "Yöntem ve mimari",
+    "methodologyIntro": "Sistem, görsel dal ve klinik özellik dalını birleştiren FlexibleFusionClassifier mimarisine dayanmaktadır. Yedi farklı konfigürasyon karşılaştırmalı olarak değerlendirildi.",
+    "methodologyCards": [
+      {
+        "title": "Genel mimari (B3 — en iyi)",
+        "items": [
+          "ResNet-50 omurgası (ImageNet ön-eğitimli, 2048 boyutlu çıktı) → Linear(2048, 256) + ReLU + Dropout(0.2).",
+          "Klinik MLP: 18 özellik → Linear(18, 128) → ReLU → Linear(128, 64) — geçersiz özellikler sıfırlanır.",
+          "Füzyon: görsel (256) + klinik (64) birleştirilir → Linear(320, 128) + ReLU + Dropout(0.3) → Linear(128, 4).",
+          "Toplam 25M parametre; eğitim süresi ~21,4 dk (GPU)."
+        ]
+      },
+      {
+        "title": "Ön işleme",
+        "items": [
+          "Görseller 224×224 boyutuna yeniden ölçeklendi; ImageNet istatistikleriyle normalize edildi.",
+          "Eğitim artırımı: ±15° döndürme, yatay çevirme, renk sapması (parlaklık/kontrast/doygunluk).",
+          "Azınlık sınıfları için WeightedRandomSampler ile sınıf dengesi sağlandı.",
+          "18 klinik özellik: ön plan alanı oranı, çizgi koyuluğu, keskin köşe oranı, sıcak renk oranı vb."
+        ]
+      },
+      {
+        "title": "Eğitim ayarları",
+        "items": [
+          "AdamW optimizer, lr=1e-4, weight_decay=1e-4; CosineAnnealingLR (T_max=30).",
+          "Batch size: 32; erken durdurma sabrı: 7 epoch; en iyi checkpoint val makro F1'e göre.",
+          "Ağırlıklı çapraz entropi kaybı (sınıf ağırlıkları sınıf frekansının tersiyle orantılı); seed=42.",
+          "7 deney: A1 (EffNet-B0), A2 (EffNet-B0+Klinik), A3 (EffNet-B3), A4 (EffNet-B3+Klinik), B3 (ResNet-50+Klinik ★), B4 (ResNet-18+Klinik), B5 (ViT-B/16+Klinik)."
+        ]
+      },
+      {
+        "title": "Kalibrasyon ve açıklanabilirlik",
+        "items": [
+          "Sıcaklık Ölçekleme: val seti logitleri üzerinde scipy NLL minimizasyonu; T*=2,65 bulundu.",
+          "ECE kalibrasyondan önce: 0,1324 → sonra: 0,0231 (Brier skoru iyileştirmesi: 0,282→0,131).",
+          "Grad-CAM: son konvolüsyon katmanı gradyanlarından sınıf odaklı ısı haritası.",
+          "LLM raporu: GitHub Models API üzerinden GPT-4o-mini; GITHUB_TOKEN gerektirmez, rule-based fallback mevcuttur."
+        ]
+      }
+    ],
+    "resultsEyebrow": "Deney sonuçları",
+    "resultsTitle": "Test kümesinde elde edilen bulgular",
+    "resultsIntro": "7 model konfigürasyonu karşılaştırmalı olarak değerlendirildi. ResNet-50 + Klinik (B3) tüm metrikler bakımından en iyi performansı sergiledi.",
+    "emotionResultsTitle": "En iyi model — ResNet-50 + Klinik (B3)",
+    "emotionResultsText": "993 örneklik test setinde sınıf bazında sonuçlar. Öfkeli ve Korku sınıfları en yüksek F1 skorlarını elde etti.",
+    "emotionMetrics": [
+      { "label": "Test doğruluğu", "value": "%83,2" },
+      { "label": "Makro F1", "value": "0,833" },
+      { "label": "ECE (kalibrasyon sonrası)", "value": "0,023" },
+      { "label": "T* (Sıcaklık)", "value": "2,65" }
+    ],
+    "genderResultsTitle": "Sınıf bazında F1 skorları",
+    "genderResultsText": "Test setinde sınıf bazında F1 skorları. Sad sınıfı Happy-Sad görsel benzerliği nedeniyle en düşük skoru aldı.",
+    "genderMetrics": [
+      { "label": "Mutlu", "value": "F1 0,844" },
+      { "label": "Üzgün", "value": "F1 0,634" },
+      { "label": "Öfkeli", "value": "F1 0,928" },
+      { "label": "Korku", "value": "F1 0,926" }
+    ],
+    "deliverablesTitle": "Ortaya konan sistem",
+    "deliverables": [
+      "7 deney konfigürasyonu için yeniden üretilebilir eğitim betikleri ve karşılaştırmalı değerlendirme altyapısı",
+      "Sıcaklık Ölçekleme kalibrasyonu ve güven eşiği tabanlı 'Belirsiz' karar mekanizması",
+      "Grad-CAM ısı haritaları, kural tabanlı ve LLM destekli klinik açıklama raporu üretimi",
+      "FastAPI REST API servisi + PyWebView masaüstü uygulaması ile klinik kullanıma hazır prototip"
+    ],
+    "limitationsTitle": "Sınırlılıklar ve etik notlar",
+    "limitations": [
+      "Etiketleme tek araştırmacı tarafından gerçekleştirildi; değerlerarası güvenilirlik (Cohen's κ) ölçülmedi.",
+      "Sad sınıfı F1 skoru (0,634) Happy-Sad görsel örtüşmesi nedeniyle diğer sınıfların gerisinde kaldı.",
+      "Sistem gerçek klinik ortamda psikologlar tarafından henüz değerlendirilmedi.",
+      "LLM tabanlı açıklama modülü harici API erişimi gerektirir; klinik ortamlarda gizlilik değerlendirmesi gerekebilir."
+    ],
+    "futureWorkTitle": "Gelecek çalışmalar",
+    "futureWork": [
+      "Daha büyük ve çok kültürlü veri setleriyle yeniden etiketleme ve Cohen's κ ölçümü",
+      "Sad sınıfı için özel veri artırma stratejileri ve karar sınırı iyileştirmesi",
+      "Derin öğrenme tabanlı klinik özellik çıkarımı (segmentasyon modelleri)",
+      "Çocuğun yaşı ve gelişimsel bağlamını göz önünde bulunduran çok görevli öğrenme mimarileri",
+      "Psikolog ve ebeveynlerle sistematik kullanıcı çalışması (user study)",
+      "Gizlilik gerekliliklerini karşılayan yerel küçük dil modelleri (SLM) ile açıklama üretimi"
+    ],
+    "disclaimerTitle": "Araştırma sınırı",
+    "disclaimer": "Bu sistem klinik tanı aracı değildir; uzman değerlendirmesini desteklemek amacıyla kullanılmalıdır. Tüm çıktılar nitelikli bir psikolog veya klinisyen tarafından yorumlanmalıdır."
+  },
+  "footer": {
+    "copyright": "© 2026 Çocuk Çizim Analizi — NÖHÜBİM Lisans Tez Prototipi. Tüm hakları saklıdır.",
+    "privacy": "Gizlilik Notu",
+    "terms": "Araştırma Koşulları",
+    "contact": "Proje İletişimi"
+  },
+  "ui": {
+    "remove": "Kaldır",
+    "confidenceLabel": "GÜVEN: {{val}}%"
+  }
+}

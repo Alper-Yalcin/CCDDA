@@ -1,0 +1,34 @@
+# Temel bilimsel python paketleri
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+
+# Görsel işleme
+Pillow
+opencv-python
+albumentations
+torch
+torchvision
+
+# NLP ve BERT
+transformers
+datasets
+sentencepiece
+
+# Eğitim yardımcıları
+tqdm
+pyyaml
+
+# Geliştirme / notebook
+jupyter
+
+# Web API
+fastapi
+uvicorn[standard]
+python-multipart
+
+# LLM explainer (GitHub Models, OpenAI SDK uyumlu)
+openai>=1.0.0
+python-dotenv

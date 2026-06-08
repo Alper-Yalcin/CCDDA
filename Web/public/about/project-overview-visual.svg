@@ -1,0 +1,183 @@
+<svg width="2048" height="590" viewBox="0 0 2048 590" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="2048" y2="590" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="0.48" stop-color="#FAF7F2"/>
+      <stop offset="1" stop-color="#FFFDF9"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F4EDE3"/>
+    </linearGradient>
+    <linearGradient id="book" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FCF4E7"/>
+      <stop offset="1" stop-color="#F1E4D1"/>
+    </linearGradient>
+    <linearGradient id="sticky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFEAB9"/>
+      <stop offset="1" stop-color="#F7D79C"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-25%" width="145%" height="160%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#2C1B10" flood-opacity="0.16"/>
+    </filter>
+    <filter id="paperShadow" x="-25%" y="-35%" width="150%" height="180%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#2C1B10" flood-opacity="0.12"/>
+    </filter>
+    <pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M 26 0 L 0 0 0 26" stroke="#E9E1D7" stroke-width="1" opacity="0.55"/>
+    </pattern>
+    <pattern id="paperDots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#DCCFBD" opacity="0.18"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#304052"/>
+    </marker>
+    <style>
+      .serif { font-family: Georgia, "Times New Roman", serif; }
+      .sans { font-family: Inter, Arial, sans-serif; }
+      .ink { stroke: #304052; stroke-linecap: round; stroke-linejoin: round; }
+      .orange { stroke: #E76F3C; }
+      .pencil { stroke-linecap: round; stroke-linejoin: round; opacity: 0.78; }
+    </style>
+  </defs>
+
+  <rect width="2048" height="590" fill="url(#bg)"/>
+  <g opacity="0.38">
+    <path d="M-10 463C330 252 542 530 806 414C1102 284 1152 118 1510 95C1702 82 1900 123 2065 28" stroke="#F1B08A" stroke-width="1.2"/>
+    <path d="M-20 505C310 302 546 567 834 441C1122 315 1196 143 1518 125C1714 114 1908 150 2060 74" stroke="#F1B08A" stroke-width="1"/>
+    <path d="M-16 542C306 360 580 574 860 466C1142 356 1220 178 1544 160C1738 149 1915 176 2060 123" stroke="#F1B08A" stroke-width="0.9"/>
+  </g>
+
+  <g transform="translate(710 61) rotate(3 540 210)" filter="url(#paperShadow)">
+    <path d="M0 32C132 20 286 7 412 11C610 17 789 36 1052 51C1076 52 1093 72 1089 96C1070 207 1050 316 1032 427C1029 446 1012 459 993 458C681 443 400 417 68 424C43 425 23 407 20 382C8 268 -2 151 0 32Z" fill="url(#paper)"/>
+    <path d="M28 52H1060V424H28V52Z" fill="url(#grid)" opacity="0.72"/>
+    <path d="M25 405C300 380 721 428 1032 399" stroke="#DACFBE" stroke-width="4" opacity="0.55"/>
+  </g>
+
+  <g transform="translate(262 48) rotate(-6 235 245)" filter="url(#softShadow)">
+    <path d="M25 7H391C427 7 457 35 461 71L510 493C514 530 485 563 448 563H68C34 563 6 536 4 502L-31 66C-34 34-8 7 25 7Z" fill="url(#book)" stroke="#E9E1D7" stroke-width="1.5"/>
+    <path d="M29 8C18 97 24 318 52 560" stroke="#DDD0BC" stroke-width="9" opacity="0.55"/>
+    <text x="238" y="116" class="sans" text-anchor="middle" font-size="20" font-weight="800" letter-spacing="3" fill="#4A4D50">LİSANS TEZİ</text>
+    <text x="238" y="204" class="serif" text-anchor="middle" font-size="42" font-weight="700" fill="#1F1F1F">Çocuk Çizimlerinden</text>
+    <text x="238" y="264" class="serif" text-anchor="middle" font-size="42" font-weight="700" fill="#1F1F1F">Duyguları Anlıyoruz</text>
+    <text x="238" y="322" class="serif" text-anchor="middle" font-size="21" font-weight="600" fill="#4B4038">Açıklanabilir Duygu Analizi Sistemi</text>
+    <circle cx="238" cy="407" r="38" fill="#FFFDF9" stroke="#8F877D" stroke-width="2"/>
+    <circle cx="238" cy="407" r="25" fill="none" stroke="#8F877D" stroke-width="1.4"/>
+    <path d="M221 411C230 428 247 428 255 411" stroke="#1F1F1F" stroke-width="3" stroke-linecap="round"/>
+    <path d="M228 391L238 381L248 391" stroke="#1F1F1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="238" y="496" class="serif" text-anchor="middle" font-size="17" font-weight="700" letter-spacing="1" fill="#5F5A54">NİĞDE ÖMER HALİSDEMİR ÜNİVERSİTESİ</text>
+    <text x="238" y="526" class="serif" text-anchor="middle" font-size="17" font-weight="600" fill="#5F5A54">Bilgisayar Mühendisliği Bölümü</text>
+    <text x="238" y="565" class="serif" text-anchor="middle" font-size="18" font-weight="700" fill="#5F5A54">2025 - 2026</text>
+  </g>
+
+  <g transform="translate(815 154)">
+    <text x="168" y="-38" class="sans" font-size="24" font-weight="900" letter-spacing="3" fill="#2C3945">- SİSTEM AKIŞI</text>
+    <g class="ink" stroke-width="3.2" fill="none">
+      <rect x="0" y="8" width="58" height="52" rx="8"/>
+      <circle cx="16" cy="23" r="5"/>
+      <path d="M7 50L23 36L34 45L45 29L55 50"/>
+    </g>
+    <text x="29" y="88" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Çizim</text>
+    <text x="29" y="111" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Girdisi</text>
+    <path d="M82 34H146" class="ink" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(185 2)" stroke="#3A6D9C" stroke-width="3" fill="none" stroke-linecap="round">
+      <circle cx="28" cy="34" r="19"/>
+      <circle cx="28" cy="34" r="8"/>
+      <path d="M28 4V14M28 54V64M58 34H68M-12 34H-2M49 13L42 20M49 55L42 48M7 13L14 20M7 55L14 48"/>
+      <circle cx="28" cy="34" r="4" fill="#3A6D9C"/>
+    </g>
+    <text x="213" y="88" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">ResNet-50</text>
+    <text x="213" y="111" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Özellik Çıkarımı</text>
+    <path d="M262 34H326" class="ink" stroke-width="3"/>
+
+    <g transform="translate(362 5)" class="ink" stroke-width="3" fill="none">
+      <path d="M13 18H61V62H13Z"/>
+      <path d="M30 18V8H44V18"/>
+      <path d="M27 34H47M27 47H47M37 24V57"/>
+    </g>
+    <text x="399" y="88" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Klinik</text>
+    <text x="399" y="111" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Göstergeler</text>
+    <path d="M445 34H509" class="ink" stroke-width="3"/>
+
+    <g transform="translate(546 1)" class="ink" stroke-width="3" fill="none">
+      <path d="M37 4L72 64H3L37 4Z"/>
+      <path d="M24 37C32 50 47 50 55 37"/>
+      <path d="M33 28L39 34L51 22"/>
+    </g>
+    <text x="583" y="88" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Concept</text>
+    <text x="583" y="111" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Bottleneck</text>
+    <path d="M635 34H699" class="ink" stroke-width="3"/>
+
+    <g transform="translate(735 13)" class="ink" stroke-width="3" fill="none">
+      <path d="M3 4H63V45H22L9 59V45H3Z"/>
+      <path d="M18 20H46M18 31H39"/>
+    </g>
+    <text x="769" y="88" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">LLM</text>
+    <text x="769" y="111" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Açıklama</text>
+    <path d="M817 34H881" class="ink" stroke-width="3"/>
+
+    <g transform="translate(916 8)" class="ink" stroke-width="3" fill="none">
+      <circle cx="32" cy="32" r="30"/>
+      <circle cx="21" cy="24" r="3" fill="#304052"/>
+      <circle cx="43" cy="24" r="3" fill="#304052"/>
+      <path d="M18 39C27 50 39 50 48 39"/>
+    </g>
+    <text x="948" y="88" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Duygu</text>
+    <text x="948" y="111" class="sans" text-anchor="middle" font-size="18" font-weight="700" fill="#2F3740">Çıktısı</text>
+  </g>
+
+  <g transform="translate(845 312) rotate(1 260 120)" filter="url(#paperShadow)">
+    <rect x="0" y="0" width="545" height="240" rx="8" fill="#FFFDF9" stroke="#E9E1D7" stroke-width="1.2"/>
+    <rect x="0" y="0" width="545" height="240" rx="8" fill="url(#paperDots)"/>
+    <g transform="translate(48 24)" fill="none" stroke-width="2.8" class="pencil">
+      <path d="M28 34C44 10 67 12 77 35C89 24 110 24 120 43C100 48 80 47 61 42C49 49 36 48 28 34Z" stroke="#4477A4"/>
+      <path d="M165 30C181 9 207 11 218 35C232 22 252 28 257 47C223 49 196 47 165 43Z" stroke="#4477A4"/>
+      <path d="M350 43C378 12 419 22 424 59C397 66 374 61 350 43Z" stroke="#E5BB2E"/>
+      <path d="M386 0V22M386 82V106M333 53H306M466 53H492M344 13L326 -8M429 12L450 -8M347 91L329 113M425 91L446 114" stroke="#E5BB2E"/>
+      <path d="M34 145L112 84L190 145" stroke="#E98263"/>
+      <path d="M55 146V222H166V146" stroke="#DCA962"/>
+      <path d="M88 180H114V222H88V180Z" stroke="#4976A1"/>
+      <path d="M130 168H151V190H130V168ZM73 168H94V190H73V168Z" stroke="#575F68"/>
+      <path d="M58 137L113 96L174 137" stroke="#E98263"/>
+      <path d="M294 83C259 72 232 96 226 128C197 138 201 179 235 180C248 204 287 202 300 178C332 178 339 137 314 124C323 102 311 88 294 83Z" stroke="#9CB94C"/>
+      <path d="M267 128L267 216M240 159L267 180L300 151" stroke="#9A6C3A"/>
+      <circle cx="211" cy="177" r="22" stroke="#8B5E4B"/>
+      <path d="M189 172C198 150 221 150 233 171" stroke="#8B5E4B"/>
+      <circle cx="202" cy="174" r="2.5" fill="#1F1F1F" stroke="none"/>
+      <circle cx="220" cy="174" r="2.5" fill="#1F1F1F" stroke="none"/>
+      <path d="M200 187C208 194 217 194 224 187" stroke="#1F1F1F" stroke-width="2"/>
+      <path d="M211 199L190 232H233L211 199Z" stroke="#3F79B7" fill="#DCEBFF"/>
+      <path d="M188 212L166 226M234 211L254 222M198 232V250M224 232V250" stroke="#8B5E4B"/>
+      <circle cx="323" cy="176" r="22" stroke="#4B332A"/>
+      <path d="M304 159L300 149M314 155L314 144M326 154L331 143M337 158L347 148" stroke="#4B332A"/>
+      <circle cx="315" cy="174" r="2.5" fill="#1F1F1F" stroke="none"/>
+      <circle cx="333" cy="174" r="2.5" fill="#1F1F1F" stroke="none"/>
+      <path d="M313 187C321 195 332 195 340 187" stroke="#1F1F1F" stroke-width="2"/>
+      <path d="M323 199L302 232H344L323 199Z" stroke="#E76F3C" fill="#FFE3C8"/>
+      <path d="M300 212L279 225M346 212L368 224M310 232V250M336 232V250" stroke="#4B332A"/>
+      <path d="M10 229C111 214 179 219 262 223C340 227 423 218 507 229" stroke="#D8C877"/>
+    </g>
+  </g>
+
+  <g transform="translate(1810 252) rotate(2 115 135)" filter="url(#softShadow)">
+    <rect x="0" y="0" width="220" height="275" rx="6" fill="url(#sticky)" stroke="#F1D59C"/>
+    <path d="M0 61H220" stroke="#EACB8E" stroke-width="1.2"/>
+    <text x="110" y="48" class="serif" text-anchor="middle" font-size="29" font-weight="700" fill="#3B3A36">Destek</text>
+    <g transform="translate(55 75)">
+      <circle cx="56" cy="31" r="26" fill="none" stroke="#EF3D2E" stroke-width="7"/>
+      <circle cx="56" cy="31" r="17" fill="none" stroke="#EF3D2E" stroke-width="5"/>
+      <circle cx="56" cy="31" r="8" fill="#EF3D2E"/>
+      <path d="M9 56H104L56 108Z" fill="#1F1F1F"/>
+      <path d="M25 56H89" stroke="#FFF4D2" stroke-width="5"/>
+    </g>
+    <text x="110" y="204" class="sans" text-anchor="middle" font-size="34" font-weight="900" letter-spacing="1" fill="#1F1F1F">TÜBİTAK</text>
+    <text x="110" y="250" class="sans" text-anchor="middle" font-size="38" font-weight="800" fill="#1F1F1F">2209-A</text>
+  </g>
+
+  <g opacity="0.16">
+    <path d="M1610 42C1734 60 1848 105 2019 72" stroke="#E76F3C" stroke-width="1.4"/>
+    <path d="M1516 75C1692 77 1817 164 2063 110" stroke="#E76F3C" stroke-width="1.2"/>
+    <path d="M1460 112C1696 100 1824 206 2070 158" stroke="#E76F3C" stroke-width="1"/>
+  </g>
+</svg>

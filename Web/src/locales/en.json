@@ -1,0 +1,270 @@
+{
+  "nav": {
+    "home": "Home",
+    "analysis": "Run Analysis",
+    "about": "About the Project"
+  },
+  "brand": {
+    "title": "ChildDrawing",
+    "accent": "Analysis",
+    "subtitle": "NÖHÜ Computer Eng. — Undergraduate Thesis Prototype"
+  },
+  "hero": {
+    "badge": "Undergraduate Thesis Research Output — 2026",
+    "title": "Explainable multimodal emotion analysis from children's drawings",
+    "subtitle": "This prototype classifies children's drawings into four emotion categories using a ResNet-50 + Clinical Feature fusion architecture trained on the hand-labeled KIDO dataset, and delivers explainable decision-support outputs to assist expert review.",
+    "highlights": [
+      "4-class emotion classifier (Happy / Sad / Angry / Fear) trained on 6,619 drawings (KIDO, hand-labeled)",
+      "ResNet-50 + 18 clinical feature fusion — Test Macro F1: 0.833 / Accuracy: 83.2%",
+      "Temperature Scaling calibration (T*=2.65), Grad-CAM visualization, and LLM clinical report generation"
+    ],
+    "start": "Start Analysis",
+    "methodology": "Project Details"
+  },
+  "home": {
+    "panelEyebrow": "Research snapshot",
+    "panelTitle": "The report distilled into one screen",
+    "panelSubtitle": "The system processes the drawing image alongside 18 OpenCV-derived clinical features to produce an emotion classification, complemented by Temperature Scaling calibration, Grad-CAM visual explainability, and an LLM-generated clinical report.",
+    "flowTitle": "Local runtime flow",
+    "panelFlow": [
+      "The drawing is accepted as input, resized to 224×224, and normalized with ImageNet statistics.",
+      "18 clinical features are extracted with OpenCV (line density, color distribution, sharp-angle ratio, etc.).",
+      "ResNet-50 visual branch and Clinical MLP outputs are fused and classified into 4 emotion classes; calibrated with T*=2.65."
+    ],
+    "panelFacts": [
+      { "label": "Test accuracy", "value": "83.2%" },
+      { "label": "Macro F1", "value": "0.833" },
+      { "label": "4 classes", "value": "H/S/A/F" }
+    ],
+    "quickCardOneLabel": "Model backbone",
+    "quickCardOneText": "ResNet-50 visual backbone (2048-dim output) and an 18-feature Clinical MLP are fused in a joint head, yielding a 25M-parameter classifier.",
+    "quickCardTwoLabel": "Explainability",
+    "quickCardTwoText": "Grad-CAM heatmaps + LLM-generated clinical report. Low-confidence cases are flagged as 'Uncertain' rather than forced into a class.",
+    "stats": [
+      {
+        "value": "5,177",
+        "label": "Original samples (KIDO)",
+        "note": "Happy: 2,963 · Sad: 1,456 · Angry: 359 · Fear: 399 — all hand-labeled."
+      },
+      {
+        "value": "6,619",
+        "label": "Augmented training set",
+        "note": "Minority classes (Angry, Fear) raised to 1,100 via augmentation. Test set kept clean."
+      },
+      {
+        "value": "993",
+        "label": "Test samples",
+        "note": "Happy: 445 · Sad: 218 · Angry: 165 · Fear: 165 — original, un-augmented samples."
+      },
+      {
+        "value": "83.2%",
+        "label": "Test accuracy",
+        "note": "ResNet-50 + Clinical (B3) — highest performance across all 7 experiment configurations."
+      }
+    ],
+    "workflowEyebrow": "How it works",
+    "workflowTitle": "From drawing to explainable clinical report",
+    "workflowIntro": "The system is designed not just as a classifier but as a decision-support tool that provides the clinician with visual evidence and an interpretable report.",
+    "workflowSteps": [
+      {
+        "title": "Data preparation",
+        "body": "5,177 drawings from the KIDO dataset were hand-labeled into four emotion classes. Minority classes were balanced to 1,100 via augmentation; the test set was held out entirely."
+      },
+      {
+        "title": "Multimodal inference",
+        "body": "ResNet-50 visual features and 18 OpenCV-derived clinical features are fused in a shared head. Temperature Scaling (T*=2.65) reduces ECE from 0.1324 to 0.0231."
+      },
+      {
+        "title": "Explanation and delivery",
+        "body": "Grad-CAM heatmap, rule-based and LLM-assisted clinical report, per-class confidence scores, and an 'Uncertain' flag below the confidence threshold are presented together."
+      }
+    ],
+    "modulesEyebrow": "System architecture",
+    "modulesTitle": "Model, calibration, explainability, and interface designed together",
+    "modulesIntro": "The project goes beyond a training run: it delivers a calibration layer, an explainability stack, and a clinical-ready interface alongside the trained model.",
+    "modules": [
+      {
+        "title": "Data and experiment layer",
+        "body": "The KIDO dataset was hand-labeled; 7 architecture configurations were trained and compared (A1–A4: EfficientNet variants, B3–B5: ResNet-50, ResNet-18, ViT-B/16)."
+      },
+      {
+        "title": "Multimodal classification core",
+        "body": "ResNet-50 (visual branch, 2048→256) and Clinical MLP (18→128→64) are concatenated and classified via a 320→128→4 fusion head."
+      },
+      {
+        "title": "Calibration module",
+        "body": "Post-hoc Temperature Scaling (T*=2.65) aligns model confidence with actual accuracy; ECE dropped from 0.1324 to 0.0231."
+      },
+      {
+        "title": "Explainability and service",
+        "body": "Grad-CAM heatmaps, LLM clinical report generation, and a FastAPI + PyWebView desktop application turn the research output into a clinical prototype."
+      }
+    ],
+    "outcomesEyebrow": "Research output",
+    "outcomesTitle": "More than a model — an integrated clinical decision-support system",
+    "outcomesIntro": "The project delivers a verifiable experiment infrastructure, calibration, explainability, and clinical presentation chain alongside the trained model.",
+    "outcomes": [
+      "Reproducible training, evaluation, and calibration scripts for all 7 experiment configurations",
+      "Grad-CAM visualization + LLM-based clinical report generation with interpretable outputs",
+      "Temperature Scaling calibration and confidence-threshold-based 'Uncertain' decision mechanism",
+      "FastAPI REST API service and PyWebView desktop application"
+    ],
+    "previewTitle": "Analysis Visualization Preview",
+    "ethicsTitle": "Usage boundary",
+    "ethicsText": "This system is not a clinical diagnosis tool. It is an explainable decision-support prototype designed to assist expert judgment; all outputs must be interpreted by a qualified psychologist or clinician."
+  },
+  "analysis": {
+    "title": "Run Analysis",
+    "subtitle": "Upload a drawing to generate an inference report.",
+    "drop": "Drop image here or click to upload",
+    "support": "Supports JPG and PNG",
+    "run": "Run Inference Model",
+    "processing": "Processing model...",
+    "predicted": "Predicted Class",
+    "confidence": "Confidence",
+    "heatmapTitle": "Attention Heatmap (Grad-CAM)",
+    "heatmapPlaceholder": "Heatmap Visualization",
+    "disclaimerTitle": "Research Disclaimer",
+    "disclaimer": "This tool is a prototype intended for academic research. Its outputs are probabilistic and must not be interpreted as a clinical diagnosis. Professional assessment should always involve qualified experts.",
+    "textLabel": "Descriptive Text (optional)",
+    "textPlaceholder": "Enter any available description about the drawing...",
+    "inferenceResult": "Inference Result",
+    "predictedEmotion": "Predicted Emotion",
+    "predictedGender": "Predicted Gender",
+    "resultExplanation": "Why This Result",
+    "noExplanation": "No explanation was returned by the backend for this result.",
+    "emotionHeatmap": "Emotion Heatmap (Grad-CAM)",
+    "genderHeatmap": "Gender Heatmap (Grad-CAM)",
+    "topTokens": "Top Influential Text Tokens",
+    "clinicalFeatures": "Clinical Features",
+    "focusRegion": "Focus region",
+    "errorTitle": "Analysis failed",
+    "backendHint": "Make sure the Python API server is running: uvicorn api_server:app --port 8000"
+  },
+  "about": {
+    "eyebrow": "Project Overview",
+    "aboutTitle": "Undergraduate thesis project summary",
+    "objectiveText": "This thesis developed an explainable multimodal deep learning system for automatic emotion classification from children's hand-drawn pictures. Based on the fusion of a ResNet-50 visual backbone with 18 OpenCV-derived clinical features, the system integrates Temperature Scaling calibration, Grad-CAM visual explainability, and LLM-based clinical report generation.",
+    "facts": [
+      {
+        "label": "Project title",
+        "value": "Emotion State Analysis with Deep Learning Methods from Children's Drawings"
+      },
+      { "label": "Principal investigator", "value": "Alper YALÇIN" },
+      { "label": "Advisor", "value": "Assoc. Prof. Dr. Erkan ÇALIŞKAN" },
+      { "label": "Institution", "value": "Nigde Omer Halisdemir University, Computer Engineering" },
+      { "label": "Dataset", "value": "KIDO (hand-labeled, 5,177 drawings)" },
+      { "label": "Best model", "value": "ResNet-50 + Clinical Fusion (B3)" }
+    ],
+    "goalsTitle": "Goals and scope",
+    "goals": [
+      "Hand-label the KIDO dataset into four emotion categories to build a reliable training source",
+      "Develop a multimodal classifier combining ResNet-50 backbone with 18 clinical features in a fusion architecture",
+      "Align model confidence scores with actual accuracy via Temperature Scaling calibration",
+      "Produce transparent decision-support outputs for clinicians via Grad-CAM and LLM-assisted explanations"
+    ],
+    "dataTitle": "Dataset and preparation pipeline",
+    "dataIntro": "The KIDO (Kinetic Family Drawing) dataset was used as the primary source. All labels were assigned manually by a single researcher; no pseudo-labels or model-guided labels were used.",
+    "dataPoints": [
+      "Original total: 5,177 drawings — Happy: 2,963 · Sad: 1,456 · Angry: 359 · Fear: 399.",
+      "Minority classes (Angry, Fear) raised to 1,100 via augmentation; test set was excluded from augmentation.",
+      "Augmented total: ~6,619 samples. Test set: 993 samples (Happy: 445, Sad: 218, Angry: 165, Fear: 165).",
+      "Emotion classes: Happy, Sad, Angry, Fear — a 4-class classification task.",
+      "Training augmentation: ±15° rotation, horizontal flip, color jitter; val/test: resize + normalize only."
+    ],
+    "methodologyTitle": "Methodology and architecture",
+    "methodologyIntro": "The system is built on the FlexibleFusionClassifier architecture, which combines a visual branch and a clinical feature branch. Seven configurations were evaluated comparatively.",
+    "methodologyCards": [
+      {
+        "title": "Overall architecture (B3 — best)",
+        "items": [
+          "ResNet-50 backbone (ImageNet pretrained, 2048-dim output) → Linear(2048, 256) + ReLU + Dropout(0.2).",
+          "Clinical MLP: 18 features → Linear(18, 128) → ReLU → Linear(128, 64) — invalid features are zeroed.",
+          "Fusion: visual (256) + clinical (64) concatenated → Linear(320, 128) + ReLU + Dropout(0.3) → Linear(128, 4).",
+          "Total 25M parameters; training time ~21.4 min (GPU)."
+        ]
+      },
+      {
+        "title": "Pre-processing",
+        "items": [
+          "Images resized to 224×224 and normalized with ImageNet statistics.",
+          "Training augmentation: random rotation ±15°, horizontal flip, color jitter (brightness/contrast/saturation).",
+          "WeightedRandomSampler used to balance class frequencies during training.",
+          "18 clinical features: foreground area ratio, stroke darkness, sharp-angle ratio, warm-color ratio, etc."
+        ]
+      },
+      {
+        "title": "Training setup",
+        "items": [
+          "AdamW optimizer, lr=1e-4, weight_decay=1e-4; CosineAnnealingLR (T_max=30).",
+          "Batch size: 32; early stopping patience: 7 epochs; best checkpoint by validation macro F1.",
+          "Weighted cross-entropy loss (class weights inversely proportional to frequency); seed=42.",
+          "7 configs: A1 (EffNet-B0), A2 (EffNet-B0+Clin), A3 (EffNet-B3), A4 (EffNet-B3+Clin), B3 (ResNet-50+Clin ★), B4 (ResNet-18+Clin), B5 (ViT-B/16+Clin)."
+        ]
+      },
+      {
+        "title": "Calibration and explainability",
+        "items": [
+          "Temperature Scaling: scipy NLL minimization on val-set logits; T*=2.65 found.",
+          "ECE before calibration: 0.1324 → after: 0.0231 (Brier score improvement: 0.282→0.131).",
+          "Grad-CAM: class-specific heatmap from last convolutional layer gradients.",
+          "LLM report: GPT-4o-mini via GitHub Models API; rule-based fallback if GITHUB_TOKEN is absent."
+        ]
+      }
+    ],
+    "resultsEyebrow": "Experimental results",
+    "resultsTitle": "Findings on the test set",
+    "resultsIntro": "7 model configurations were compared. ResNet-50 + Clinical (B3) achieved the best performance across all metrics.",
+    "emotionResultsTitle": "Best model — ResNet-50 + Clinical (B3)",
+    "emotionResultsText": "Per-class results on the 993-sample test set. Angry and Fear classes achieved the highest F1 scores.",
+    "emotionMetrics": [
+      { "label": "Test accuracy", "value": "83.2%" },
+      { "label": "Macro F1", "value": "0.833" },
+      { "label": "ECE (post-calibration)", "value": "0.023" },
+      { "label": "T* (Temperature)", "value": "2.65" }
+    ],
+    "genderResultsTitle": "Per-class F1 scores",
+    "genderResultsText": "Individual class F1 scores on the test set. Sad scored lowest due to visual overlap with Happy.",
+    "genderMetrics": [
+      { "label": "Happy", "value": "F1 0.844" },
+      { "label": "Sad", "value": "F1 0.634" },
+      { "label": "Angry", "value": "F1 0.928" },
+      { "label": "Fear", "value": "F1 0.926" }
+    ],
+    "deliverablesTitle": "Integrated system delivered",
+    "deliverables": [
+      "Reproducible training scripts and comparative evaluation infrastructure for all 7 experiment configurations",
+      "Temperature Scaling calibration module and confidence-threshold-based 'Uncertain' decision mechanism",
+      "Grad-CAM heatmaps, rule-based and LLM-assisted clinical explanation report generation",
+      "FastAPI REST API service + PyWebView desktop application as a clinical-ready prototype"
+    ],
+    "limitationsTitle": "Limitations and ethical notes",
+    "limitations": [
+      "Labeling was performed by a single researcher; inter-rater reliability (Cohen's κ) was not measured.",
+      "Sad class F1 (0.634) lags behind other classes due to visual overlap with Happy drawings.",
+      "The system has not yet been evaluated by psychologists in a real clinical setting.",
+      "LLM-based explanation requires external API access; privacy assessment may be needed in clinical environments."
+    ],
+    "futureWorkTitle": "Future work",
+    "futureWork": [
+      "Re-labeling with larger and cross-cultural datasets and Cohen's κ measurement",
+      "Targeted augmentation and decision-boundary refinement for the Sad class",
+      "Deep learning-based clinical feature extraction (segmentation models)",
+      "Multi-task learning architectures that account for the child's developmental context",
+      "Systematic user study (psychologists and parents) for clinical utility and safety evaluation",
+      "Offline small language models (SLM) for privacy-preserving explanation generation"
+    ],
+    "disclaimerTitle": "Research boundary",
+    "disclaimer": "This system is not a clinical diagnosis tool; it should be used to support expert evaluation. All outputs must be interpreted by a qualified psychologist or clinician."
+  },
+  "footer": {
+    "copyright": "© 2026 Child Drawing Analysis — NÖHÜ CS Undergraduate Thesis Prototype. All rights reserved.",
+    "privacy": "Privacy Note",
+    "terms": "Research Terms",
+    "contact": "Project Contact"
+  },
+  "ui": {
+    "remove": "Remove",
+    "confidenceLabel": "CONFIDENCE: {{val}}%"
+  }
+}

@@ -1,0 +1,13 @@
+# Minimal runtime + packaging dependencies for the Windows desktop build.
+numpy
+Pillow
+opencv-python
+torch
+torchvision
+transformers
+sentencepiece
+fastapi
+uvicorn[standard]
+python-multipart
+pywebview
+pyinstaller
