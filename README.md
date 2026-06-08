@@ -1,9 +1,13 @@
-# CCDDA — Explainable Emotion Analysis from Children's Drawings
+# Generative AI and Clinical Indicator-Based Explainable Deep Learning System for the Analysis of Children's Drawings
 
 > **Child Art Analyzer** — an interpretable deep-learning system that classifies the
 > dominant emotion in a child's drawing (**Happy · Sad · Angry · Fear**) and explains
 > *why*, by first predicting human-readable clinical indicators inspired by projective
-> drawing tests (Koppitz, Di Leo).
+> drawing tests (Koppitz, Di Leo). Generative AI (an LLM) turns those indicators into a
+> readable clinical narrative.
+>
+> *Türkçe başlık: Çocuk Çizimlerinin Analizinde Üretken Yapay Zeka ve Klinik Gösterge
+> Tabanlı Açıklanabilir Derin Öğrenme Sistemi.*
 
 <p align="center">
   <img src="docs/screenshots/home.png" alt="Child Art Analyzer — landing page" width="80%">

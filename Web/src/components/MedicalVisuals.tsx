@@ -17,22 +17,24 @@ import {
   ThumbsUp,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { heroFeatures, pipeline, sampleImages } from '../data/medvision';
+import { heroFeatures, pipeline, sampleImages, type LS } from '../data/medvision';
+import { useTranslation } from '../i18n';
 
-const EMOTION_BADGES = [
-  { label: 'Mutlu',  pct: '94%', color: '#5BAE7B', img: sampleImages[0]  },
-  { label: 'Öfkeli', pct: '87%', color: '#E76F3C', img: sampleImages[6]  },
-  { label: 'Korku',  pct: '91%', color: '#9B5DE5', img: sampleImages[10] },
-  { label: 'Üzgün',  pct: '78%', color: '#2F80ED', img: sampleImages[5]  },
+const EMOTION_BADGES: { label: LS; pct: string; color: string; img: string }[] = [
+  { label: { en: 'Happy', tr: 'Mutlu' },  pct: '94%', color: '#5BAE7B', img: sampleImages[0]  },
+  { label: { en: 'Angry', tr: 'Öfkeli' }, pct: '87%', color: '#E76F3C', img: sampleImages[6]  },
+  { label: { en: 'Fear', tr: 'Korku' },  pct: '91%', color: '#9B5DE5', img: sampleImages[10] },
+  { label: { en: 'Sad', tr: 'Üzgün' },  pct: '78%', color: '#2F80ED', img: sampleImages[5]  },
 ];
 
-const VISUAL_MARKERS = [
-  { label: 'Grad-CAM', icon: Activity },
-  { label: 'Klinik Göstergeler', icon: Gauge },
-  { label: 'LLM Açıklama', icon: MessageSquareText },
+const VISUAL_MARKERS: { label: LS; icon: typeof Activity }[] = [
+  { label: { en: 'Grad-CAM', tr: 'Grad-CAM' }, icon: Activity },
+  { label: { en: 'Clinical indicators', tr: 'Klinik Göstergeler' }, icon: Gauge },
+  { label: { en: 'LLM explanation', tr: 'LLM Açıklama' }, icon: MessageSquareText },
 ];
 
 export function DrawingAnalysisHero() {
+  const { lang } = useTranslation();
   return (
     <div className="relative mx-auto min-h-[460px] w-full max-w-[700px] sm:min-h-[540px] lg:min-h-[610px]">
       <div
@@ -53,7 +55,7 @@ export function DrawingAnalysisHero() {
         className="absolute left-1/2 top-10 w-[86%] max-w-[560px] -translate-x-1/2 -rotate-3 rounded-md bg-surface p-3 shadow-[0_34px_80px_-44px_rgba(52,31,17,0.68)] sm:top-12 lg:left-[46%] lg:w-[78%]"
       >
         <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-line bg-surface">
-          <img src="/home-preview.jpg" alt="Çocuk çizimi analizi" className="h-full w-full object-cover" />
+          <img src="/home-preview.jpg" alt={lang === 'tr' ? 'Çocuk çizimi analizi' : 'Child drawing analysis'} className="h-full w-full object-cover" />
           <div className="absolute inset-y-0 right-0 w-[48%] overflow-hidden border-l border-white/70">
             <div className="absolute inset-0 bg-[#0F4C81]/25 mix-blend-multiply" />
             <div
@@ -78,11 +80,11 @@ export function DrawingAnalysisHero() {
         {VISUAL_MARKERS.map((marker) => {
           const Icon = marker.icon;
           return (
-            <div key={marker.label} className="flex flex-col items-center gap-2 border-b border-line px-2 py-4 text-center last:border-b-0">
+            <div key={marker.label.en} className="flex flex-col items-center gap-2 border-b border-line px-2 py-4 text-center last:border-b-0">
               <span className="grid h-9 w-9 place-items-center rounded-full bg-tint text-[#E76F3C]">
                 <Icon size={17} strokeWidth={1.8} />
               </span>
-              <span className="text-[11px] font-semibold leading-snug text-ink">{marker.label}</span>
+              <span className="text-[11px] font-semibold leading-snug text-ink">{marker.label[lang]}</span>
             </div>
           );
         })}
@@ -94,10 +96,10 @@ export function DrawingAnalysisHero() {
         transition={{ duration: 0.55, delay: 0.45 }}
         className="absolute bottom-[108px] right-2 w-[245px] rounded-2xl bg-[#25231F]/95 p-5 text-white shadow-[0_28px_60px_-32px_rgba(0,0,0,0.9)] sm:bottom-[118px] sm:right-10 sm:w-[280px]"
       >
-        <div className="text-xs font-semibold text-white/80">Açıklanabilir Tahmin</div>
-        <div className="mt-2 font-serif text-5xl font-semibold leading-none text-[#FFD18A]">%83.4</div>
+        <div className="text-xs font-semibold text-white/80">{lang === 'tr' ? 'Açıklanabilir Tahmin' : 'Explainable prediction'}</div>
+        <div className="mt-2 font-serif text-5xl font-semibold leading-none text-[#FFD18A]">{lang === 'tr' ? '%83.4' : '83.4%'}</div>
         <div className="mt-2 flex items-center justify-between gap-3 text-sm text-white/85">
-          <span>Makro F1 Skoru</span>
+          <span>{lang === 'tr' ? 'Makro F1 Skoru' : 'Macro F1 score'}</span>
           <span className="h-px flex-1 bg-[#E76F3C]/45" />
           <span className="h-2 w-2 rounded-full bg-[#E76F3C]" />
         </div>
@@ -108,14 +110,14 @@ export function DrawingAnalysisHero() {
           const Icon = feature.icon;
           return (
             <motion.div
-              key={feature.title}
+              key={feature.title.en}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.42, delay: 0.35 + index * 0.06 }}
               className="flex items-center gap-2 rounded-full border border-line bg-surface/90 px-3 py-2 text-xs font-semibold text-ink shadow-[0_14px_34px_-28px_rgba(52,31,17,0.6)] backdrop-blur"
             >
               <Icon size={15} className="shrink-0 text-[#E76F3C]" strokeWidth={1.8} />
-              <span className="truncate">{feature.title}</span>
+              <span className="truncate">{feature.title[lang]}</span>
             </motion.div>
           );
         })}
@@ -125,6 +127,7 @@ export function DrawingAnalysisHero() {
 }
 
 export function HistologyBlob({ variant = 'hero' }: { variant?: 'hero' | 'compact' }) {
+  const { lang } = useTranslation();
   const isHero = variant === 'hero';
 
   return (
@@ -137,13 +140,13 @@ export function HistologyBlob({ variant = 'hero' }: { variant?: 'hero' | 'compac
       <div className="absolute inset-x-6 top-8 overflow-hidden rounded-[28px] border-[6px] border-white bg-surface shadow-[0_30px_80px_-40px_rgba(52,31,17,0.7)]">
         <div className="grid grid-cols-2">
           {EMOTION_BADGES.map((b) => (
-            <div key={b.label} className="relative h-[160px] overflow-hidden">
-              <img src={b.img} alt={b.label} className="h-full w-full object-cover" />
+            <div key={b.label.en} className="relative h-[160px] overflow-hidden">
+              <img src={b.img} alt={b.label[lang]} className="h-full w-full object-cover" />
               <div
                 className="absolute bottom-0 inset-x-0 py-1.5 text-center text-[10px] font-bold text-white"
                 style={{ background: `${b.color}cc` }}
               >
-                {b.label} {b.pct}
+                {b.label[lang]} {b.pct}
               </div>
             </div>
           ))}
@@ -163,7 +166,7 @@ export function HistologyBlob({ variant = 'hero' }: { variant?: 'hero' | 'compac
       {/* Floating badge — Grad-CAM */}
       <div className="absolute bottom-2 left-4 flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 shadow-[0_12px_30px_-16px_rgba(52,31,17,0.5)]">
         <ThumbsUp size={12} className="text-[#E76F3C]" />
-        <span className="text-xs font-semibold text-ink">Grad-CAM aktif</span>
+        <span className="text-xs font-semibold text-ink">{lang === 'tr' ? 'Grad-CAM aktif' : 'Grad-CAM active'}</span>
       </div>
 
       <span className="absolute right-2 top-16 h-2 w-2 rounded-full bg-[#E76F3C]" />
@@ -173,11 +176,12 @@ export function HistologyBlob({ variant = 'hero' }: { variant?: 'hero' | 'compac
 }
 
 export function MicroscopeComposition() {
+  const { lang } = useTranslation();
   return (
     <div className="relative mx-auto min-h-[320px] max-w-[620px]">
       <div className="absolute inset-x-8 bottom-8 h-64 rounded-[46%_54%_52%_48%] bg-surface2" />
       <div className="absolute right-6 top-20 h-56 w-56 overflow-hidden rounded-full border-[8px] border-white shadow-[0_24px_70px_-48px_rgba(52,31,17,0.75)]">
-        <img src={sampleImages[2]} alt="Örnek çizim" className="h-full w-full object-cover" />
+        <img src={sampleImages[2]} alt={lang === 'tr' ? 'Örnek çizim' : 'Sample drawing'} className="h-full w-full object-cover" />
       </div>
       <div className="absolute left-12 top-10 grid h-56 w-56 place-items-center rounded-[40%_60%_55%_45%] bg-tint text-[#E76F3C]">
         <Brain size={120} strokeWidth={1.1} />
@@ -190,20 +194,21 @@ export function MicroscopeComposition() {
 }
 
 export function PipelineDiagram({ withImage = false }: { withImage?: boolean }) {
+  const { lang } = useTranslation();
   return (
     <div className="grid gap-4 md:grid-cols-4">
       {pipeline.map((item, index) => {
         const Icon = item.icon;
         return (
-          <div key={item.title} className="relative">
+          <div key={item.title.en} className="relative">
             <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-line bg-surface p-5 text-center">
               {withImage && index === 0 ? (
                 <img src={sampleImages[2]} alt="" className="mb-4 h-20 w-20 rounded-xl object-cover" />
               ) : (
                 <Icon className="mb-4 text-ink" size={38} strokeWidth={1.4} />
               )}
-              <div className="font-semibold text-ink">{item.title}</div>
-              <div className="mt-2 text-sm leading-relaxed text-muted">{item.body}</div>
+              <div className="font-semibold text-ink">{item.title[lang]}</div>
+              <div className="mt-2 text-sm leading-relaxed text-muted">{item.body[lang]}</div>
             </div>
             {index < pipeline.length - 1 && (
               <div className="absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 text-[#E76F3C] md:block">→</div>
@@ -216,6 +221,7 @@ export function PipelineDiagram({ withImage = false }: { withImage?: boolean }) 
 }
 
 export function EditorialPipelineDiagram() {
+  const { lang } = useTranslation();
   return (
     <div className="relative">
       <div className="absolute left-8 right-8 top-10 hidden h-px bg-line lg:block" />
@@ -223,15 +229,15 @@ export function EditorialPipelineDiagram() {
         {pipeline.map((item, index) => {
           const Icon = item.icon;
           return (
-            <div key={item.title} className="relative border-t border-line pt-5 lg:border-t-0 lg:pt-0">
+            <div key={item.title.en} className="relative border-t border-line pt-5 lg:border-t-0 lg:pt-0">
               <div className="relative z-10 flex items-start gap-4 lg:block">
                 <div className="grid h-20 w-20 shrink-0 place-items-center rounded-full border border-line bg-surface text-[#E76F3C] shadow-[0_16px_38px_-30px_rgba(52,31,17,0.5)]">
                   <Icon size={31} strokeWidth={1.45} />
                 </div>
                 <div className="lg:mt-6">
                   <div className="text-xs font-bold uppercase tracking-[0.22em] text-[#E76F3C]">0{index + 1}</div>
-                  <h3 className="mt-2 font-serif text-2xl font-semibold leading-tight text-ink">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted">{item.body}</p>
+                  <h3 className="mt-2 font-serif text-2xl font-semibold leading-tight text-ink">{item.title[lang]}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted">{item.body[lang]}</p>
                 </div>
               </div>
               {index < pipeline.length - 1 && (
@@ -244,28 +250,30 @@ export function EditorialPipelineDiagram() {
       <div className="mt-8 flex items-start gap-3 border-t border-line pt-5 text-sm leading-6 text-muted">
         <FileText className="mt-0.5 shrink-0 text-[#E76F3C]" size={18} strokeWidth={1.8} />
         <span>
-          ResNet-50 omurga (~25M parametre); duyguya 16 figür-farkında klinik göstergeden ulaşan kavram darboğazı. Tüm deney konfigürasyonları yeniden üretilebilir.
+          {lang === 'tr'
+            ? 'ResNet-50 omurga (~25M parametre); duyguya 16 figür-farkında klinik göstergeden ulaşan kavram darboğazı. Tüm deney konfigürasyonları yeniden üretilebilir.'
+            : 'ResNet-50 backbone (~25M parameters); a concept bottleneck that reaches the emotion through 16 figure-aware clinical indicators. All experiment configurations are reproducible.'}
         </span>
       </div>
     </div>
   );
 }
 
-// — About hero için "tez masası / kâğıt kolaj" kompozisyonu —
-const COLLAGE_FLOW = [
-  { icon: ImageIcon, label: 'Çizim Girdisi' },
-  { icon: Network, label: 'ResNet-50' },
-  { icon: Gauge, label: 'Klinik Göstergeler' },
-  { icon: Layers3, label: 'Concept Bottleneck' },
-  { icon: MessageSquareText, label: 'LLM Açıklama' },
-  { icon: Smile, label: 'Duygu Çıktısı' },
+// — "Thesis desk / paper collage" composition for the About hero —
+const COLLAGE_FLOW: { icon: typeof ImageIcon; label: LS }[] = [
+  { icon: ImageIcon, label: { en: 'Drawing input', tr: 'Çizim Girdisi' } },
+  { icon: Network, label: { en: 'ResNet-50', tr: 'ResNet-50' } },
+  { icon: Gauge, label: { en: 'Clinical indicators', tr: 'Klinik Göstergeler' } },
+  { icon: Layers3, label: { en: 'Concept Bottleneck', tr: 'Concept Bottleneck' } },
+  { icon: MessageSquareText, label: { en: 'LLM explanation', tr: 'LLM Açıklama' } },
+  { icon: Smile, label: { en: 'Emotion output', tr: 'Duygu Çıktısı' } },
 ];
 
 function ChildDrawing() {
   return (
-    <svg viewBox="0 0 240 150" className="block h-full w-full" role="img" aria-label="Çocuk çizimi illüstrasyonu">
+    <svg viewBox="0 0 240 150" className="block h-full w-full" role="img" aria-label="Child drawing illustration">
       <rect width="240" height="150" fill="#FCFBF7" />
-      {/* güneş */}
+      {/* sun */}
       <g stroke="#F2C94C" strokeWidth="3" strokeLinecap="round">
         <line x1="206" y1="14" x2="206" y2="5" />
         <line x1="206" y1="57" x2="206" y2="66" />
@@ -277,22 +285,22 @@ function ChildDrawing() {
         <line x1="190" y1="51" x2="184" y2="57" />
       </g>
       <circle cx="206" cy="35" r="14" fill="#F2C94C" />
-      {/* bulut */}
+      {/* cloud */}
       <g fill="#FFFFFF" stroke="#C9DCEE" strokeWidth="2">
         <ellipse cx="44" cy="26" rx="19" ry="10" />
         <ellipse cx="62" cy="23" rx="13" ry="8" />
       </g>
-      {/* ağaç */}
+      {/* tree */}
       <rect x="40" y="94" width="9" height="36" rx="2" fill="#B07A45" />
       <circle cx="30" cy="96" r="13" fill="#69BE88" />
       <circle cx="58" cy="96" r="13" fill="#69BE88" />
       <circle cx="44" cy="86" r="22" fill="#5BAE7B" />
-      {/* ev */}
+      {/* house */}
       <rect x="150" y="98" width="62" height="44" rx="2" fill="#FCE6D6" stroke="#E0B79B" strokeWidth="2" />
       <path d="M144 99 L181 70 L218 99 Z" fill="#E76F3C" />
       <rect x="173" y="118" width="15" height="24" rx="1" fill="#B07A45" />
       <rect x="156" y="106" width="13" height="12" rx="1" fill="#DCEAF7" stroke="#9CC0E0" strokeWidth="1.5" />
-      {/* çocuklar — el ele */}
+      {/* children holding hands */}
       <line x1="106" y1="134" x2="116" y2="134" stroke="#F7CBA6" strokeWidth="3" strokeLinecap="round" />
       <g>
         <circle cx="96" cy="116" r="9" fill="#F7CBA6" stroke="#E0A982" strokeWidth="1.5" />
@@ -306,13 +314,14 @@ function ChildDrawing() {
         <line x1="119" y1="131" x2="110" y2="134" stroke="#F7CBA6" strokeWidth="3" strokeLinecap="round" />
         <line x1="129" y1="131" x2="139" y2="137" stroke="#F7CBA6" strokeWidth="3" strokeLinecap="round" />
       </g>
-      {/* zemin */}
+      {/* ground */}
       <path d="M0 142 H240 V150 H0 Z" fill="#A8D5A2" />
     </svg>
   );
 }
 
 export function ThesisCollage() {
+  const { lang } = useTranslation();
   return (
     <div className="relative mx-auto min-h-[430px] w-full max-w-[620px] lg:min-h-[500px]">
       <motion.div
@@ -331,7 +340,7 @@ export function ThesisCollage() {
           }}
         />
 
-        {/* Tez kapağı (Sol üst) */}
+        {/* Thesis cover (top left) */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -339,21 +348,21 @@ export function ThesisCollage() {
           className="absolute left-5 top-6 z-30 w-[210px] rounded-[18px] border border-line bg-surface2 p-6 text-center shadow-[0_32px_64px_-40px_rgba(52,31,17,0.4)] sm:left-8 sm:top-8 sm:w-[230px]"
           style={{ transform: 'rotate(-3deg)' }}
         >
-          <div className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#E76F3C]">Lisans Tezi</div>
+          <div className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#E76F3C]">{lang === 'tr' ? 'Lisans Tezi' : 'B.Sc. Thesis'}</div>
           <div className="mt-3 font-serif text-base font-semibold leading-snug text-ink sm:text-[17px]">
-            ÇOCUK ÇİZİMLERİNDE AÇIKLANABİLİR DUYGU SINIFLANDIRMASI
+            {lang === 'tr' ? 'ÇOCUK ÇİZİMLERİNDE AÇIKLANABİLİR DUYGU SINIFLANDIRMASI' : "EXPLAINABLE EMOTION CLASSIFICATION FROM CHILDREN'S DRAWINGS"}
           </div>
           <div className="mx-auto my-4 h-px w-12 bg-line" />
           <div className="text-[9px] font-semibold leading-relaxed tracking-wide text-ink">
-            NİĞDE ÖMER HALİSDEMİR ÜNİVERSİTESİ
+            {lang === 'tr' ? 'NİĞDE ÖMER HALİSDEMİR ÜNİVERSİTESİ' : 'NIGDE OMER HALISDEMIR UNIVERSITY'}
           </div>
-          <div className="mt-1 text-[9px] text-muted">Bilgisayar Mühendisliği</div>
+          <div className="mt-1 text-[9px] text-muted">{lang === 'tr' ? 'Bilgisayar Mühendisliği' : 'Computer Engineering'}</div>
           <div className="mt-4 inline-flex rounded-md border border-[#F2C8B2] bg-tint px-2 py-0.5 text-[9px] font-bold text-[#E76F3C]">
             2024 - 2025
           </div>
         </motion.div>
 
-        {/* Sistem akışı (Sağ üst) */}
+        {/* System flow (top right) */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -361,7 +370,7 @@ export function ThesisCollage() {
           className="absolute right-5 top-6 z-10 w-[240px] rounded-2xl border border-line bg-surface p-5 shadow-[0_20px_50px_-30px_rgba(52,31,17,0.2)] sm:right-8 sm:w-[280px] lg:right-10 lg:top-8 lg:w-[300px]"
           style={{ transform: 'rotate(1deg)' }}
         >
-          <div className="mb-3 text-[10px] font-bold uppercase tracking-[0.25em] text-muted">Sistem Akışı</div>
+          <div className="mb-3 text-[10px] font-bold uppercase tracking-[0.25em] text-muted">{lang === 'tr' ? 'Sistem Akışı' : 'System flow'}</div>
           <div className="relative flex flex-col gap-2">
             <div className="absolute bottom-4 left-[13px] top-4 w-px bg-line" />
             {COLLAGE_FLOW.map((step, idx) => {
@@ -371,14 +380,14 @@ export function ThesisCollage() {
                   <span className="grid h-[28px] w-[28px] shrink-0 place-items-center rounded-full border border-[#F2C8B2] bg-tint text-[#E76F3C]">
                     <Icon size={14} />
                   </span>
-                  <span className="text-[11px] font-semibold text-muted">{step.label}</span>
+                  <span className="text-[11px] font-semibold text-muted">{step.label[lang]}</span>
                 </div>
               );
             })}
           </div>
         </motion.div>
 
-        {/* Çocuk çizimi (Sol alt) */}
+        {/* Child drawing (bottom left) */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -389,13 +398,13 @@ export function ThesisCollage() {
           <div className="overflow-hidden rounded-xl border border-line bg-surface2">
             <img
               src={sampleImages[0] || '/samples/happy_1.jpg'}
-              alt="Çocuk Çizimi"
+              alt={lang === 'tr' ? 'Çocuk Çizimi' : 'Child drawing'}
               className="h-[140px] w-full object-contain sm:h-[160px] lg:h-[190px]"
             />
           </div>
         </motion.div>
 
-        {/* Metrik Pill'leri (Orta / Dağınık) */}
+        {/* Metric pills (center / scattered) */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -403,20 +412,20 @@ export function ThesisCollage() {
           className="absolute bottom-36 right-6 z-20 flex hidden flex-col items-end gap-2.5 sm:flex sm:right-10 lg:right-14"
         >
           <div className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-[10px] font-semibold text-ink shadow-sm">
-            5.177 Çizim
+            {lang === 'tr' ? '5.177 Çizim' : '5,177 drawings'}
           </div>
           <div className="relative right-4 rounded-full border border-line bg-surface px-3.5 py-1.5 text-[10px] font-semibold text-ink shadow-sm">
-            0.834 Makro F1
+            {lang === 'tr' ? '0.834 Makro F1' : '0.834 Macro F1'}
           </div>
           <div className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-[10px] font-semibold text-ink shadow-sm">
-            16 Klinik Gösterge
+            {lang === 'tr' ? '16 Klinik Gösterge' : '16 clinical indicators'}
           </div>
           <div className="rounded-full border border-[#F2C8B2] bg-tint px-3.5 py-1.5 text-[10px] font-bold text-[#E76F3C] shadow-sm">
             Grad-CAM + LLM
           </div>
         </motion.div>
 
-        {/* TÜBİTAK notu (Sağ alt) */}
+        {/* TÜBİTAK note (bottom right) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -424,7 +433,7 @@ export function ThesisCollage() {
           className="absolute bottom-6 right-5 z-40 w-[140px] rounded-lg border border-[#F2C8B2] bg-tint p-3.5 shadow-[0_16px_40px_-20px_rgba(231,111,60,0.3)] sm:bottom-8 sm:right-8"
           style={{ transform: 'rotate(4deg)' }}
         >
-          <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#E76F3C]/80">Destek</div>
+          <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#E76F3C]/80">{lang === 'tr' ? 'Destek' : 'Funding'}</div>
           <div className="mt-1.5 flex items-center gap-2">
             <span className="grid h-6 w-6 place-items-center rounded-sm bg-[#0F4C81] text-white">
               <Landmark size={13} strokeWidth={2} />
@@ -437,17 +446,18 @@ export function ThesisCollage() {
   );
 }
 
-// About hero görseli: tez/araştırma temalı kod-tabanlı kompozisyon (Grad-CAM ve metrik yok).
-const ABOUT_CONCEPTS = [
-  { icon: Gauge, label: 'Klinik Göstergeler' },
-  { icon: Layers3, label: 'Kavram Darboğazı' },
-  { icon: MessageSquareText, label: 'LLM Açıklama' },
+// About hero visual: thesis/research-themed, code-based composition (no Grad-CAM or metrics).
+const ABOUT_CONCEPTS: { icon: typeof Gauge; label: LS }[] = [
+  { icon: Gauge, label: { en: 'Clinical indicators', tr: 'Klinik Göstergeler' } },
+  { icon: Layers3, label: { en: 'Concept Bottleneck', tr: 'Kavram Darboğazı' } },
+  { icon: MessageSquareText, label: { en: 'LLM explanation', tr: 'LLM Açıklama' } },
 ];
 
 export function ResearchHeroVisual() {
+  const { lang } = useTranslation();
   return (
     <div className="relative mx-auto min-h-[440px] w-full max-w-[740px] sm:min-h-[490px] lg:min-h-[520px]">
-      {/* kareli kâğıt zemin */}
+      {/* grid paper background */}
       <div
         className="absolute inset-0 opacity-60"
         style={{
@@ -458,13 +468,13 @@ export function ResearchHeroVisual() {
           WebkitMaskImage: 'radial-gradient(circle at 52% 46%, black, transparent 72%)',
         }}
       />
-      {/* dekoratif halkalar */}
+      {/* decorative rings */}
       <div className="absolute -right-4 top-12 hidden h-[400px] w-[400px] rounded-full border border-[#E76F3C]/12 lg:block" />
       <div className="absolute right-10 top-24 hidden h-[300px] w-[300px] rounded-full border border-[#0F4C81]/10 lg:block" />
-      {/* yumuşak sıcak ışık */}
+      {/* soft warm light */}
       <div className="absolute left-1/2 top-1/2 h-52 w-[74%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#F4D8C2]/35 blur-3xl" />
 
-      {/* Akademik / tez rozeti */}
+      {/* Academic / thesis badge */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -475,27 +485,27 @@ export function ResearchHeroVisual() {
           <GraduationCap size={17} strokeWidth={1.7} />
         </span>
         <div>
-          <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#E76F3C]">Lisans Tezi</div>
-          <div className="text-sm font-semibold leading-tight text-ink">NÖHÜ · Bilgisayar Müh.</div>
+          <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#E76F3C]">{lang === 'tr' ? 'Lisans Tezi' : 'B.Sc. Thesis'}</div>
+          <div className="text-sm font-semibold leading-tight text-ink">{lang === 'tr' ? 'NÖHÜ · Bilgisayar Müh.' : 'NÖHÜ · Computer Eng.'}</div>
         </div>
       </motion.div>
 
-      {/* Ana kâğıt kart: çocuk çizimi (gerçek) */}
+      {/* Main paper card: child drawing (real) */}
       <motion.div
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute left-1/2 top-12 w-[86%] max-w-[520px] -translate-x-1/2 -rotate-3 rounded-2xl border border-line bg-surface p-3 shadow-[0_36px_84px_-46px_rgba(52,31,17,0.62)] lg:left-[49%]"
       >
         <div className="overflow-hidden rounded-xl border border-line bg-surface">
-          <img src={sampleImages[0]} alt="Çocuk çizimi örneği" className="aspect-[1.45] w-full object-cover" />
+          <img src={sampleImages[0]} alt={lang === 'tr' ? 'Çocuk çizimi örneği' : 'Sample child drawing'} className="aspect-[1.45] w-full object-cover" />
           <div className="flex items-center gap-2 border-t border-line px-3 py-2 text-[11px] font-semibold text-muted">
             <Sparkles size={13} className="text-[#E76F3C]" strokeWidth={1.9} />
-            Çocuk Çizimi · KIDO Veri Seti
+            {lang === 'tr' ? 'Çocuk Çizimi · KIDO Veri Seti' : 'Child Drawing · KIDO Dataset'}
           </div>
         </div>
       </motion.div>
 
-      {/* TÜBİTAK destek rozeti */}
+      {/* TÜBİTAK funding badge */}
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
@@ -506,25 +516,25 @@ export function ResearchHeroVisual() {
           <Landmark size={16} strokeWidth={1.8} />
         </span>
         <div>
-          <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#9A7B1F] dark:text-[#D8B968]">Destek</div>
+          <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#9A7B1F] dark:text-[#D8B968]">{lang === 'tr' ? 'Destek' : 'Funding'}</div>
           <div className="font-serif text-[15px] font-semibold leading-tight text-ink">TÜBİTAK 2209-A</div>
         </div>
       </motion.div>
 
-      {/* Kavram pill'leri (yüzde yok) */}
+      {/* Concept pills (no percentages) */}
       <div className="absolute bottom-0 left-1/2 flex w-[94%] -translate-x-1/2 flex-wrap justify-center gap-2">
         {ABOUT_CONCEPTS.map((step, index) => {
           const Icon = step.icon;
           return (
             <motion.div
-              key={step.label}
+              key={step.label.en}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.42, delay: 0.55 + index * 0.07 }}
               className="flex items-center gap-2 rounded-full border border-line bg-surface/90 px-3 py-2 text-xs font-semibold text-ink shadow-[0_14px_34px_-28px_rgba(52,31,17,0.6)] backdrop-blur"
             >
               <Icon size={14} className="shrink-0 text-[#E76F3C]" strokeWidth={1.8} />
-              <span className="truncate">{step.label}</span>
+              <span className="truncate">{step.label[lang]}</span>
             </motion.div>
           );
         })}
@@ -534,9 +544,10 @@ export function ResearchHeroVisual() {
 }
 
 export function ResultBadge() {
+  const { lang } = useTranslation();
   return (
     <div className="inline-flex items-center gap-2 rounded-full bg-[#EAF6EF] px-4 py-2 text-sm font-semibold text-[#5BAE7B]">
-      Tamamlandı
+      {lang === 'tr' ? 'Tamamlandı' : 'Completed'}
       <CheckCircle2 size={15} />
     </div>
   );

@@ -31,7 +31,9 @@ import {
   emotionColors,
   sampleImages,
 } from '../data/medvision';
+import { useTranslation } from '../i18n';
 import type { ApiResult } from '../types';
+import type { Lang } from '../i18n';
 
 const CANVAS_COLORS = ['#1F1F1F', '#E76F3C', '#2F80ED', '#5BAE7B', '#9B5DE5', '#F2C94C', '#EB5757'];
 const BRUSH_SIZES = [4, 8, 16, 28];
@@ -53,33 +55,171 @@ type IndicatorItem = {
   value: number | string;
 };
 
-const infoTabs: { key: InfoTab; label: string }[] = [
-  { key: 'explanation', label: 'Açıklama' },
-  { key: 'indicators', label: 'Klinik Göstergeler' },
-  { key: 'llm', label: 'LLM Yorum' },
-];
+// All UI copy, keyed by language.
+const STR = {
+  en: {
+    eyebrow: 'ANALYSIS WORKSPACE',
+    title: 'Upload a Drawing and Review the Analysis',
+    subtitle: 'Upload the child’s drawing and review the AI-assisted analysis results and clinical indicators.',
+    samplesTitle: 'Sample Drawings',
+    sampleAlt: 'sample drawing',
+    preprocessNote: 'PNG, JPG or WEBP · Max 10MB · 224×224 pre-processing',
+    analyzing: 'Analyzing',
+    startAnalysis: 'Start Analysis',
+    errImageFormat: 'Please upload an image in PNG, JPG, JPEG or WEBP format.',
+    errUnexpected: 'An unexpected error occurred.',
+    gradcamResultAlt: 'Grad-CAM result',
+    gradcamNotReady: 'Grad-CAM not ready yet',
+    gradcamNotReadyBody: 'When a drawing is analyzed, the regions the model focused on appear here.',
+    selectedAlt: 'Selected drawing',
+    removeImg: 'Remove image',
+    dropTitle: 'Drag the drawing here',
+    dropOr: 'or click to choose a file',
+    dropHint: 'PNG, JPG, JPEG · max 10 MB',
+    chooseFile: 'Choose File',
+    drawCanvas: 'Draw on Canvas',
+    canvasTitle: 'Draw',
+    close: 'Close',
+    color: 'Color',
+    brush: 'Brush size',
+    tools: 'Tools',
+    eraser: 'Eraser',
+    clear: 'Clear',
+    useDrawing: 'Use Drawing',
+    cancel: 'Cancel',
+    resultTitle: 'Analysis Result',
+    resultSubtitle: 'Prediction, confidence and explanation inspector panel.',
+    newAnalysis: 'New analysis',
+    noAnalysis: 'No analysis yet',
+    noAnalysisBody:
+      'Upload a drawing or create one on the canvas. When the analysis completes, the emotion prediction, confidence score, class probabilities, Grad-CAM and clinical explanation appear here.',
+    analysisView: 'Analysis View',
+    running: 'Analysis running',
+    runningBody: 'The drawing is being passed through the clinical decision-support pipeline.',
+    predictedEmotion: 'Predicted Emotion',
+    confidence: 'Confidence Score',
+    highConf: 'High Confidence',
+    reviewCare: 'Review Carefully',
+    gradcamHeat: 'Grad-CAM Heatmap',
+    gradcamAlt: 'Grad-CAM heatmap',
+    gradcamNote: 'Warm regions show the drawing areas most influential in the model’s class decision.',
+    classProbs: 'Class Probabilities',
+    clinicalExplanation: 'Clinical Explanation',
+    noExplanation: 'No detailed explanation is available for this drawing.',
+    indicatorsTitle: '16 Clinical Indicators',
+    indicatorsBody:
+      'The model makes its emotion prediction through 16 figure-aware clinical indicators. In this work, the indicators are used as Koppitz/Di Leo-based explainable intermediate concepts.',
+    fidelity: 'Concept fidelity',
+    fidelityVal: 'r=0.79',
+    calibration: 'Calibration',
+    calibrationVal: 'ECE=0.019',
+    macroF1: 'Macro F1',
+    macroF1Val: '0.834',
+    noScoresInfo: 'No per-indicator scores were present in the API response, so no placeholder values are shown.',
+    uncertain: 'Uncertain',
+    infoTabs: { explanation: 'Explanation', indicators: 'Clinical Indicators', llm: 'LLM Note' },
+    infoTabContent: {
+      explanation: {
+        title: 'Predicted Emotion and Confidence Score',
+        body: 'Once the analysis completes, the predicted emotion class, the model confidence score and the probability distribution over the four emotions are shown here.',
+      },
+      indicators: {
+        title: '16 Figure-Aware Clinical Indicators',
+        body: 'The model makes its decision through Koppitz/Di Leo-based explainable intermediate concepts. The indicator values for the drawing are listed here after the analysis.',
+      },
+      llm: {
+        title: 'AI-Assisted Clinical Note',
+        body: 'The prediction and clinical indicators are passed to a language model and turned into a readable clinical assessment text; this note appears here after the analysis.',
+      },
+    },
+  },
+  tr: {
+    eyebrow: 'ANALİZ ÇALIŞMA ALANI',
+    title: 'Çizim Yükle ve Analizi İncele',
+    subtitle: 'Çocuğun çizimini yükleyin, yapay zeka destekli analiz sonuçlarını ve klinik göstergeleri inceleyin.',
+    samplesTitle: 'Örnek Çizimler',
+    sampleAlt: 'örnek çizim',
+    preprocessNote: 'PNG, JPG veya WEBP · Maks. 10MB · 224×224 ön işleme',
+    analyzing: 'Analiz Ediliyor',
+    startAnalysis: 'Analizi Başlat',
+    errImageFormat: 'Lütfen PNG, JPG, JPEG veya WEBP formatında bir görsel yükleyin.',
+    errUnexpected: 'Beklenmeyen bir hata oluştu.',
+    gradcamResultAlt: 'Grad-CAM sonucu',
+    gradcamNotReady: 'Grad-CAM henüz hazır değil',
+    gradcamNotReadyBody: 'Bir çizim analiz edildiğinde modelin odaklandığı bölgeler burada görüntülenir.',
+    selectedAlt: 'Seçilen çizim',
+    removeImg: 'Görseli kaldır',
+    dropTitle: 'Çizimi buraya sürükleyin',
+    dropOr: 'veya tıklayarak dosya seçin',
+    dropHint: 'PNG, JPG, JPEG · maks. 10 MB',
+    chooseFile: 'Dosya Seç',
+    drawCanvas: 'Canvas ile Çiz',
+    canvasTitle: 'Çizim Yap',
+    close: 'Kapat',
+    color: 'Renk',
+    brush: 'Kalem Ucu',
+    tools: 'Araçlar',
+    eraser: 'Silgi',
+    clear: 'Temizle',
+    useDrawing: 'Çizimi Kullan',
+    cancel: 'İptal',
+    resultTitle: 'Analiz Sonucu',
+    resultSubtitle: 'Tahmin, güven ve açıklama inspector paneli.',
+    newAnalysis: 'Yeni analiz',
+    noAnalysis: 'Henüz analiz yapılmadı',
+    noAnalysisBody:
+      'Bir çizim yükleyin veya canvas üzerinde çizim oluşturun. Analiz tamamlandığında duygu tahmini, güven skoru, sınıf olasılıkları, Grad-CAM ve klinik açıklama burada görüntülenir.',
+    analysisView: 'Analiz Görünümü',
+    running: 'Analiz çalışıyor',
+    runningBody: 'Çizim klinik karar destek hattından geçiriliyor.',
+    predictedEmotion: 'Tahmin Edilen Duygu',
+    confidence: 'Güven Skoru',
+    highConf: 'Yüksek Güven',
+    reviewCare: 'Dikkatli İncele',
+    gradcamHeat: 'Grad-CAM Isı Haritası',
+    gradcamAlt: 'Grad-CAM ısı haritası',
+    gradcamNote: 'Sıcak alanlar, modelin sınıf kararında daha etkili olan çizim bölgelerini gösterir.',
+    classProbs: 'Sınıf Olasılıkları',
+    clinicalExplanation: 'Klinik Açıklama',
+    noExplanation: 'Bu çizim için ayrıntılı açıklama bulunmuyor.',
+    indicatorsTitle: '16 Klinik Gösterge',
+    indicatorsBody:
+      'Model, duygu tahminini 16 figür-farkında klinik gösterge üzerinden verir. Bu çalışmada göstergeler Koppitz/Di Leo temelli açıklanabilir ara kavramlar olarak kullanılmıştır.',
+    fidelity: 'Gösterge sadakati',
+    fidelityVal: 'r=0,79',
+    calibration: 'Kalibrasyon',
+    calibrationVal: 'ECE=0,019',
+    macroF1: 'Makro F1',
+    macroF1Val: '0,834',
+    noScoresInfo: 'API yanıtında gösterge bazlı ayrıntılı skor bulunmadığı için sahte değer gösterilmedi.',
+    uncertain: 'Belirsiz',
+    infoTabs: { explanation: 'Açıklama', indicators: 'Klinik Göstergeler', llm: 'LLM Yorum' },
+    infoTabContent: {
+      explanation: {
+        title: 'Tahmin Edilen Duygu ve Güven Skoru',
+        body: 'Analiz tamamlandığında çizimden tahmin edilen duygu sınıfı, modelin güven skoru ve dört duygu için olasılık dağılımı burada görüntülenir.',
+      },
+      indicators: {
+        title: '16 Figür-Farkında Klinik Gösterge',
+        body: 'Model, kararını Koppitz/Di Leo temelli açıklanabilir ara kavramlar üzerinden verir. Çizime ait gösterge değerleri analiz sonrası bu alanda listelenir.',
+      },
+      llm: {
+        title: 'Yapay Zeka Destekli Klinik Yorum',
+        body: 'Tahmin ve klinik göstergeler bir dil modeline aktarılarak okunabilir bir klinik değerlendirme metnine dönüştürülür; bu yorum analiz sonrası burada yer alır.',
+      },
+    },
+  },
+} as const;
 
-const infoTabContent: Record<InfoTab, { title: string; body: string }> = {
-  explanation: {
-    title: 'Tahmin Edilen Duygu ve Güven Skoru',
-    body: 'Analiz tamamlandığında çizimden tahmin edilen duygu sınıfı, modelin güven skoru ve dört duygu için olasılık dağılımı burada görüntülenir.',
-  },
-  indicators: {
-    title: '16 Figür-Farkında Klinik Gösterge',
-    body: 'Model, kararını Koppitz/Di Leo temelli açıklanabilir ara kavramlar üzerinden verir. Çizime ait gösterge değerleri analiz sonrası bu alanda listelenir.',
-  },
-  llm: {
-    title: 'Yapay Zeka Destekli Klinik Yorum',
-    body: 'Tahmin ve klinik göstergeler bir dil modeline aktarılarak okunabilir bir klinik değerlendirme metnine dönüştürülür; bu yorum analiz sonrası burada yer alır.',
-  },
-};
+const infoTabKeys: InfoTab[] = ['explanation', 'indicators', 'llm'];
 
 const emotionIcons: LucideIcon[] = [Smile, Frown, CircleAlert, ShieldCheck];
 
-// Maps an English emotion label to its Turkish equivalent (falls back to the raw label).
-function toTurkishLabel(label: string): string {
+// Maps an English emotion label to its display label in the active language.
+function localizedLabel(label: string, lang: Lang): string {
   const i = emotionClasses.findIndex((c) => c.toLowerCase() === label.toLowerCase());
-  return i >= 0 ? emotionClassesTr[i] : label || 'Belirsiz';
+  if (i < 0) return label || (lang === 'tr' ? 'Belirsiz' : 'Uncertain');
+  return lang === 'tr' ? emotionClassesTr[i] : emotionClasses[i];
 }
 
 function percent(v: number) {
@@ -144,11 +284,11 @@ function extractIndicators(result: ApiResult | null): IndicatorItem[] {
         }
         if (item && typeof item === 'object') {
           const itemRecord = item as Record<string, unknown>;
-          const label = itemRecord.label ?? itemRecord.name ?? itemRecord.title ?? itemRecord.concept ?? `Gösterge ${index + 1}`;
+          const label = itemRecord.label ?? itemRecord.name ?? itemRecord.title ?? itemRecord.concept ?? `Indicator ${index + 1}`;
           const value = getIndicatorValue(item);
           return value !== null ? { label: String(label), value } : null;
         }
-        return { label: `Gösterge ${index + 1}`, value: item as number | string };
+        return { label: `Indicator ${index + 1}`, value: item as number | string };
       })
       .filter((item): item is IndicatorItem => Boolean(item));
   }
@@ -177,7 +317,7 @@ function prepareContext(ctx: CanvasRenderingContext2D) {
   ctx.lineJoin = 'round';
 }
 
-// SPA oturumu boyunca yaşayan analiz cache'i (sayfa değişiminde state korunur).
+// Analysis cache that lives for the SPA session (state is preserved across page changes).
 const analysisCache: {
   file: File | null;
   previewSrc: string | null;
@@ -185,6 +325,8 @@ const analysisCache: {
 } = { file: null, previewSrc: null, result: null };
 
 export function AnalysisPage() {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   const [file, setFile] = useState<File | null>(analysisCache.file);
   const [previewSrc, setPreviewSrc] = useState<string | null>(analysisCache.previewSrc);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -195,8 +337,8 @@ export function AnalysisPage() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Sayfa değişiminde (component unmount) state kaybolmasın diye modül-seviyesi
-  // cache'e yansıt; AnalysisPage tekrar açıldığında buradan geri yüklenir.
+  // Reflect into the module-level cache so state is not lost on unmount;
+  // restored from here when AnalysisPage reopens.
   useEffect(() => {
     analysisCache.file = file;
     analysisCache.previewSrc = previewSrc;
@@ -222,7 +364,7 @@ export function AnalysisPage() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) selectFile(f, URL.createObjectURL(f));
-    // Aynı dosya tekrar seçilebilsin diye input değerini sıfırla.
+    // Reset the input value so the same file can be selected again.
     e.target.value = '';
   };
 
@@ -245,16 +387,17 @@ export function AnalysisPage() {
     const formData = new FormData();
     formData.append('image', file);
     formData.append('file', file);
-    formData.append('lang', 'tr');
+    formData.append('lang', lang);
     try {
       const res = await fetch(API_URL, { method: 'POST', body: formData });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        throw new Error(body?.detail ?? `Analiz başarısız oldu (${res.status}).`);
+        const fallback = lang === 'tr' ? `Analiz başarısız oldu (${res.status}).` : `Analysis failed (${res.status}).`;
+        throw new Error(body?.detail ?? fallback);
       }
       setResult(await res.json());
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Beklenmeyen bir hata oluştu.');
+      setError(err instanceof Error ? err.message : s.errUnexpected);
     } finally {
       setIsAnalyzing(false);
     }
@@ -274,7 +417,7 @@ export function AnalysisPage() {
     const dropped = e.dataTransfer.files?.[0];
     if (!dropped) return;
     if (!dropped.type.startsWith('image/')) {
-      setError('Lütfen PNG, JPG, JPEG veya WEBP formatında bir görsel yükleyin.');
+      setError(s.errImageFormat);
       return;
     }
     selectFile(dropped, URL.createObjectURL(dropped));
@@ -297,30 +440,32 @@ export function AnalysisPage() {
       />
 
       <div className="mx-auto grid max-w-[1640px] grid-cols-1 px-4 sm:px-6 xl:h-full xl:grid-cols-[minmax(0,1fr)_480px]">
-        {/* ── Sol: çalışma kolonu ── */}
+        {/* ── Left: working column ── */}
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
           className="order-1 flex min-w-0 flex-col py-4 xl:col-start-1 xl:h-full xl:min-h-0 xl:pr-10"
         >
-          {/* Başlık */}
+          {/* Title */}
           <div className="shrink-0">
-            <div className="text-xs font-bold uppercase tracking-[0.32em] text-[#E76F3C]">ANALİZ ÇALIŞMA ALANI</div>
+            <div className="text-xs font-bold uppercase tracking-[0.32em] text-[#E76F3C]">{s.eyebrow}</div>
             <h1 className="mt-2 font-serif text-3xl font-semibold leading-tight tracking-[-0.02em] text-ink md:text-4xl">
-              Çizim Yükle ve Analizi İncele
+              {s.title}
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              Çocuğun çizimini yükleyin, yapay zeka destekli analiz sonuçlarını ve klinik göstergeleri inceleyin.
+              {s.subtitle}
             </p>
           </div>
 
-          {/* Örnek çizimler — kompakt rail */}
+          {/* Sample drawings — compact rail */}
           <div className="mt-4 shrink-0">
-            <h2 className="font-serif text-xl font-semibold text-ink">Örnek Çizimler</h2>
+            <h2 className="font-serif text-xl font-semibold text-ink">{s.samplesTitle}</h2>
             <div className="mt-2 flex gap-2.5 overflow-x-auto pb-1">
               {filteredSamples.map((sample) => {
                 const selected = previewSrc === sample.src;
+                const labelIdx = emotionClasses.indexOf(sample.emotion);
+                const label = lang === 'tr' ? emotionClassesTr[labelIdx] : emotionClasses[labelIdx];
                 return (
                   <motion.button
                     key={sample.src}
@@ -333,7 +478,7 @@ export function AnalysisPage() {
                   >
                     <img
                       src={sample.src}
-                      alt={`${emotionClassesTr[emotionClasses.indexOf(sample.emotion)]} örnek çizim`}
+                      alt={`${label} ${s.sampleAlt}`}
                       className="h-full w-full object-cover"
                     />
                     {selected && (
@@ -347,7 +492,7 @@ export function AnalysisPage() {
             </div>
           </div>
 
-          {/* Ayırıcı + çalışma alanı */}
+          {/* Divider + workspace */}
           <div className="mt-4 flex flex-col border-t border-line pt-4 xl:min-h-0 xl:flex-1">
             <div
               onDragOver={(e) => {
@@ -370,7 +515,7 @@ export function AnalysisPage() {
               />
             </div>
 
-            <p className="mt-3 shrink-0 text-center text-xs text-muted">PNG, JPG veya WEBP · Maks. 10MB · 224×224 ön işleme</p>
+            <p className="mt-3 shrink-0 text-center text-xs text-muted">{s.preprocessNote}</p>
 
             <Button
               type="button"
@@ -381,11 +526,11 @@ export function AnalysisPage() {
               {isAnalyzing ? (
                 <>
                   <RefreshCw className="animate-spin" size={17} />
-                  Analiz Ediliyor
+                  {s.analyzing}
                 </>
               ) : (
                 <>
-                  Analizi Başlat
+                  {s.startAnalysis}
                   <ArrowRight size={17} />
                 </>
               )}
@@ -440,19 +585,21 @@ function WorkspacePreview({
   onOpenCanvas: () => void;
   onClear: () => void;
 }) {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   if (activeTab === 'gradcam') {
     return (
       <div className="grid h-[380px] place-items-center overflow-hidden rounded-2xl border border-dashed border-[#E9CDBA] bg-surface/60 p-4 sm:h-[440px] xl:h-full xl:min-h-[360px]">
         {normalized?.heatmap ? (
-          <img src={`data:image/png;base64,${normalized.heatmap}`} alt="Grad-CAM sonucu" className="max-h-full max-w-full rounded-xl object-contain" />
+          <img src={`data:image/png;base64,${normalized.heatmap}`} alt={s.gradcamResultAlt} className="max-h-full max-w-full rounded-xl object-contain" />
         ) : (
           <div className="max-w-sm text-center">
             <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-tint text-[#E76F3C]">
               <Zap size={25} strokeWidth={1.6} />
             </div>
-            <h3 className="mt-5 font-serif text-2xl font-semibold text-ink">Grad-CAM henüz hazır değil</h3>
+            <h3 className="mt-5 font-serif text-2xl font-semibold text-ink">{s.gradcamNotReady}</h3>
             <p className="mt-3 text-sm leading-6 text-muted">
-              Bir çizim analiz edildiğinde modelin odaklandığı bölgeler burada görüntülenir.
+              {s.gradcamNotReadyBody}
             </p>
           </div>
         )}
@@ -471,7 +618,7 @@ function WorkspacePreview({
         <>
           <img
             src={previewSrc}
-            alt="Seçilen çizim"
+            alt={s.selectedAlt}
             className="absolute inset-4 h-[calc(100%-2rem)] w-[calc(100%-2rem)] rounded-xl object-contain object-center"
           />
           <button
@@ -480,8 +627,8 @@ function WorkspacePreview({
               e.stopPropagation();
               onClear();
             }}
-            aria-label="Görseli kaldır"
-            title="Görseli kaldır"
+            aria-label={s.removeImg}
+            title={s.removeImg}
             className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-surface/90 text-muted shadow-md ring-1 ring-line transition hover:bg-surface hover:text-[#E76F3C]"
           >
             <X size={18} />
@@ -492,9 +639,9 @@ function WorkspacePreview({
           <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-tint text-[#E76F3C]">
             <UploadCloud size={34} strokeWidth={1.45} />
           </div>
-          <h3 className="mt-5 font-serif text-3xl font-semibold text-ink">Çizimi buraya sürükleyin</h3>
-          <p className="mt-2 text-sm leading-6 text-muted">veya tıklayarak dosya seçin</p>
-          <p className="mt-1 text-xs text-muted">PNG, JPG, JPEG · maks. 10 MB</p>
+          <h3 className="mt-5 font-serif text-3xl font-semibold text-ink">{s.dropTitle}</h3>
+          <p className="mt-2 text-sm leading-6 text-muted">{s.dropOr}</p>
+          <p className="mt-1 text-xs text-muted">{s.dropHint}</p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button
               type="button"
@@ -504,7 +651,7 @@ function WorkspacePreview({
               }}
               className="!rounded-xl"
             >
-              Dosya Seç
+              {s.chooseFile}
             </Button>
             <Button
               type="button"
@@ -516,7 +663,7 @@ function WorkspacePreview({
               className="!rounded-xl"
             >
               <Pencil size={16} />
-              Canvas ile Çiz
+              {s.drawCanvas}
             </Button>
           </div>
         </div>
@@ -526,6 +673,8 @@ function WorkspacePreview({
 }
 
 function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string) => void; onClose: () => void }) {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasHostRef = useRef<HTMLDivElement | null>(null);
   const drawingRef = useRef(false);
@@ -533,7 +682,7 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
   const [size, setSize] = useState(BRUSH_SIZES[1]);
   const [isEraser, setIsEraser] = useState(false);
 
-  // ESC ile kapat + modal açıkken arka plan kaymasını engelle.
+  // Close on ESC + prevent background scroll while the modal is open.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -652,7 +801,7 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
     if (!canvas) return;
     canvas.toBlob((blob) => {
       if (!blob) return;
-      const file = new File([blob], `cizim_${Date.now()}.png`, { type: 'image/png' });
+      const file = new File([blob], `drawing_${Date.now()}.png`, { type: 'image/png' });
       onSave(file, URL.createObjectURL(blob));
     }, 'image/png');
   };
@@ -674,14 +823,14 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
         onClick={(e) => e.stopPropagation()}
         className="flex h-[88vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl sm:flex-row"
       >
-        {/* ── Sidebar: araçlar ── */}
+        {/* ── Sidebar: tools ── */}
         <aside className="flex shrink-0 flex-col gap-6 overflow-y-auto border-b border-line bg-bg p-5 sm:w-72 sm:border-b-0 sm:border-r">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="font-serif text-xl font-semibold text-ink">Çizim Yap</h3>
+            <h3 className="font-serif text-xl font-semibold text-ink">{s.canvasTitle}</h3>
             <button
               type="button"
               onClick={onClose}
-              aria-label="Kapat"
+              aria-label={s.close}
               className="grid h-9 w-9 place-items-center rounded-full text-muted transition hover:bg-tint hover:text-[#E76F3C]"
             >
               <X size={18} />
@@ -689,7 +838,7 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
           </div>
 
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Renk</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">{s.color}</div>
             <div className="mt-3 flex flex-wrap gap-2.5">
               {CANVAS_COLORS.map((c) => (
                 <button
@@ -699,7 +848,7 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
                     setColor(c);
                     setIsEraser(false);
                   }}
-                  aria-label={`Renk ${c}`}
+                  aria-label={`${s.color} ${c}`}
                   className={`h-9 w-9 rounded-full border-2 transition hover:scale-105 ${
                     color === c && !isEraser ? 'scale-110 border-ink' : 'border-white shadow-sm'
                   }`}
@@ -710,14 +859,14 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
           </div>
 
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Kalem Ucu</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">{s.brush}</div>
             <div className="mt-3 flex flex-wrap gap-2">
               {BRUSH_SIZES.map((brushSize) => (
                 <button
                   key={brushSize}
                   type="button"
                   onClick={() => setSize(brushSize)}
-                  aria-label={`Kalem ucu ${brushSize}px`}
+                  aria-label={`${s.brush} ${brushSize}px`}
                   className={`grid h-11 w-11 place-items-center rounded-lg border transition ${
                     size === brushSize ? 'border-[#E76F3C] bg-tint' : 'border-line bg-surface hover:border-[#F08A5D]'
                   }`}
@@ -737,7 +886,7 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
           </div>
 
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Araçlar</div>
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">{s.tools}</div>
             <div className="mt-3 flex gap-2">
               <button
                 type="button"
@@ -745,19 +894,19 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
                 className={`flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition ${
                   isEraser ? 'border-[#E76F3C] bg-tint text-[#E76F3C]' : 'border-line bg-surface text-muted hover:border-[#F08A5D]'
                 }`}
-                aria-label="Silgi"
+                aria-label={s.eraser}
               >
                 <Eraser size={17} />
-                Silgi
+                {s.eraser}
               </button>
               <button
                 type="button"
                 onClick={clearCanvas}
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-line bg-surface px-3 py-2.5 text-sm font-semibold text-muted transition hover:border-[#EB5757] hover:text-[#EB5757]"
-                aria-label="Temizle"
+                aria-label={s.clear}
               >
                 <Trash2 size={17} />
-                Temizle
+                {s.clear}
               </button>
             </div>
           </div>
@@ -765,15 +914,15 @@ function CanvasModal({ onSave, onClose }: { onSave: (file: File, preview: string
           <div className="mt-auto flex flex-col gap-3 pt-2">
             <Button type="button" onClick={handleSave} className="!rounded-xl">
               <Check size={17} />
-              Çizimi Kullan
+              {s.useDrawing}
             </Button>
             <Button type="button" variant="secondary" onClick={onClose} className="!rounded-xl">
-              İptal
+              {s.cancel}
             </Button>
           </div>
         </aside>
 
-        {/* ── Canvas: tüm sağ taraf ── */}
+        {/* ── Canvas: entire right side ── */}
         <div ref={canvasHostRef} className="relative min-h-0 flex-1 bg-white">
           <canvas
             ref={canvasRef}
@@ -805,6 +954,8 @@ function ResultInspector({
   error: string | null;
   onReset: () => void;
 }) {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   return (
     <motion.aside
       initial={{ opacity: 0, x: 18 }}
@@ -814,14 +965,14 @@ function ResultInspector({
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-serif text-2xl font-semibold text-ink">Analiz Sonucu</h2>
-          <p className="mt-1 text-sm text-muted">Tahmin, güven ve açıklama inspector paneli.</p>
+          <h2 className="font-serif text-2xl font-semibold text-ink">{s.resultTitle}</h2>
+          <p className="mt-1 text-sm text-muted">{s.resultSubtitle}</p>
         </div>
         <button
           type="button"
           onClick={onReset}
           className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-[#E76F3C] transition hover:bg-tint"
-          aria-label="Yeni analiz"
+          aria-label={s.newAnalysis}
         >
           <RefreshCw size={17} />
         </button>
@@ -848,6 +999,8 @@ function ResultInspector({
 }
 
 function EmptyInspector() {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   const [infoTab, setInfoTab] = useState<InfoTab>('explanation');
   return (
     <motion.div key="empty" initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} className="mt-7">
@@ -855,33 +1008,33 @@ function EmptyInspector() {
         <div className="grid h-14 w-14 place-items-center rounded-full bg-tint text-[#E76F3C]">
           <ImageIcon size={24} strokeWidth={1.6} />
         </div>
-        <h3 className="mt-5 font-serif text-2xl font-semibold text-ink">Henüz analiz yapılmadı</h3>
+        <h3 className="mt-5 font-serif text-2xl font-semibold text-ink">{s.noAnalysis}</h3>
         <p className="mt-3 text-sm leading-7 text-muted">
-          Bir çizim yükleyin veya canvas üzerinde çizim oluşturun. Analiz tamamlandığında duygu tahmini, güven skoru, sınıf olasılıkları, Grad-CAM ve klinik açıklama burada görüntülenir.
+          {s.noAnalysisBody}
         </p>
       </div>
 
       <div className="mt-6 border-t border-line pt-5">
-        <h3 className="font-serif text-lg font-semibold text-ink">Analiz Görünümü</h3>
+        <h3 className="font-serif text-lg font-semibold text-ink">{s.analysisView}</h3>
         <div className="mt-3 flex gap-6 overflow-x-auto border-b border-line">
-          {infoTabs.map((tab) => (
+          {infoTabKeys.map((key) => (
             <button
-              key={tab.key}
+              key={key}
               type="button"
-              onClick={() => setInfoTab(tab.key)}
+              onClick={() => setInfoTab(key)}
               className={`shrink-0 border-b-2 px-1 pb-2.5 text-sm font-semibold transition ${
-                infoTab === tab.key ? 'border-[#E76F3C] text-[#E76F3C]' : 'border-transparent text-muted hover:text-[#E76F3C]'
+                infoTab === key ? 'border-[#E76F3C] text-[#E76F3C]' : 'border-transparent text-muted hover:text-[#E76F3C]'
               }`}
             >
-              {tab.label}
+              {s.infoTabs[key]}
             </button>
           ))}
         </div>
         <div className="mt-4 flex gap-3 text-sm leading-6 text-muted">
           <Sparkles className="mt-0.5 shrink-0 text-[#E76F3C]" size={20} strokeWidth={1.7} />
           <div>
-            <p>{infoTabContent[infoTab].title}</p>
-            <p className="mt-1">{infoTabContent[infoTab].body}</p>
+            <p>{s.infoTabContent[infoTab].title}</p>
+            <p className="mt-1">{s.infoTabContent[infoTab].body}</p>
           </div>
         </div>
       </div>
@@ -890,14 +1043,16 @@ function EmptyInspector() {
 }
 
 function AnalyzingState() {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   return (
     <motion.div key="loading" initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} className="mt-7">
       <div className="rounded-2xl border border-line bg-surface/55 p-5">
         <div className="flex items-center gap-3">
           <RefreshCw className="animate-spin text-[#E76F3C]" size={20} />
           <div>
-            <h3 className="font-serif text-2xl font-semibold text-ink">Analiz çalışıyor</h3>
-            <p className="mt-1 text-sm text-muted">Çizim klinik karar destek hattından geçiriliyor.</p>
+            <h3 className="font-serif text-2xl font-semibold text-ink">{s.running}</h3>
+            <p className="mt-1 text-sm text-muted">{s.runningBody}</p>
           </div>
         </div>
         <div className="mt-5 h-2 overflow-hidden rounded-full bg-surface2">
@@ -914,15 +1069,15 @@ function AnalyzingState() {
         {analysisProcess.map((step, index) => {
           const Icon = step.icon;
           return (
-            <div key={step.title} className="flex gap-3 border-b border-line pb-4 last:border-b-0">
+            <div key={step.title.en} className="flex gap-3 border-b border-line pb-4 last:border-b-0">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-tint text-[#E76F3C]">
                 <Icon size={18} strokeWidth={1.65} />
               </div>
               <div>
                 <div className="text-sm font-semibold text-ink">
-                  {index + 1}. {step.title}
+                  {index + 1}. {step.title[lang]}
                 </div>
-                <p className="mt-1 text-xs leading-5 text-muted">{step.body}</p>
+                <p className="mt-1 text-xs leading-5 text-muted">{step.body[lang]}</p>
               </div>
             </div>
           );
@@ -941,23 +1096,26 @@ function ResultState({
   result: ApiResult | null;
   indicators: IndicatorItem[];
 }) {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   const emotionIndex = emotionClasses.findIndex((c) => c.toLowerCase() === normalized.label.toLowerCase());
   const Icon = emotionIcons[emotionIndex >= 0 ? emotionIndex : 2];
   const color = emotionColors[emotionIndex >= 0 ? emotionIndex : 2] ?? '#E76F3C';
+  const classLabels = lang === 'tr' ? emotionClassesTr : emotionClasses;
 
   return (
     <motion.div key="result" initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} className="mt-7">
       <div>
-        <div className="text-sm font-semibold text-muted">Tahmin Edilen Duygu</div>
+        <div className="text-sm font-semibold text-muted">{s.predictedEmotion}</div>
         <div className="mt-4 flex items-center gap-4">
           <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-tint ring-8 ring-surface" style={{ color }}>
             <Icon size={28} strokeWidth={1.8} />
           </div>
           <div className="min-w-0">
             <div className="font-serif text-4xl font-semibold leading-tight text-ink">
-              <span style={{ color }}>{toTurkishLabel(normalized.label)}</span>
+              <span style={{ color }}>{localizedLabel(normalized.label, lang)}</span>
             </div>
-            {normalized.label && <div className="mt-1 text-sm text-muted">({normalized.label})</div>}
+            {normalized.label && lang === 'tr' && <div className="mt-1 text-sm text-muted">({normalized.label})</div>}
           </div>
         </div>
       </div>
@@ -965,13 +1123,13 @@ function ResultState({
       <div className="mt-8">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <div className="text-sm font-semibold text-muted">Güven Skoru</div>
+            <div className="text-sm font-semibold text-muted">{s.confidence}</div>
             <div className="mt-2 font-serif text-5xl font-semibold leading-none" style={{ color }}>
               {percent(normalized.confidence)}
             </div>
           </div>
           <span className="rounded-lg bg-tint px-3 py-1.5 text-xs font-semibold text-[#E76F3C]">
-            {normalized.confidence >= 80 ? 'Yüksek Güven' : 'Dikkatli İncele'}
+            {normalized.confidence >= 80 ? s.highConf : s.reviewCare}
           </span>
         </div>
         <div className="mt-4 h-3 overflow-hidden rounded-full bg-surface2">
@@ -988,26 +1146,26 @@ function ResultState({
       {normalized.heatmap && (
         <div className="mt-8 border-t border-line pt-6">
           <div className="flex items-center justify-between gap-3">
-            <div className="text-sm font-semibold text-ink">Grad-CAM Isı Haritası</div>
+            <div className="text-sm font-semibold text-ink">{s.gradcamHeat}</div>
             <Zap className="text-[#E76F3C]" size={18} strokeWidth={1.7} />
           </div>
           <div className="mt-3 overflow-hidden rounded-xl border border-line bg-[#1F1F1F]">
             <img
               src={`data:image/png;base64,${normalized.heatmap}`}
-              alt="Grad-CAM ısı haritası"
+              alt={s.gradcamAlt}
               className="h-auto w-full object-contain"
             />
           </div>
           <p className="mt-2 text-xs leading-5 text-muted">
-            Sıcak alanlar, modelin sınıf kararında daha etkili olan çizim bölgelerini gösterir.
+            {s.gradcamNote}
           </p>
         </div>
       )}
 
       <div className="mt-8 border-t border-line pt-6">
-        <div className="text-sm font-semibold text-ink">Sınıf Olasılıkları</div>
+        <div className="text-sm font-semibold text-ink">{s.classProbs}</div>
         <div className="mt-4 space-y-4">
-          {emotionClassesTr.map((label, index) => {
+          {classLabels.map((label, index) => {
             const RowIcon = emotionIcons[index] ?? CircleAlert;
             const probability = normalized.probabilities[index] ?? 0;
             return (
@@ -1016,7 +1174,7 @@ function ResultState({
                 <div className="min-w-0">
                   <div className="flex items-baseline gap-1.5 text-sm">
                     <span className="font-semibold text-ink">{label}</span>
-                    <span className="truncate text-xs text-muted">({emotionClasses[index]})</span>
+                    {lang === 'tr' && <span className="truncate text-xs text-muted">({emotionClasses[index]})</span>}
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface2">
                     <motion.div
@@ -1037,11 +1195,11 @@ function ResultState({
 
       <div className="mt-8 border-t border-line pt-6">
         <div className="flex items-center justify-between gap-3">
-          <div className="text-sm font-semibold text-ink">Klinik Açıklama</div>
+          <div className="text-sm font-semibold text-ink">{s.clinicalExplanation}</div>
           <BookOpen className="text-[#E76F3C]" size={18} strokeWidth={1.7} />
         </div>
         <p className="mt-3 text-sm leading-7 text-muted">
-          {normalized.explanation ?? 'Bu çizim için ayrıntılı açıklama bulunmuyor.'}
+          {normalized.explanation ?? s.noExplanation}
         </p>
       </div>
 
@@ -1051,10 +1209,12 @@ function ResultState({
 }
 
 function ClinicalIndicatorsCompact({ result, indicators }: { result: ApiResult | null; indicators: IndicatorItem[] }) {
+  const { lang } = useTranslation();
+  const s = STR[lang];
   return (
     <div className="mt-8 border-t border-line pt-6">
       <div className="flex items-center justify-between gap-3">
-        <div className="font-serif text-xl font-semibold text-ink">16 Klinik Gösterge</div>
+        <div className="font-serif text-xl font-semibold text-ink">{s.indicatorsTitle}</div>
         <Settings2 className="text-[#E76F3C]" size={18} strokeWidth={1.7} />
       </div>
 
@@ -1070,13 +1230,13 @@ function ClinicalIndicatorsCompact({ result, indicators }: { result: ApiResult |
       ) : (
         <>
           <p className="mt-3 text-sm leading-6 text-muted">
-            Model, duygu tahminini 16 figür-farkında klinik gösterge üzerinden verir. Bu çalışmada göstergeler Koppitz/Di Leo temelli açıklanabilir ara kavramlar olarak kullanılmıştır.
+            {s.indicatorsBody}
           </p>
           <div className="mt-4 space-y-2">
             {[
-              ['Gösterge sadakati', 'r=0,79'],
-              ['Kalibrasyon', 'ECE=0,019'],
-              ['Makro F1', '0,834'],
+              [s.fidelity, s.fidelityVal],
+              [s.calibration, s.calibrationVal],
+              [s.macroF1, s.macroF1Val],
             ].map(([label, value]) => (
               <div key={label} className="flex items-center justify-between gap-4 text-sm">
                 <span className="text-muted">{label}</span>
@@ -1090,7 +1250,7 @@ function ClinicalIndicatorsCompact({ result, indicators }: { result: ApiResult |
       {result && indicators.length === 0 && (
         <div className="mt-4 flex gap-2 rounded-xl bg-surface2 p-3 text-xs leading-5 text-muted">
           <Info size={15} className="mt-0.5 shrink-0 text-[#E76F3C]" />
-          API yanıtında gösterge bazlı ayrıntılı skor bulunmadığı için sahte değer gösterilmedi.
+          {s.noScoresInfo}
         </div>
       )}
     </div>

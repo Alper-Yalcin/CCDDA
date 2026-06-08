@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import en from './locales/en.json';
 import tr from './locales/tr.json';
 
-type Lang = 'en' | 'tr';
+export type Lang = 'en' | 'tr';
 
 const resources: Record<Lang, any> = {
   en,
